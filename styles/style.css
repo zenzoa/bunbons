@@ -1,0 +1,19 @@
+html, body {
+    overflow: hidden;
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    background: black;
+    user-select: none;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+}
+
+canvas {
+    display: block;
+    border-radius: 2px;
+    background: white;
+    image-rendering: pixelated;
+    image-rendering: crisp-edges;
+}
