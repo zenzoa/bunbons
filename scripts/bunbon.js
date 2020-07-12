@@ -51,23 +51,18 @@ class BunBon extends GameObject {
         this.maxScore = 600
 
         this.canBlastOff = false
-        this.isBlastingOff = false
 
         this.speed = 0
         this.maxSpeed = bunbonDNA.maxSpeed
 
-        this.isResting = false
         this.restChance = bunbonDNA.restChance
         this.maxRestLength = 500
 
-        this.isSleeping = false
         this.maxSleepLength = 1000
 
-        this.isJumping = false
         this.jumpChance = bunbonDNA.jumpChance
         this.maxJumpHeight = 20
 
-        this.isChatting = false
         this.maxChatLength = 500
         this.chatPartner = null
     
@@ -76,6 +71,8 @@ class BunBon extends GameObject {
         this.timesBlocked = 0
         this.wanderCounter = 0
         this.goalType = 'wander'
+
+        this.state = null
 
         this.drives = {
             hunger: 0,
@@ -246,7 +243,7 @@ class BunBon extends GameObject {
         }
 
         let sleepGoal = (ignoreChance) => {
-            if (this.isChatting) return
+            if (this.state === 'chatting') return
             let chanceOfSleep = random() * 100
             if (chanceOfSleep < this.drives.sleepiness || ignoreChance) {
                 this.startSleep()
@@ -263,7 +260,6 @@ class BunBon extends GameObject {
                     newGoal = createVector(goalX, goalY)
                 }
             }
-            // console.log(this.name, 'is wandering')
             this.goalType = 'wander'
             this.farGoal = newGoal
         }
@@ -285,16 +281,27 @@ class BunBon extends GameObject {
             }
         })
         
-        if (!this.goalType) randomGoal()
+        if (!this.goalType) {
+            let highestDrive = this.highestDrive()
+            if (this.drives[highestDrive] > 50) {
+                if (highestDrive === 'hunger') this.startThought('food')
+                if (highestDrive === 'boredom') this.startThought('toy')
+                if (highestDrive === 'loneliness') this.startThought('friend')
+                if (highestDrive === 'sleepiness') this.startThought('sleep')
+            }
+            randomGoal()
+        } else if (this.goalType !== 'sleep') {
+            this.startThought(this.goalType)
+        }
     }
 
     pickNearGoal() {
         if (this.goalType === 'wander') {
-            if (!this.isJumping && random() < this.restChance) {
+            if (this.state !== 'jumping' && random() < this.restChance) {
                 this.startRest()
                 return
             }
-            if (!this.isJumping && random() < this.jumpChance) {
+            if (this.state !== 'jumping' && random() < this.jumpChance) {
                 this.startJump()
             }
         }
@@ -349,6 +356,8 @@ class BunBon extends GameObject {
     }
 
     moveToGoal() {
+        this.animationTimer += 6
+
         // update moving goal
         if (this.goalObject) {
             this.farGoal = this.goalObject.pos
@@ -361,7 +370,7 @@ class BunBon extends GameObject {
         this.pos = Vector.add(this.pos, d)
 
         // don't check goals while jumping
-        if (this.isJumping) return
+        if (this.state === 'jumping') return
 
         // check goals
         if (this.isAtGoal(this.nearGoal)) {
@@ -411,6 +420,7 @@ class BunBon extends GameObject {
                 this.friendOpinions[goalName] = floor(random(0, 100))
                 if (DEBUG) console.log(this.name, 'met a new friend,', goalName, '(opinion', this.friendOpinions[goalName] + '%)')
             } else if (this.friendOpinions[goalName] > 50 && this.goalObject.friendOpinions[this.name] > 50) {
+                // TODO: breeeeed!
                 console.log('MAYBE BREED???')
             }
             this.startChat(this.goalObject)
@@ -419,68 +429,107 @@ class BunBon extends GameObject {
         this.pickFarGoal()
     }
 
+    startThought(thoughtType) {
+        this.isThinking = true
+        this.thoughtType = thoughtType
+        this.thoughtTimer = 0
+        this.thoughtLength = floor(random(30, 60))
+        if (DEBUG) console.log(this.name, 'is thinking about', this.thoughtType)
+    }
+
+    thought() {
+        this.thoughtTimer++
+        if (this.thoughtTimer > this.thoughtLength) {
+            this.isThinking = false
+        }
+    }
+
     startEat() {
-        this.isEating = true
+        this.state = 'eating'
         this.eatTimer = 0
         this.eatLength = floor(random(30, 60))
     }
 
     eat() {
+        this.animationTimer += 6
+
+        if (this.animationFrame === 1) {
+            this.face = 'eat1'
+        } else {
+            this.face = 'eat2'
+        }
+
         this.eatTimer++
+
         if (this.eatTimer > this.eatLength) {
-            this.isEating = false
+            this.state = null
         }
     }
 
     startPlay() {
-        this.isPlaying = true
+        this.state = 'playing'
         this.playTimer = 0
         this.playLength = floor(random(30, 60))
         this.playFace = random(['smile', 'grin', 'laugh'].filter(x => x !== this.face))
     }
 
     play() {
+        this.face = this.playFace
+
         this.playTimer++
+
         if (this.playTimer > this.playLength) {
-            this.isPlaying = false
+            this.state = null
         }
     }
 
     startRest() {
-        this.isResting = true
+        this.state = 'resting'
         this.restTimer = 0
         this.originalPos = this.pos
         this.restLength = floor(random(this.maxRestLength / 2, this.maxRestLength))
     }
 
     rest() {
+        this.animationTimer += 2
+
         this.restTimer++
+
         if (this.restTimer > this.restLength) {
-            this.isResting = false
+            this.state = null
             this.pos = this.originalPos
         }
     }
 
     startSleep() {
         if (DEBUG) console.log(this.name, 'went to sleep')
-        this.isSleeping = true
+        this.state = 'sleeping'
         this.sleepTimer = 0
         this.originalPos = this.pos
         this.sleepLength = floor(random(this.maxSleepLength / 2, this.maxSleepLength))
     }
 
     sleep() {
+        this.animationTimer += 1
+
+        if (this.animationFrame === 1) {
+            this.face = 'sleep1'
+        } else {
+            this.face = 'sleep2'
+        }
+
         this.reduceDrive('sleepiness', 0.1)
         this.sleepTimer++
+
         if (this.sleepTimer > this.sleepLength) { //} || this.drives.sleepiness <= 0) {
             if (DEBUG) console.log(this.name, 'woke up')
-            this.isSleeping = false
+            this.state = null
             this.pos = this.originalPos
         }
     }
 
     startJump() {
-        this.isJumping = true
+        this.state = 'jumping'
         this.jumpTimer = 0
         this.jumpHeight = floor(random(this.maxJumpHeight / 2, this.maxJumpHeight))
         this.jumpY = 0
@@ -490,16 +539,16 @@ class BunBon extends GameObject {
         this.jumpTimer++
         this.jumpY = this.jumpHeight * sin(this.jumpTimer * 0.15)
         if (this.jumpY <= 0) {
-            this.isJumping = false
+            this.state = null
             this.jumpY = 0
         }
     }
 
     startChat(chatPartner) {
-        if (this.isChatting || chatPartner.isSleeping) return
+        if (this.state === 'chatting' || chatPartner.state !== 'sleeping') return
         this.chatPartner = chatPartner
         if (DEBUG) console.log(this.name, 'is chatting with', this.chatPartner.name)
-        this.isChatting = true
+        this.state = 'chatting'
         this.chatTimer = 0
         this.chatLength = floor(random(this.maxChatLength / 2, this.maxChatLength))
         this.isFlipped = this.chatPartner.pos.x < this.pos.x
@@ -507,11 +556,23 @@ class BunBon extends GameObject {
     }
 
     chat() {
+        if (this.faceTimer === 0 && this.chatPartner) {
+            let opinion = this.friendOpinions[this.chatPartner.name]
+            if (opinion > random() * 100) {
+                this.face = random(['smile', 'grin', 'laugh'])
+            } else if (opinion < random() * 50) {
+                this.face = random(['blank', 'blink', 'moue'])
+            } else {
+                this.face = random(['gasp', 'blush'])
+            }
+            this.faceTimer = floor(random(10, 30))
+        }
+
         let opinion = this.chatPartner ? this.friendOpinions[this.chatPartner.name] : 0
         let rate = opinion >= 50 ? 2 : 1
         this.reduceDrive('loneliness', 0.1 * rate)
         this.chatTimer++
-        if (this.chatTimer > this.chatLength || !this.chatPartner || this.chatPartner.isInInventory || !this.chatPartner.isChatting) {
+        if (this.chatTimer > this.chatLength || !this.chatPartner || this.chatPartner.isInInventory || this.chatPartner.state !== 'chatting') {
             this.endChat()
         }
     }
@@ -520,7 +581,7 @@ class BunBon extends GameObject {
         // console.log(this.name, 'stopped chatting')
         let chatPartner = this.chatPartner
         this.chatPartner = null
-        this.isChatting = false
+        this.state = null
         if (chatPartner && chatPartner.chatPartner === this) {
             if (this.friendOpinions[chatPartner.name]) {
                 let opinionBoost = floor(random(0, 11))
@@ -544,14 +605,17 @@ class BunBon extends GameObject {
 
     startBlastOff() {
         if (DEBUG) console.log(this.name, 'is blasting off!')
-        this.isBlastingOff = true
+        this.state = 'blasting-off'
         this.blastOffTimer = 0
     }
 
     blastOff() {
+        this.face = 'laugh'
+
         this.blastOffTimer++
         this.pos.y -= floor(this.blastOffTimer)
         this.pos.x += floor(this.blastOffTimer / 2)
+
         if (this.pos.y < -this.height) {
             currentScreen.unlockConnections()
             blastedOffBunbons.push(this)
@@ -560,6 +624,14 @@ class BunBon extends GameObject {
     }
 
     pet() {
+        this.animationTimer += min(8, round(mouseVelocity) * 2)
+
+        if (mouseVelocity < 0.1) {
+            this.face = 'blank'
+        } else {
+            this.face = 'blink'
+        }
+
         this.reduceDrive('loneliness', 0.1)
     }
 
@@ -607,103 +679,96 @@ class BunBon extends GameObject {
             this.scoreIncreased = false
         }
 
-        // update facial expression
+        // update facial expression timer
+        let updateFace = false
         this.faceTimer--
-        if (this.isBlastingOff) {
-            this.face = 'laugh'
-        }
-        else if (selectedObject === this && mouseIsPressed && !isDragging && !this.isSleeping) {
-            // getting petted!
-            if (mouseVelocity < 0.1) {
-                this.face = 'blank'
-            } else {
-                this.face = 'blink'
-            }
-        }
-        else if (this.isSleeping) {
-            if (this.animationFrame === 1) this.face = 'sleep1'
-            else this.face = 'sleep2'
-        }
-        else if (this.isEating) {
-            if (this.animationFrame === 1) this.face = 'eat1'
-            else this.face = 'eat2'
-        }
-        else if (this.faceTimer <= 0) {
+        if (this.faceTimer < 0) {
             this.faceTimer = 30
-            if (this.isChatting && this.chatPartner) {
-                let opinion = this.friendOpinions[this.chatPartner.name]
-                if (opinion > random() * 100) {
-                    this.face = random(['smile', 'grin', 'laugh'])
-                } else if (opinion < random() * 50) {
-                    this.face = random(['blank', 'blink', 'moue'])
-                } else {
-                    this.face = random(['gasp', 'blush'])
-                }
-                this.faceTimer = floor(random(10, 30))
-            } else if (random() < 0.2) {
-                this.face = 'blink'
-                this.faceTimer = 10
-            } else if (highestDriveValue < 10 || (random() < 0.1 && averageDriveValue < 30)) {
-                this.face = 'grin'
-            } else if (highestDriveValue < 30 || (random() < 0.1 && averageDriveValue < 60)) {
-                this.face = 'smile'
-            } else if (highestDriveValue > 80 || (random() < 0.1 && averageDriveValue > 60)) {
-                if (highestDrive === 'hunger' || highestDrive === 'boredom') {
-                    this.face = 'angry'
-                } else {
-                    this.face = 'frown'
-                }
-            } else if (highestDriveValue > 60 || (random() < 0.1 && averageDriveValue > 30)) {
-                this.face = 'moue'
-            } else {
-                this.face = 'blank'
-            }
         }
-        else if (this.isPlaying) {
-            this.face = this.playFace
+
+        // handle state of being dragged or pet
+        if (selectedObject === this && mouseIsPressed) {
+            if (isDragging) {
+                this.state = 'being-dragged'
+            } else {
+                this.state = 'being-pet'
+            }
+        } else {
+            if (this.state === 'being-dragged' || this.state === 'being-pet') {
+                this.state = null
+            }
         }
 
         // check state
-        if (this.isBlastingOff) {
+        if (this.state === 'blasting-off') {
             this.blastOff()
         }
-        else if (selectedObject === this && mouseIsPressed && isDragging) {
-            // do nothing
+        else if (this.state === 'being-dragged') {
+            updateFace = true
         }
-        else if (this.isEating) {
+        else if (this.state === 'eating') {
             this.eat()
-            this.animationTimer += 6
         }
-        else if (this.isChatting) {
+        else if (this.state === 'chatting') {
             this.chat()
         }
-        else if (this.isSleeping) {
+        else if (this.state === 'sleeping') {
             this.sleep()
-            this.animationTimer += 1
         }
-        else if (selectedObject === this && mouseIsPressed) {
+        else if (this.state === 'being-pet') {
             this.pet()
-            this.animationTimer += min(8, round(mouseVelocity) * 2)
         }
-        else if (this.isPlaying) {
+        else if (this.state === 'playing') {
             this.play()
         }
-        else if (this.isResting) {
+        else if (this.state === 'resting') {
             this.rest()
-            this.animationTimer += 2
+            updateFace = true
         }
-        else if (this.isJumping) {
+        else if (this.state === 'jumping') {
             this.jump()
+            updateFace = true
         }
         else {
             this.moveToGoal()
-            this.animationTimer += 6
+            updateFace = true
+        }
+
+        // set face based on emotion if wasn't set by activity
+        if (this.faceTimer === 0 && updateFace) {
+            this.updateFace(highestDrive, highestDriveValue, averageDriveValue)
         }
 
         // update animation
         if (this.animationTimer >= 60) {
             this.animationTimer = 0
             this.animationFrame = this.animationFrame === 0 ? 1 : 0
+        }
+
+        // update thought
+        if (this.isThinking) {
+            this.thought()
+        }
+    }
+
+    updateFace(highestDrive, highestDriveValue, averageDriveValue) {
+        if (random() < 0.2) {
+            this.face = 'blink'
+            this.faceTimer = 10
+        } else if (highestDriveValue < 10 || (random() < 0.1 && averageDriveValue < 30)) {
+            this.face = 'grin'
+        } else if (highestDriveValue < 30 || (random() < 0.1 && averageDriveValue < 60)) {
+            this.face = 'smile'
+        } else if (highestDriveValue > 80 || (random() < 0.1 && averageDriveValue > 60)) {
+            if (highestDrive === 'hunger' || highestDrive === 'boredom') {
+                this.face = 'angry'
+            } else {
+                this.face = 'frown'
+            }
+        } else if (highestDriveValue > 60 || (random() < 0.1 && averageDriveValue > 30)) {
+            this.face = 'moue'
+        } else {
+            this.face = 'blank'
         }
     }
 
