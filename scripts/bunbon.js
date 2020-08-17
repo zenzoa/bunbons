@@ -1,25 +1,183 @@
+let bunbonBodies = [
+    40,
+    41
+]
+
+let bunbonBabyBodies = [
+    0,
+    1,
+    2,
+    3
+]
+
+let earsStartIndex = 60
 let bunbonEars = {
-    long: 2,
-    short: 3,
-    round: 4,
-    lop: 5
+    none: 0,
+    long: earsStartIndex + 0,
+    short: earsStartIndex + 1,
+    floppy: earsStartIndex + 2,
+    round: earsStartIndex + 3,
+    pointed: earsStartIndex + 4,
+    lop: earsStartIndex + 5
 }
 
+let tailsStartIndex = 80
+let bunbonTails = {
+    none: 0,
+    short: tailsStartIndex + 0,
+    fin: tailsStartIndex + 1,
+    fluffy: tailsStartIndex + 2,
+    thin: tailsStartIndex + 3,
+    curly: tailsStartIndex + 4,
+    stubby: tailsStartIndex + 5,
+}
+
+let backsStartIndex = 100
+let bunbonBacks = {
+    none: 0,
+    fin: backsStartIndex + 0,
+    spikes: backsStartIndex + 1,
+    spines: backsStartIndex + 2,
+    wavy: backsStartIndex + 3,
+    shell: backsStartIndex + 4,
+    leaf: backsStartIndex + 5,
+}
+
+let headsStartIndex = 120
+let bunbonHeads = {
+    none: 0,
+    horn: headsStartIndex + 0,
+    antlers: headsStartIndex + 1,
+    gem: headsStartIndex + 2,
+    spikes: headsStartIndex + 3,
+    horns: headsStartIndex + 4,
+    antennae: headsStartIndex + 5,
+    ram: headsStartIndex + 6,
+}
+
+let patternsStartIndex = 140
+let bunbonPatterns = {
+    none: 0,
+    stripes: patternsStartIndex + 0,
+    spots: patternsStartIndex + 1,
+    band: patternsStartIndex + 2,
+}
+
+let facesStartIndex = 20
 let bunbonFaces = {
-    blank: 20,
-    blink: 21,
-    smile: 22,
-    grin: 23,
-    laugh: 24,
-    gasp: 25,
-    blush: 26,
-    moue: 27,
-    angry: 28,
-    frown: 29,
-    sleep1: 30,
-    sleep2: 31,
-    eat1: 32,
-    eat2: 33
+    blank: facesStartIndex + 0,
+    blink: facesStartIndex + 1,
+    smile: facesStartIndex + 2,
+    grin: facesStartIndex + 3,
+    laugh: facesStartIndex + 4,
+    gasp: facesStartIndex + 5,
+    blush: facesStartIndex + 6,
+    moue: facesStartIndex + 7,
+    angry: facesStartIndex + 8,
+    frown: facesStartIndex + 9,
+    sleep1: facesStartIndex + 10,
+    sleep2: facesStartIndex + 11,
+    eat1: facesStartIndex + 12,
+    eat2: facesStartIndex + 13
+}
+
+let bunbonIcons = {
+    adult: 7,
+    baby: 8
+}
+
+let replacementColors = [
+    [255, 209, 171],
+    [255, 128, 170],
+    [191, 63, 179],
+    [104, 43, 130],
+]
+
+let bunbonColors = {
+    'grey': [
+        [255, 255, 255],
+        [199, 220, 208],
+        [155, 171, 178],
+        [105, 79, 98]
+    ],
+    'black': [
+        [155, 171, 178],
+        [98, 85, 101],
+        [69, 61, 76],
+        [23, 17, 26]
+    ],
+    'dust': [
+        [213, 197, 171],
+        [171, 148, 122],
+        [150, 108, 108],
+        [62, 53, 70]
+    ],
+    'chocolate': [
+        [252, 203, 163],
+        [230, 144, 78],
+        [205, 104, 61],
+        [98, 35, 47]
+    ],
+    'gold': [
+        [250, 247, 237],
+        [250, 203, 62],
+        [238, 142, 46],
+        [159, 41, 78]
+    ],
+    'yellow': [
+        [253, 247, 237],
+        [255, 238, 104],
+        [250, 203, 62],
+        [205, 104, 61]
+    ],
+    'red': [
+        [252, 203, 163],
+        [245, 125, 74],
+        [234, 79, 54],
+        [110, 39, 39]
+    ],
+    'cream': [
+        [253, 247, 237],
+        [254, 243, 192],
+        [253, 203, 176],
+        [150, 108, 108]
+    ],
+    'blush': [
+        [253, 247, 237],
+        [253, 203, 176],
+        [246, 129, 129],
+        [131, 28, 93]
+    ],
+    'pink': [
+        [253, 203, 176],
+        [246, 129, 129],
+        [240, 79, 120],
+        [131, 28, 93]
+    ],
+    'purple': [
+        [253, 247, 237],
+        [240, 179, 221],
+        [194, 120, 208],
+        [71, 53, 121]
+    ],
+    'green': [
+        [253, 247, 237],
+        [145, 219, 105],
+        [30, 188, 115],
+        [22, 90, 76]
+    ],
+    'aqua': [
+        [253, 247, 237],
+        [114, 214, 206],
+        [86, 152, 204],
+        [71, 53, 121]
+    ],
+    'blue': [
+        [253, 247, 237],
+        [124, 184, 231],
+        [114, 111, 213],
+        [56, 39, 104]
+    ]
 }
 
 class BunBon extends GameObject {
@@ -39,7 +197,12 @@ class BunBon extends GameObject {
         this.faceTimer = 0
 
         this.color = bunbonDNA.color
+        this.secondaryColor = bunbonDNA.secondaryColor
+        this.pattern = bunbonDNA.pattern
         this.ears = bunbonDNA.ears
+        this.tail = bunbonDNA.tail
+        this.back = bunbonDNA.back
+        this.head = bunbonDNA.head
         this.face = random(Object.keys(bunbonFaces))
 
         this.isBaby = true
@@ -96,9 +259,16 @@ class BunBon extends GameObject {
     static randomDNA() {
         return {
             parents: [],
-            color: random(Object.keys(colorSpritesheets)),
+
+            color: random(Object.keys(bunbonColors)),
+            secondaryColor: random(Object.keys(bunbonColors)),
+
             ears: random(Object.keys(bunbonEars)),
-            // other body parts
+            tail: random(Object.keys(bunbonTails)),
+            back: random(Object.keys(bunbonBacks)),
+            head: random(Object.keys(bunbonHeads)),
+            pattern: random(Object.keys(bunbonPatterns)),
+
             ageToAdulthood: random(30, 120),
             maxSpeed: random(0.2, 0.8),
             restChance: random(0.001, 0.02),
@@ -788,19 +958,40 @@ class BunBon extends GameObject {
         }
 
         // draw base
-        let decorationY = this.animationFrame === 0 ? 0 : 1
-        let frame = this.animationFrame === 0 ? 0 : 1
         if (this.isBaby) {
-            frame += 16
-            if (this.face === 'blink' || this.face.startsWith('sleep') || this.face.startsWith('eat')) frame += 2
-        }
 
-        image(colorSpritesheets[this.color].get(frame), 0, 0)
+            let body = this.animationFrame === 0 ? bunbonBabyBodies[0] : bunbonBabyBodies[1]
+            if (this.face === 'blink' || this.face.startsWith('sleep') || this.face.startsWith('eat')) body += 2
+            image(colorSpritesheets[this.color].get(body), 0, 0)
 
-        // draw layers
-        if (!this.isBaby) {
-            image(colorSpritesheets[this.color].get(bunbonEars[this.ears]), 0, decorationY)
-            image(colorSpritesheets[this.color].get(bunbonFaces[this.face]), 0, decorationY)
+        } else {
+            let ears = bunbonEars[this.ears]
+            let tail = bunbonTails[this.tail]
+            let back = bunbonBacks[this.back]
+            let head = bunbonHeads[this.head]
+            let pattern = bunbonPatterns[this.pattern]
+            let face = bunbonFaces[this.face]
+
+            let body = this.animationFrame === 0 ? bunbonBodies[0] : bunbonBodies[1]
+            if (this.animationFrame !== 0) pattern += 10
+            let decorationY = this.animationFrame === 0 ? 0 : 1
+
+            // draw white outline
+            image(colorSpritesheets[this.color].get(body + 10), 0, 0)
+            if (tail) image(colorSpritesheets[this.color].get(tail + 10), -1, decorationY)
+            if (back) image(colorSpritesheets[this.secondaryColor].get(back + 10), 0, decorationY)
+            if (ears) image(colorSpritesheets[this.color].get(ears + 10), 1, decorationY)
+            if (head) image(colorSpritesheets[this.secondaryColor].get(head + 10), 1, decorationY)
+
+            // draw layers
+            image(colorSpritesheets[this.color].get(body), 0, 0)
+            if (pattern) image(colorSpritesheets[this.secondaryColor].get(pattern), 0, 0)
+            if (tail) image(colorSpritesheets[this.color].get(tail), -1, decorationY)
+            if (back) image(colorSpritesheets[this.secondaryColor].get(back), 0, decorationY)
+            if (ears) image(colorSpritesheets[this.color].get(ears), 1, decorationY)
+            if (head) image(colorSpritesheets[this.secondaryColor].get(head), 1, decorationY)
+            image(colorSpritesheets[this.color].get(face), 0, decorationY)
+
         }
 
         pop()
@@ -895,13 +1086,9 @@ class BunBon extends GameObject {
 
     drawIcon(x, y) {
         if (this.isBaby) {
-            x -= 16
-            y -= 16
-            image(colorSpritesheets[this.color].get(384), x, y)
+            image(colorSpritesheets[this.color].get(bunbonIcons.baby), x - 16, y - 16)
         } else {
-            x -= 16
-            y -= 16
-            image(colorSpritesheets[this.color].get(383), x, y)
+            image(colorSpritesheets[this.color].get(bunbonIcons.adult), x - 16, y - 16)
         }
     }
 }

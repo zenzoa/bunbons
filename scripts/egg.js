@@ -1,3 +1,9 @@
+let bunbonEggs = [
+    4,
+    5,
+    6
+]
+
 class Egg extends Toy {
     constructor(bunbonDNA, x, y) {
         super(22, 24)
@@ -45,7 +51,7 @@ class Egg extends Toy {
         let y = floor(this.pos.y - this.height + this.offsetY)
         translate(x, y)
 
-        let frame = 380
+        let frame = bunbonEggs[0]
         if (this.isShaking || this.timeToHatch < 32) {
             this.shakingTimer++
             if (this.shakingTimer >= 8) {

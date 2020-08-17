@@ -100,7 +100,7 @@ class Planet {
         fill(this.color)
         ellipse(0, 0, this.radius * 2, this.radius * 2)
 
-        let bunbonSpacing = 10
+        let bunbonSpacing = 11
         translate(-(bunbonSpacing / 2) * (bunbons.length - 1), -this.radius - 6)
         bunbons.forEach((bunbon, i) => {
             bunbon.drawIcon(i * bunbonSpacing, 0)

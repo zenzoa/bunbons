@@ -8,8 +8,9 @@ TODO:
 - longer egg hatching time
 - longer childhood
 - confirm before blasting off
-- import/export bunbons (as a binary-encoded string)
-
+- import/export bunbons? (as a binary-encoded string)
+- BUG: facial expressions while dragging/petting seems off, maybe it's waking them up too
+- BUG: clicking on a planet brings up one of two different planets?!
 */
 
 let DEBUG = true
@@ -63,30 +64,6 @@ let Vector = p5.Vector
 
 let spritesheet, spritesheetImg
 let colorSpritesheets = {}
-
-let basePalette = [
-    [104, 43, 130],
-    [191, 63, 179],
-    [255, 128, 170]
-]
-
-let spritesheetColors = {
-    'pink': [
-        [104, 43, 130],
-        [191, 63, 179],
-        [255, 128, 170]
-    ],
-    'yellow': [
-        [196, 77, 41],
-        [255, 191, 54],
-        [255, 242, 117]
-    ],
-    'green': [
-        [57, 133, 90],
-        [131, 224, 76],
-        [220, 255, 112]
-    ]
-}
 
 let gameObjects = []
 let inventoryObjects = Array(inventory.slotCount)
@@ -170,27 +147,6 @@ function boundPosition(obj) {
     if (obj.pos.y > WORLD_HEIGHT) obj.pos.y = WORLD_HEIGHT
 }
 
-function recolor(baseImage, oldPalette, newPalette) {
-    let img = baseImage.get()
-    img.loadPixels()
-    let pixelCount = 4 * img.width * img.height
-    for (let i = 0; i < pixelCount; i += 4) {
-        oldPalette.forEach((oldColor, j) => {
-            rDiff = abs(oldColor[0] - img.pixels[i])
-            gDiff = abs(oldColor[1] - img.pixels[i + 1])
-            bDiff = abs(oldColor[2] - img.pixels[i + 2])
-            if (rDiff < 25 && gDiff < 25 && bDiff < 25) {
-                let newColor = newPalette[j]
-                img.pixels[i] = newColor[0]
-                img.pixels[i + 1] = newColor[1]
-                img.pixels[i + 2] = newColor[2]
-            }
-        })
-    }
-    img.updatePixels()
-    return img
-}
-
 function preload() {
     myFont = loadFont('fonts/UbuntuMono-Bold.woff')
 
@@ -215,11 +171,9 @@ function setup() {
     textSize(7)
     textAlign(CENTER, BASELINE)
 
-    Object.keys(spritesheetColors).forEach(colorName => {
-        let newPalette = spritesheetColors[colorName]
-        let colorSpritesheetImg = recolor(spritesheetImg, basePalette, newPalette)
-        let colorSpritesheet = new Spritesheet(colorSpritesheetImg, 32, 32)
-        colorSpritesheets[colorName] = colorSpritesheet
+    let baseSpritesheet = new Spritesheet(spritesheetImg, 32, 32)
+    Object.keys(bunbonColors).forEach(colorName => {
+        colorSpritesheets[colorName] = baseSpritesheet.recolor(colorName)
     })
 
     planetBG = planetBGs[0]
