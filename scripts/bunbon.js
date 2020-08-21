@@ -197,7 +197,8 @@ class BunBon extends GameObject {
         super(24, 22)
 
         if (!bunbonDNA) bunbonDNA = BunBon.randomDNA()
-        this.parents = bunbonDNA.parents
+        this.dna = bunbonDNA
+        this.parents = this.dna.parents
 
         this.name = NameGenerator.generate()
         this.pos = pos || randomPoint()
@@ -209,19 +210,19 @@ class BunBon extends GameObject {
         this.faceTimer = 0
         this.speechBubbleTimer = 0
 
-        this.color = bunbonDNA.color
-        this.secondaryColor = bunbonDNA.secondaryColor
-        this.pattern = bunbonDNA.pattern
-        this.ears = bunbonDNA.ears
-        this.tail = bunbonDNA.tail
-        this.back = bunbonDNA.back
-        this.head = bunbonDNA.head
+        this.color = this.dna.color
+        this.secondaryColor = this.dna.secondaryColor
+        this.pattern = this.dna.pattern
+        this.ears = this.dna.ears
+        this.tail = this.dna.tail
+        this.back = this.dna.back
+        this.head = this.dna.head
         this.face = random(Object.keys(bunbonFaces))
 
         this.isBaby = true
         this.age = 0
         this.ageTimer = 0
-        this.ageToAdulthood = bunbonDNA.ageToAdulthood
+        this.ageToAdulthood = this.dna.ageToAdulthood
 
         this.score = 0
         this.maxScore = 600
@@ -229,14 +230,14 @@ class BunBon extends GameObject {
         this.canBlastOff = false
 
         this.speed = 0
-        this.maxSpeed = bunbonDNA.maxSpeed
+        this.maxSpeed = this.dna.maxSpeed
 
-        this.restChance = bunbonDNA.restChance
+        this.restChance = this.dna.restChance
         this.maxRestLength = 500
 
         this.maxSleepLength = 1000
 
-        this.jumpChance = bunbonDNA.jumpChance
+        this.jumpChance = this.dna.jumpChance
         this.maxJumpHeight = 20
 
         this.maxChatLength = 500
@@ -258,10 +259,10 @@ class BunBon extends GameObject {
         }
 
         this.rates = {
-            hunger: bunbonDNA.hungerRate,
-            boredom: bunbonDNA.boredomRate,
-            loneliness: bunbonDNA.lonelinessRate,
-            sleepiness: bunbonDNA.sleepinessRate
+            hunger: this.dna.hungerRate,
+            boredom: this.dna.boredomRate,
+            loneliness: this.dna.lonelinessRate,
+            sleepiness: this.dna.sleepinessRate
         }
 
         this.foodOpinions = {}
@@ -270,27 +271,41 @@ class BunBon extends GameObject {
     }
 
     static randomDNA() {
-        return {
-            parents: [],
+        let randomChromosome = () => {
+            return {
+                color: random(Object.keys(bunbonColors)),
+                secondaryColor: random(Object.keys(bunbonColors)),
 
-            color: random(Object.keys(bunbonColors)),
-            secondaryColor: random(Object.keys(bunbonColors)),
+                ears: random(Object.keys(bunbonEars)),
+                tail: random(Object.keys(bunbonTails)),
+                back: random(Object.keys(bunbonBacks)),
+                head: random(Object.keys(bunbonHeads)),
+                pattern: random(Object.keys(bunbonPatterns)),
 
-            ears: random(Object.keys(bunbonEars)),
-            tail: random(Object.keys(bunbonTails)),
-            back: random(Object.keys(bunbonBacks)),
-            head: random(Object.keys(bunbonHeads)),
-            pattern: random(Object.keys(bunbonPatterns)),
-
-            ageToAdulthood: random(120, 480), // 2 - 8 minutes
-            maxSpeed: random(0.2, 0.8),
-            restChance: random(0.001, 0.02),
-            jumpChance: random(0.01, 0.1),
-            hungerRate: floor(random() * 100),
-            boredomRate: floor(random() * 100),
-            lonelinessRate: floor(random() * 100),
-            sleepinessRate: floor(random() * 100)
+                ageToAdulthood: random(120, 480), // 2 - 8 minutes
+                maxSpeed: random(0.2, 0.8),
+                restChance: random(0.001, 0.02),
+                jumpChance: random(0.01, 0.1),
+                hungerRate: floor(random() * 100),
+                boredomRate: floor(random() * 100),
+                lonelinessRate: floor(random() * 100),
+                sleepinessRate: floor(random() * 100)
+            }
         }
+
+        let chromosome = randomChromosome()
+
+        let dna = {
+            parents: [],
+            chromosomes: [chromosome, chromosome]
+        }
+
+        Object.keys(dna.chromosomes[0]).forEach(gene => {
+            let chromosome = dna.chromosomes[random([0, 1])]
+            dna[gene] = chromosome[gene]
+        })
+
+        return dna
     }
 
     static canBreed(parent1, parent2) {
@@ -312,35 +327,25 @@ class BunBon extends GameObject {
     }
 
     static breed(parent1, parent2) {
-        let combinedDNA = {}
-        let dna1 = parent1.getDNA()
-        let dna2 = parent2.getDNA()
-        Object.keys(dna1).forEach(geneName => {
-            let whichParent = random([1, 2])
-            if (whichParent === 1) {
-                combinedDNA[geneName] = dna1[geneName]
-            } else {
-                combinedDNA[geneName] = dna2[geneName]
-            }
-        })
-        combinedDNA.parents = [parent1.name, parent2.name]
-        return combinedDNA
-    }
+        if (DEBUG) console.log('breeding:', parent1.name, 'and', parent2.name)
 
-    getDNA() {
-        return {
-            color: this.color,
-            ears: this.ears,
-            // other body parts
-            ageToAdulthood: this.ageToAdulthood,
-            maxSpeed: this.maxSpeed,
-            restChance: this.restChance,
-            jumpChance: this.jumpChance,
-            hungerRate: this.rates.hunger,
-            boredomRate: this.rates.boredom,
-            lonelinessRate: this.rates.loneliness,
-            sleepinessRate: this.rates.sleepiness
+        let dna1 = parent1.dna
+        let dna2 = parent2.dna
+
+        let chromosome1 = random(dna1.chromosomes)
+        let chromosome2 = random(dna2.chromosomes)
+
+        let combinedDNA = {
+            parents: [parent1.name, parent2.name],
+            chromosomes: [chromosome1, chromosome2]
         }
+
+        Object.keys(chromosome1).forEach(gene => {
+            let chromosome = combinedDNA.chromosomes[random([0, 1])]
+            combinedDNA[gene] = chromosome[gene]
+        })
+
+        return combinedDNA
     }
 
     highestDrive() {
@@ -603,8 +608,7 @@ class BunBon extends GameObject {
                 this.friendOpinions[goalName] = floor(random(0, 100))
                 if (DEBUG) console.log(this.name, 'met a new friend,', goalName, '(opinion', this.friendOpinions[goalName] + '%)')
             } else if (this.friendOpinions[goalName] > 50 && this.goalObject.friendOpinions[this.name] > 50) {
-                // TODO: breeeeed!
-                console.log('MAYBE BREED???')
+                BunBon.breed(this, this.goalObject)
             }
             this.startChat(this.goalObject)
         }

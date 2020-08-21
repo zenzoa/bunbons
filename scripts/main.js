@@ -1,16 +1,18 @@
 /*
 
 TODO:
-- breeding
 - save progress to localhost
 - blasting off image
 - planet images
-- 
+- toy and food images
+- ui graphics
 - confirm before blasting off
 - import/export bunbons? (as a binary-encoded string)
-- BUG: facial expressions while dragging/petting seems off, maybe it's waking them up too
-- BUG: clicking on a planet brings up one of two different planets?!
-- BUG: bunbons can spawn in masked areas of the bg, causes the game to bug out
+
+BUGS:
+- facial expressions while dragging/petting seems off, maybe it's waking them up too
+- clicking on a planet brings up one of two different planets?!
+- bunbons can spawn in masked areas of the bg, causes the game to bug out
 */
 
 let DEBUG = true
