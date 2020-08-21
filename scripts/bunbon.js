@@ -86,6 +86,10 @@ let bunbonIcons = {
     baby: 8
 }
 
+let bunbonSpeechBubble = 9
+let bunbonDreamBubble = 15
+let bunbonDreamBubbleFlipped = 16
+
 let replacementColors = [
     [255, 209, 171],
     [255, 128, 170],
@@ -180,6 +184,14 @@ let bunbonColors = {
     ]
 }
 
+let bunbonThoughts = {
+    'food': 10,
+    'toy': 11,
+    'friend': 12,
+    'sleep': 13,
+    'sleep-flipped': 14
+}
+
 class BunBon extends GameObject {
     constructor(pos, bunbonDNA) {
         super(24, 22)
@@ -195,6 +207,7 @@ class BunBon extends GameObject {
         this.animationTimer = 0
         this.animationFrame = 0
         this.faceTimer = 0
+        this.speechBubbleTimer = 0
 
         this.color = bunbonDNA.color
         this.secondaryColor = bunbonDNA.secondaryColor
@@ -269,7 +282,7 @@ class BunBon extends GameObject {
             head: random(Object.keys(bunbonHeads)),
             pattern: random(Object.keys(bunbonPatterns)),
 
-            ageToAdulthood: random(30, 120),
+            ageToAdulthood: random(120, 480), // 2 - 8 minutes
             maxSpeed: random(0.2, 0.8),
             restChance: random(0.001, 0.02),
             jumpChance: random(0.01, 0.1),
@@ -603,7 +616,7 @@ class BunBon extends GameObject {
         this.isThinking = true
         this.thoughtType = thoughtType
         this.thoughtTimer = 0
-        this.thoughtLength = floor(random(30, 60))
+        this.thoughtLength = floor(random(60, 120))
         if (DEBUG) console.log(this.name, 'is thinking about', this.thoughtType)
     }
 
@@ -715,7 +728,7 @@ class BunBon extends GameObject {
     }
 
     startChat(chatPartner) {
-        if (this.state === 'chatting' || chatPartner.state !== 'sleeping') return
+        if (this.state === 'chatting' || chatPartner.state === 'sleeping') return
         this.chatPartner = chatPartner
         if (DEBUG) console.log(this.name, 'is chatting with', this.chatPartner.name)
         this.state = 'chatting'
@@ -736,6 +749,10 @@ class BunBon extends GameObject {
                 this.face = random(['gasp', 'blush'])
             }
             this.faceTimer = floor(random(10, 30))
+
+            if (this.chatPartner.speechBubbleTimer < 10) {
+                this.speechBubbleTimer = floor(random(20, 30))
+            }
         }
 
         let opinion = this.chatPartner ? this.friendOpinions[this.chatPartner.name] : 0
@@ -748,7 +765,6 @@ class BunBon extends GameObject {
     }
 
     endChat() {
-        // console.log(this.name, 'stopped chatting')
         let chatPartner = this.chatPartner
         this.chatPartner = null
         this.state = null
@@ -874,7 +890,6 @@ class BunBon extends GameObject {
             this.blastOff()
         }
         else if (this.state === 'being-dragged') {
-            updateFace = true
         }
         else if (this.state === 'eating') {
             this.eat()
@@ -919,6 +934,11 @@ class BunBon extends GameObject {
         if (this.isThinking) {
             this.thought()
         }
+
+        // update speech bubble
+        if (this.speechBubbleTimer > 0) {
+            this.speechBubbleTimer--
+        }
     }
 
     updateFace(highestDrive, highestDriveValue, averageDriveValue) {
@@ -946,7 +966,7 @@ class BunBon extends GameObject {
         push()
 
         // find upper-left corner of sprite
-        let jumpOffset = this.isInInventory ? 0 : this.jumpY
+        let jumpOffset = (this.state === 'jumping' && !this.isInInventory) ? this.jumpY : 0
         let x = floor(this.pos.x - (this.width / 2) + this.offsetX)
         let y = floor(this.pos.y - this.height + this.offsetY - jumpOffset)
         translate(x, y)
@@ -973,7 +993,7 @@ class BunBon extends GameObject {
             let face = bunbonFaces[this.face]
 
             let body = this.animationFrame === 0 ? bunbonBodies[0] : bunbonBodies[1]
-            if (this.animationFrame !== 0) pattern += 10
+            if (pattern && this.animationFrame !== 0) pattern += 10
             let decorationY = this.animationFrame === 0 ? 0 : 1
 
             // draw white outline
@@ -992,6 +1012,26 @@ class BunBon extends GameObject {
             if (head) image(colorSpritesheets[this.secondaryColor].get(head), 1, decorationY)
             image(colorSpritesheets[this.color].get(face), 0, decorationY)
 
+        }
+
+        if (this.state === 'sleeping') {
+            // draw dream bubble
+            let dreamBubbleImage = this.isFlipped ? bunbonDreamBubbleFlipped : bunbonDreamBubble
+            let dreamBubbleY = Math.sin(this.sleepTimer * .1)
+            image(baseSpritesheet.get(dreamBubbleImage), 26, dreamBubbleY)
+        } else if (this.state === 'chatting') {
+            // draw speech bubble
+            if (this.speechBubbleTimer > 0) {
+                let speechBubbleY = Math.sin(this.speechBubbleTimer * 0.33) - 2
+                image(baseSpritesheet.get(bunbonSpeechBubble), 20, speechBubbleY)
+            }
+        } else if (this.isThinking) {
+            // draw thought bubble
+            let thoughtBubbleImage = bunbonThoughts[this.thoughtType]
+            if (this.isFlipped && this.thoughtType === 'sleep') {
+                thoughtBubbleImage = bunbonThoughts['sleep-flipped']
+            }
+            image(baseSpritesheet.get(thoughtBubbleImage), 20, -4)
         }
 
         pop()

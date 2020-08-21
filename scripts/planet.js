@@ -1,6 +1,7 @@
 class Planet {
-    constructor(index, connectedPlanets = [], startUnlocked = false) {
+    constructor(index, name, connectedPlanets = [], startUnlocked = false) {
         this.index = index
+        this.name = name
         this.isUnlocked = startUnlocked
         this.connectedPlanets = connectedPlanets
     }
@@ -53,16 +54,16 @@ class Planet {
     }
 
     open() {
-        if (DEBUG) console.log('open planet', this.index)
+        if (DEBUG) console.log('open planet', this.name)
         selectedBunbon = null
         selectedObject = null
         gameObjects = this.objects
-        planetBG = planetBGs[this.index]
-        planetMask = planetMasks[this.index]
+        planetBG = planetBGs[this.name]
+        planetMask = planetMasks[this.name]
     }
 
     close() {
-        if (DEBUG) console.log('close planet', this.index)
+        if (DEBUG) console.log('close planet', this.name)
         this.objects = gameObjects.slice()
         gameObjects = null
     }

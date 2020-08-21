@@ -2,15 +2,15 @@
 
 TODO:
 - breeding
-- little icons above bunbons when talking and sleeping
-- bunbon thoughts? maybe instead of the little meter thing
 - save progress to localhost
-- longer egg hatching time
-- longer childhood
+- blasting off image
+- planet images
+- 
 - confirm before blasting off
 - import/export bunbons? (as a binary-encoded string)
 - BUG: facial expressions while dragging/petting seems off, maybe it's waking them up too
 - BUG: clicking on a planet brings up one of two different planets?!
+- BUG: bunbons can spawn in masked areas of the bg, causes the game to bug out
 */
 
 let DEBUG = true
@@ -62,7 +62,7 @@ let isDragging = false
 // p5.disableFriendlyErrors = true
 let Vector = p5.Vector
 
-let spritesheet, spritesheetImg
+let spritesheet, spritesheetImg, baseSpritesheet
 let colorSpritesheets = {}
 
 let gameObjects = []
@@ -72,10 +72,10 @@ let selectedBunbon = null
 let selectedObject = null
 
 let spaceScreen = new Space()
-let planets = Array(16).fill(0).map((x, i) => (new Planet(i)))
+let planets = Array(16).fill(0).map((x, i) => (new Planet(i, 'park')))
 
-let planetBGs = []
-let planetMasks = []
+let planetBGs = {}
+let planetMasks = {}
 let planetBG = null
 let planetMask = null
 
@@ -152,9 +152,16 @@ function preload() {
 
     spritesheetImg = loadImage('../images/spritesheet.png')
 
-    for (let i = 0; i < planets.length; i++) {
-        planetBGs.push(loadImage('../images/planet00-bg.png'))
-        planetMasks.push(loadImage('../images/planet00-mask.png'))
+    planetBGs = {
+        mossyforest: loadImage('../images/planets/mossyforest.png'),
+        park: loadImage('../images/planets/park.png'),
+        volcano: loadImage('../images/planets/volcano.png')
+    }
+
+    planetMasks = {
+        mossyforest: loadImage('../images/planets/mossyforest-mask.png'),
+        park: loadImage('../images/planets/park-mask.png'),
+        volcano: loadImage('../images/planets/volcano-mask.png')
     }
 }
 
@@ -171,13 +178,13 @@ function setup() {
     textSize(7)
     textAlign(CENTER, BASELINE)
 
-    let baseSpritesheet = new Spritesheet(spritesheetImg, 32, 32)
+    baseSpritesheet = new Spritesheet(spritesheetImg, 32, 32)
     Object.keys(bunbonColors).forEach(colorName => {
         colorSpritesheets[colorName] = baseSpritesheet.recolor(colorName)
     })
 
-    planetBG = planetBGs[0]
-    planetMask = planetMasks[0]
+    planetBG = planetBGs.park
+    planetMask = planetMasks.park
 
     spaceScreen.setup()
     planets.forEach(planet => planet.setup())

@@ -15,7 +15,7 @@ class Egg extends Toy {
         this.offsetY = -7
 
         this.bunbonDNA = bunbonDNA || BunBon.randomDNA()
-        this.timeToHatch = FRAME_RATE * 10
+        this.timeToHatch = FRAME_RATE * 60 // 1 minute
         this.color = this.bunbonDNA.color
 
         this.isShaking = false
