@@ -55,4 +55,12 @@ class GameObject {
     update() {}
 
     draw() {}
+
+    export() {}
+
+    static import(data) {
+        if (data.type === 'bunbon') {
+            return BunBon.importBunBon(data)
+        }
+    }
 }

@@ -1,5 +1,6 @@
 class Planet {
     constructor(index, name, connectedPlanets = [], startUnlocked = false) {
+        if (DEBUG) console.log('create planet', index, name)
         this.index = index
         this.name = name
         this.isUnlocked = startUnlocked
@@ -54,7 +55,7 @@ class Planet {
     }
 
     open() {
-        if (DEBUG) console.log('open planet', this.name)
+        if (DEBUG) console.log('open planet', this.index, this.name)
         selectedBunbon = null
         selectedObject = null
         gameObjects = this.objects
@@ -63,7 +64,7 @@ class Planet {
     }
 
     close() {
-        if (DEBUG) console.log('close planet', this.name)
+        if (DEBUG) console.log('close planet', this.index, this.name)
         this.objects = gameObjects.slice()
         gameObjects = null
     }
@@ -309,5 +310,30 @@ class Planet {
                 selectedBunbon.layEgg()
             }
         }
+    }
+
+    export() {
+        let data = {
+            index: this.index,
+            name: this.name,
+            isUnlocked: this.isUnlocked,
+            connectedPlanets: this.connectedPlanets,
+            radius: this.radius,
+            color: this.color,
+            x: this.x,
+            y: this.y,
+            objects: this.objects.map(o => o.export()).filter(o => !!o)
+        }
+        return data
+    }
+
+    static import(data) {
+        let newPlanet = new Planet(data.index, data.name, data.connectedPlanets, data.isUnlocked)
+        newPlanet.radius = data.radius
+        newPlanet.color = data.color
+        newPlanet.x = data.x
+        newPlanet.y = data.y
+        newPlanet.objects = data.objects.map(o => GameObject.import(o)).filter(o => !!o)
+        return newPlanet
     }
 }

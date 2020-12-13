@@ -7,12 +7,10 @@ TODO:
 - toy and food images
 - ui graphics
 - confirm before blasting off
-- import/export bunbons? (as a binary-encoded string)
 
 BUGS:
-- facial expressions while dragging/petting seems off, maybe it's waking them up too
 - clicking on a planet brings up one of two different planets?!
-- bunbons can spawn in masked areas of the bg, causes the game to bug out
+- ?? bunbons can spawn in masked areas of the bg, causes the game to bug out (this looks like it should work)
 */
 
 let DEBUG = true
@@ -74,7 +72,7 @@ let selectedBunbon = null
 let selectedObject = null
 
 let spaceScreen = new Space()
-let planets = Array(16).fill(0).map((x, i) => (new Planet(i, 'park')))
+let planets = []
 
 let planetBGs = {}
 let planetMasks = {}
@@ -189,8 +187,12 @@ function setup() {
     planetMask = planetMasks.park
 
     spaceScreen.setup()
-    planets.forEach(planet => planet.setup())
-    planets[0].isUnlocked = true
+    let isLoadSuccessful = loadState()
+    if (!isLoadSuccessful) {
+        planets = Array(16).fill(0).map((x, i) => (new Planet(i, 'park')))
+        planets.forEach(planet => planet.setup())
+        planets[0].isUnlocked = true
+    }
 
     openScreen('space', 0)
 }
@@ -246,8 +248,39 @@ function mouseReleased() {
     let dy = startY - y
 
     currentScreen.mouseReleased(x, y, dx, dy)
+
+    saveState()
 }
 
 function keyPressed() {
     currentScreen.keyPressed()
+}
+
+function saveState() {
+    let data = {
+        planets: planets.map(p => p.export()),
+        inventoryObjects: inventoryObjects.map(o => o.export())
+    }
+    try {
+        dataString = JSON.stringify(data)
+        window.localStorage.setItem('bunbons', dataString)
+    } catch(e) {
+        if (DEBUG) console.error('unable to save', e)
+    }
+}
+
+function loadState() {
+    try {
+        let dataString = window.localStorage.getItem('bunbons')
+        let data = dataString ? JSON.parse(dataString) : null
+        if (data) {
+            if (data.planets) planets = data.planets.map(p => Planet.import(p))
+            if (data.inventoryObjects) inventoryObjects = data.inventoryObjects.map(o => GameObject.import(o))
+            return true
+        } else {
+            throw 'bad data'
+        }
+    } catch(e) {
+        if (DEBUG) console.error('unable to load', e)
+    }
 }

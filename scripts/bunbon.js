@@ -894,6 +894,7 @@ class BunBon extends GameObject {
             this.blastOff()
         }
         else if (this.state === 'being-dragged') {
+            updateFace = true
         }
         else if (this.state === 'eating') {
             this.eat()
@@ -1134,5 +1135,39 @@ class BunBon extends GameObject {
         } else {
             image(colorSpritesheets[this.color].get(bunbonIcons.adult), x - 16, y - 16)
         }
+    }
+
+    export() {
+        let data = {
+            type: 'bunbon',
+            dna: this.dna,
+            name: this.name,
+            x: this.pos.x,
+            y: this.pos.y,
+            isBaby: this.isBaby,
+            age: this.age,
+            score: this.score,
+            canBlastOff: this.canBlastOff,
+            drives: this.drives,
+            foodOpinions: this.foodOpinions,
+            toyOpinions: this.toyOpinions,
+            friendOpinions: this.friendOpinions
+        }
+        return data
+    }
+
+    static importBunBon(data) {
+        let pos = createVector(data.x, data.y)
+        let newBunBon = new BunBon(pos, data.dna)
+        newBunBon.name = data.name
+        newBunBon.isBaby = data.isBaby
+        newBunBon.age = data.age
+        newBunBon.score = data.score
+        newBunBon.canBlastOff = data.canBlastOff
+        newBunBon.drives = data.drives
+        newBunBon.foodOpinions = data.foodOpinions
+        newBunBon.toyOpinions = data.toyOpinions
+        newBunBon.friendOpinions = data.friendOpinions
+        return newBunBon
     }
 }
