@@ -61,6 +61,7 @@ class Planet {
         gameObjects = this.objects
         planetBG = planetBGs[this.name]
         planetMask = planetMasks[this.name]
+        this.isBlastingOff = false
     }
 
     close() {
@@ -69,8 +70,12 @@ class Planet {
         gameObjects = null
     }
 
-    unlockConnections() {
+    blastOff() {
         this.goToSpace = true
+        lastPlanet = this
+    }
+
+    unlockConnections() {
         this.connectedPlanets.forEach(i => {
             let connectedPlanet = planets[i]
             connectedPlanet.isUnlocked = true
@@ -261,6 +266,7 @@ class Planet {
                 x >= blastOffButton.x && x < blastOffButton.x + blastOffButton.width &&
                 y >= blastOffButton.y && y < blastOffButton.y + blastOffButton.height
             ) {
+                this.isBlastingOff = true
                 selectedBunbon.startBlastOff()
             }
         }
@@ -304,6 +310,7 @@ class Planet {
                 selectedBunbon.score = min(selectedBunbon.score, selectedBunbon.maxScore)
             }
             else if (key === 'b') {
+                this.isBlastingOff = true
                 selectedBunbon.startBlastOff()
             }
             else if (key === 'e') {

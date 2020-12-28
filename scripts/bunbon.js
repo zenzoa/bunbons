@@ -86,6 +86,13 @@ let bunbonIcons = {
     baby: 8
 }
 
+let bunbonBlastoffImages = {
+    rocket1: 160,
+    rocket2: 161,
+    smallRocket1: 17,
+    smallRocket2: 18
+}
+
 let bunbonSpeechBubble = 9
 let bunbonDreamBubble = 15
 let bunbonDreamBubbleFlipped = 16
@@ -803,11 +810,15 @@ class BunBon extends GameObject {
         this.face = 'laugh'
 
         this.blastOffTimer++
-        this.pos.y -= floor(this.blastOffTimer)
-        this.pos.x += floor(this.blastOffTimer / 2)
+        if (this.isFlipped) {
+            this.pos.x -= this.blastOffTimer * 0.05
+        } else {
+            this.pos.x += this.blastOffTimer * 0.05
+        }
+        this.pos.y -= this.blastOffTimer * 0.1
 
-        if (this.pos.y < -this.height) {
-            currentScreen.unlockConnections()
+        if ((this.pos.x < -32 || this.pos.x > SCREEN_WIDTH) || (this.pos.y < -32 || this.pos.y > SCREEN_HEIGHT)) {
+            currentScreen.blastOff()
             blastedOffBunbons.push(this)
             this.removeMe = true
         }
@@ -990,12 +1001,16 @@ class BunBon extends GameObject {
             image(colorSpritesheets[this.color].get(body), 0, 0)
 
         } else {
+
             let ears = bunbonEars[this.ears]
             let tail = bunbonTails[this.tail]
             let back = bunbonBacks[this.back]
             let head = bunbonHeads[this.head]
             let pattern = bunbonPatterns[this.pattern]
             let face = bunbonFaces[this.face]
+
+            let rocketFrame = (this.blastOffTimer % 10) < 5 ? 'rocket2' : 'rocket1'
+            let rocket = this.state === 'blasting-off' ? bunbonBlastoffImages[rocketFrame] : null
 
             let body = this.animationFrame === 0 ? bunbonBodies[0] : bunbonBodies[1]
             if (pattern && this.animationFrame !== 0) pattern += 10
@@ -1005,6 +1020,7 @@ class BunBon extends GameObject {
             image(colorSpritesheets[this.color].get(body + 10), 0, 0)
             if (tail) image(colorSpritesheets[this.color].get(tail + 10), -1, decorationY)
             if (back) image(colorSpritesheets[this.secondaryColor].get(back + 10), 0, decorationY)
+            if (rocket) image(colorSpritesheets[this.color].get(rocket + 10), -6, decorationY + 2)
             if (ears) image(colorSpritesheets[this.color].get(ears + 10), 1, decorationY)
             if (head) image(colorSpritesheets[this.secondaryColor].get(head + 10), 1, decorationY)
 
@@ -1013,13 +1029,16 @@ class BunBon extends GameObject {
             if (pattern) image(colorSpritesheets[this.secondaryColor].get(pattern), 0, 0)
             if (tail) image(colorSpritesheets[this.color].get(tail), -1, decorationY)
             if (back) image(colorSpritesheets[this.secondaryColor].get(back), 0, decorationY)
+            if (rocket) image(colorSpritesheets[this.color].get(rocket), -6, decorationY + 2)
             if (ears) image(colorSpritesheets[this.color].get(ears), 1, decorationY)
             if (head) image(colorSpritesheets[this.secondaryColor].get(head), 1, decorationY)
             image(colorSpritesheets[this.color].get(face), 0, decorationY)
 
         }
 
-        if (this.state === 'sleeping') {
+        if (this.state === 'blasting-off') {
+            // do nothing
+        } else if (this.state === 'sleeping') {
             // draw dream bubble
             let dreamBubbleImage = this.isFlipped ? bunbonDreamBubbleFlipped : bunbonDreamBubble
             let dreamBubbleY = Math.sin(this.sleepTimer * .1)
@@ -1044,7 +1063,7 @@ class BunBon extends GameObject {
         if (this.isInInventory && !(selectedObject === this && mouseIsPressed)) return
 
         // draw selection info
-        if (selectedBunbon === this) {
+        if (selectedBunbon === this && this.state !== 'blasting-off') {
             push()
             fill('#444')
             stroke('white')
@@ -1135,6 +1154,11 @@ class BunBon extends GameObject {
         } else {
             image(colorSpritesheets[this.color].get(bunbonIcons.adult), x - 16, y - 16)
         }
+    }
+
+    drawBlastOff(frame) {
+        let frameName = frame ? 'smallRocket2' : 'smallRocket1'
+        image(colorSpritesheets[this.color].get(bunbonBlastoffImages[frameName]), -16, -16)
     }
 
     export() {

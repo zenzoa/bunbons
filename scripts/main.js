@@ -1,12 +1,12 @@
 /*
 
 TODO:
-- save progress to localhost
-- blasting off image
+- fix save/load
 - planet images
 - toy and food images
 - ui graphics
 - confirm before blasting off
+- prevent clicking when blasting off
 
 BUGS:
 - clicking on a planet brings up one of two different planets?!
@@ -80,6 +80,7 @@ let planetBG = null
 let planetMask = null
 
 let currentScreen = spaceScreen
+let lastPlanet = null
 
 let myFont
 
@@ -270,17 +271,17 @@ function saveState() {
 }
 
 function loadState() {
-    try {
-        let dataString = window.localStorage.getItem('bunbons')
-        let data = dataString ? JSON.parse(dataString) : null
-        if (data) {
-            if (data.planets) planets = data.planets.map(p => Planet.import(p))
-            if (data.inventoryObjects) inventoryObjects = data.inventoryObjects.map(o => GameObject.import(o))
-            return true
-        } else {
-            throw 'bad data'
-        }
-    } catch(e) {
-        if (DEBUG) console.error('unable to load', e)
-    }
+    // try {
+    //     let dataString = window.localStorage.getItem('bunbons')
+    //     let data = dataString ? JSON.parse(dataString) : null
+    //     if (data) {
+    //         if (data.planets) planets = data.planets.map(p => Planet.import(p))
+    //         if (data.inventoryObjects) inventoryObjects = data.inventoryObjects.map(o => GameObject.import(o))
+    //         return true
+    //     } else {
+    //         throw 'bad data'
+    //     }
+    // } catch(e) {
+    //     if (DEBUG) console.error('unable to load', e)
+    // }
 }
