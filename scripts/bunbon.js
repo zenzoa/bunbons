@@ -985,20 +985,13 @@ class BunBon extends GameObject {
         let jumpOffset = (this.state === 'jumping' && !this.isInInventory) ? this.jumpY : 0
         let x = floor(this.pos.x - (this.width / 2) + this.offsetX)
         let y = floor(this.pos.y - this.height + this.offsetY - jumpOffset)
-        translate(x, y)
-
-        // flip sprite if moving left
-        if (this.isFlipped) {
-            scale(-1, 1)
-            translate(this.offsetX * 2 - this.width, 0)
-        }
 
         // draw base
         if (this.isBaby) {
 
             let body = this.animationFrame === 0 ? bunbonBabyBodies[0] : bunbonBabyBodies[1]
             if (this.face === 'blink' || this.face.startsWith('sleep') || this.face.startsWith('eat')) body += 2
-            image(colorSpritesheets[this.color].get(body), 0, 0)
+            image(colorSpritesheets[this.color].get(body, this.isFlipped), x, y)
 
         } else {
 
@@ -1014,25 +1007,25 @@ class BunBon extends GameObject {
 
             let body = this.animationFrame === 0 ? bunbonBodies[0] : bunbonBodies[1]
             if (pattern && this.animationFrame !== 0) pattern += 10
-            let decorationY = this.animationFrame === 0 ? 0 : 1
+            let decorationY = y + (this.animationFrame === 0 ? 0 : 1)
 
             // draw white outline
-            image(colorSpritesheets[this.color].get(body + 10), 0, 0)
-            if (tail) image(colorSpritesheets[this.color].get(tail + 10), -1, decorationY)
-            if (back) image(colorSpritesheets[this.secondaryColor].get(back + 10), 0, decorationY)
-            if (rocket) image(colorSpritesheets[this.color].get(rocket + 10), -6, decorationY + 2)
-            if (ears) image(colorSpritesheets[this.color].get(ears + 10), 1, decorationY)
-            if (head) image(colorSpritesheets[this.secondaryColor].get(head + 10), 1, decorationY)
+            image(colorSpritesheets[this.color].get(body + 10, this.isFlipped), x, y)
+            if (tail) image(colorSpritesheets[this.color].get(tail + 10, this.isFlipped), x - 1, decorationY)
+            if (back) image(colorSpritesheets[this.secondaryColor].get(back + 10, this.isFlipped), x, decorationY)
+            if (rocket) image(colorSpritesheets[this.color].get(rocket + 10, this.isFlipped), x - 6, decorationY + 2)
+            if (ears) image(colorSpritesheets[this.color].get(ears + 10, this.isFlipped), x + 1, decorationY)
+            if (head) image(colorSpritesheets[this.secondaryColor].get(head + 10, this.isFlipped), x + 1, decorationY)
 
             // draw layers
-            image(colorSpritesheets[this.color].get(body), 0, 0)
-            if (pattern) image(colorSpritesheets[this.secondaryColor].get(pattern), 0, 0)
-            if (tail) image(colorSpritesheets[this.color].get(tail), -1, decorationY)
-            if (back) image(colorSpritesheets[this.secondaryColor].get(back), 0, decorationY)
-            if (rocket) image(colorSpritesheets[this.color].get(rocket), -6, decorationY + 2)
-            if (ears) image(colorSpritesheets[this.color].get(ears), 1, decorationY)
-            if (head) image(colorSpritesheets[this.secondaryColor].get(head), 1, decorationY)
-            image(colorSpritesheets[this.color].get(face), 0, decorationY)
+            image(colorSpritesheets[this.color].get(body, this.isFlipped), x, y)
+            if (pattern) image(colorSpritesheets[this.secondaryColor].get(pattern, this.isFlipped), x, y)
+            if (tail) image(colorSpritesheets[this.color].get(tail, this.isFlipped), x - 1, decorationY)
+            if (back) image(colorSpritesheets[this.secondaryColor].get(back, this.isFlipped), x, decorationY)
+            if (rocket) image(colorSpritesheets[this.color].get(rocket, this.isFlipped), x - 6, decorationY + 2)
+            if (ears) image(colorSpritesheets[this.color].get(ears, this.isFlipped), x + 1, decorationY)
+            if (head) image(colorSpritesheets[this.secondaryColor].get(head, this.isFlipped), x + 1, decorationY)
+            image(colorSpritesheets[this.color].get(face, this.isFlipped), x, decorationY)
 
         }
 
@@ -1042,12 +1035,12 @@ class BunBon extends GameObject {
             // draw dream bubble
             let dreamBubbleImage = this.isFlipped ? bunbonDreamBubbleFlipped : bunbonDreamBubble
             let dreamBubbleY = Math.sin(this.sleepTimer * .1)
-            image(baseSpritesheet.get(dreamBubbleImage), 26, dreamBubbleY)
+            image(baseSpritesheet.get(dreamBubbleImage, this.isFlipped), x + 26, y + dreamBubbleY)
         } else if (this.state === 'chatting') {
             // draw speech bubble
             if (this.speechBubbleTimer > 0) {
                 let speechBubbleY = Math.sin(this.speechBubbleTimer * 0.33) - 2
-                image(baseSpritesheet.get(bunbonSpeechBubble), 20, speechBubbleY)
+                image(baseSpritesheet.get(bunbonSpeechBubble, this.isFlipped), x + 20, y + speechBubbleY)
             }
         } else if (this.isThinking) {
             // draw thought bubble
@@ -1055,10 +1048,8 @@ class BunBon extends GameObject {
             if (this.isFlipped && this.thoughtType === 'sleep') {
                 thoughtBubbleImage = bunbonThoughts['sleep-flipped']
             }
-            image(baseSpritesheet.get(thoughtBubbleImage), 20, -4)
+            image(baseSpritesheet.get(thoughtBubbleImage, this.isFlipped), x + 20, y - 4)
         }
-
-        pop()
 
         if (this.isInInventory && !(selectedObject === this && mouseIsPressed)) return
 
