@@ -176,7 +176,6 @@ class Planet {
                 if (obj.isOnPointer(x, y)) {
                     selectedObject = obj
                     if (selectedObject instanceof BunBon) selectedBunbon = obj
-                    selectedObject.isBeingDragged = true
                 }
             })
         }
@@ -186,10 +185,8 @@ class Planet {
                 // click in inventory
                 selectedObject = inventoryObjects[slot]
                 if (selectedObject instanceof BunBon) selectedBunbon = selectedObject
-
                 inventoryObjects[slot] = null
                 gameObjects.push(selectedObject)
-                selectedObject.isBeingDragged = true
             }
         }
     }
@@ -200,6 +197,7 @@ class Planet {
             if (!(selectedObject instanceof BunBon) || distSquared >= 1024) {
 
                 isDragging = true
+                selectedObject.isBeingDragged = true
         
                 if (y >= WORLD_HEIGHT) {
                     let slot = getInventorySlot(x, y)
@@ -225,7 +223,7 @@ class Planet {
     mouseReleased(x, y, dx, dy) {
         isDragging = false
 
-        if (selectedObject && selectedObject.isDraggable) {
+        if (selectedObject && selectedObject.isBeingDragged) {
             selectedObject.isBeingDragged = false
 
             if (y >= WORLD_HEIGHT) {

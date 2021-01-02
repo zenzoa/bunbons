@@ -1077,7 +1077,7 @@ class BunBon extends GameObject {
 
             // draw layers
             image(this.images[bodyFrame + flipped], x, y)
-            if (pattern) image(this.images[patternFrame + flipped], tailX, decorationY)
+            if (pattern) image(this.images[patternFrame + flipped], x, y)
             if (tail) image(this.images['tail' + flipped], tailX, decorationY)
             if (back) image(this.images['back' + flipped], x, decorationY)
             if (this.state === 'blasting-off') image(this.images[rocketFrame + flipped], rocketX, decorationY + 2)

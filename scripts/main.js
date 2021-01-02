@@ -5,6 +5,7 @@ TODO:
 - planet images
 - toy images
 - finish food images
+- pre-load face images
 - progress indicator graphics
 - confirm before blasting off
 
@@ -12,8 +13,6 @@ BUGS:
 - prevent clicking when blasting off
 - random pauses every so often, at least in Firefox (cause: cc graph reduction, aka c++ garbage collection)
 - slowdown over time?
-- dragging bunbons sometimes doesn't work?
-- clicking outside main window can open a planet
 - fix save & load - better saving strategy, new planet has the same bunbons as the old planet after blasting off
 
 */
@@ -62,9 +61,10 @@ let lastY = 0
 let startX = 0
 let startY = 0
 let mouseVelocity = 0
+let hasClicked = false
 let isDragging = false
 
-// p5.disableFriendlyErrors = true
+p5.disableFriendlyErrors = true
 let Vector = p5.Vector
 
 let spritesheet, spritesheetImg, baseSpritesheet
@@ -226,7 +226,10 @@ function touchStarted() {
     startX = x
     startY = y
 
-    currentScreen.mousePressed(x, y)
+    if (x >= 0 && y >= 0 && x < SCREEN_WIDTH && y < SCREEN_HEIGHT) {
+        hasClicked = true
+        currentScreen.mousePressed(x, y)
+    }
 }
 
 function mousePressed() {
@@ -235,13 +238,23 @@ function mousePressed() {
 
     startX = x
     startY = y
-
-    currentScreen.mousePressed(x, y)
+    
+    if (x >= 0 && y >= 0 && x < SCREEN_WIDTH && y < SCREEN_HEIGHT) {
+        currentScreen.mousePressed(x, y)
+        hasClicked = true
+    }
 }
 
 function mouseDragged() {
+    if (!hasClicked) return
+
     let x = mouseX / CANVAS_SCALE
     let y = mouseY / CANVAS_SCALE
+
+    if (x < 0) x = 0
+    if (x >= SCREEN_WIDTH) x = SCREEN_WIDTH - 1
+    if (y < 0) y = 0
+    if (y >= SCREEN_HEIGHT) y = SCREEN_HEIGHT - 1
 
     let dx = startX - x
     let dy = startY - y
@@ -250,13 +263,21 @@ function mouseDragged() {
 }
 
 function mouseReleased() {
+    if (!hasClicked) return
+
     let x = mouseX / CANVAS_SCALE
     let y = mouseY / CANVAS_SCALE
+
+    if (x < 0) x = 0
+    if (x >= SCREEN_WIDTH) x = SCREEN_WIDTH - 1
+    if (y < 0) y = 0
+    if (y >= SCREEN_HEIGHT) y = SCREEN_HEIGHT - 1
 
     let dx = startX - x
     let dy = startY - y
 
     currentScreen.mouseReleased(x, y, dx, dy)
+    hasClicked = false
 }
 
 function keyPressed() {
