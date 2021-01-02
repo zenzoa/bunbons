@@ -10,7 +10,6 @@ TODO:
 - confirm before blasting off
 
 BUGS:
-- prevent clicking when blasting off
 - random pauses every so often, at least in Firefox (cause: cc graph reduction, aka c++ garbage collection)
 - slowdown over time?
 - fix save & load - better saving strategy, new planet has the same bunbons as the old planet after blasting off
@@ -61,8 +60,9 @@ let lastY = 0
 let startX = 0
 let startY = 0
 let mouseVelocity = 0
-let hasClicked = false
+let isClicking = false
 let isDragging = false
+let preventClicking = false
 
 p5.disableFriendlyErrors = true
 let Vector = p5.Vector
@@ -220,6 +220,8 @@ function draw() {
 
 function touchStarted() {
     // duplicating mousePressed here because p5js has a bug in it
+    if (preventClicking) return
+
     let x = mouseX / CANVAS_SCALE
     let y = mouseY / CANVAS_SCALE
 
@@ -227,12 +229,14 @@ function touchStarted() {
     startY = y
 
     if (x >= 0 && y >= 0 && x < SCREEN_WIDTH && y < SCREEN_HEIGHT) {
-        hasClicked = true
         currentScreen.mousePressed(x, y)
+        isClicking = true
     }
 }
 
 function mousePressed() {
+    if (preventClicking) return
+
     let x = mouseX / CANVAS_SCALE
     let y = mouseY / CANVAS_SCALE
 
@@ -241,12 +245,12 @@ function mousePressed() {
     
     if (x >= 0 && y >= 0 && x < SCREEN_WIDTH && y < SCREEN_HEIGHT) {
         currentScreen.mousePressed(x, y)
-        hasClicked = true
+        isClicking = true
     }
 }
 
 function mouseDragged() {
-    if (!hasClicked) return
+    if (!isClicking) return
 
     let x = mouseX / CANVAS_SCALE
     let y = mouseY / CANVAS_SCALE
@@ -263,7 +267,7 @@ function mouseDragged() {
 }
 
 function mouseReleased() {
-    if (!hasClicked) return
+    if (!isClicking) return
 
     let x = mouseX / CANVAS_SCALE
     let y = mouseY / CANVAS_SCALE
@@ -277,7 +281,7 @@ function mouseReleased() {
     let dy = startY - y
 
     currentScreen.mouseReleased(x, y, dx, dy)
-    hasClicked = false
+    isClicking = false
 }
 
 function keyPressed() {

@@ -863,6 +863,7 @@ class BunBon extends GameObject {
         if (DEBUG) console.log(this.name, 'is blasting off!')
         this.state = 'blasting-off'
         this.blastOffTimer = 0
+        preventClicking = true
     }
 
     blastOff() {
@@ -947,7 +948,7 @@ class BunBon extends GameObject {
         }
 
         // handle state of being dragged or pet
-        if (selectedObject === this && mouseIsPressed) {
+        if (selectedObject === this && isClicking) {
             if (isDragging) {
                 this.state = 'being-dragged'
             } else {

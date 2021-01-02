@@ -45,6 +45,7 @@ class Space {
             this.drawTransition = true
             this.transitionRadius = 1
             this.transitionReversed = false
+            preventClicking = false
         }
     }
 
