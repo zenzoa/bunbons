@@ -1,15 +1,19 @@
 let foodSprites = {
     'mushrooms': 180,
     'cloud-dumplings': 181,
-    'juice-orb': 182
+    'juice-orb': 182,
+    'flowers': 183,
+    'dragon-fruit': 184,
+    'rock-candy': 185,
+    'ice-cream': 186
 }
 
 class Food extends GameObject {
-    constructor() {
+    constructor(name) {
         super(24, 24)
-
+        
         // temp
-        let foodType = random(Object.keys(foodSprites))
+        let foodType = name || random(Object.keys(foodSprites))
         let foodSpriteIndex = foodSprites[foodType]
 
         this.name = foodType
@@ -34,18 +38,17 @@ class Food extends GameObject {
     }
 
     update() {
+        if (this.isBeingDragged) return
+
         if (this.isRefilling) {
             this.refillTimer++
             if (this.refillTimer >= this.refillLength) {
                 this.isRefilling = false
-                // console.log(this.name, 'refilled')
             }
         }
     }
 
     draw() {
-        push()
-
         // find upper-left corner of sprite
         let x = floor(this.pos.x - (this.width / 2) + this.offsetX)
         let y = floor(this.pos.y - this.height + this.offsetY)
@@ -59,5 +62,30 @@ class Food extends GameObject {
             stroke('lightblue')
             rect(x - this.offsetX, y - this.offsetY, this.width, this.height)
         }
+    }
+
+    export() {
+        let data = {
+            type: 'food',
+            name: this.name,
+            x: this.pos.x,
+            y: this.pos.y,
+            isRefilling: this.isRefilling,
+            refillLength: this.refillLength,
+            refillTimer: this.refillTimer,
+            isInInventory: this.isInInventory
+        }
+        return data
+    }
+
+    static importFood(data) {
+        let newFood = new Food(data.name)
+        newFood.pos = createVector(data.x, data.y)
+        newFood.isRefilling = data.isRefilling
+        newFood.refillLength = data.refillLength
+        newFood.refillTimer = data.refillTimer
+        newFood.isInInventory = data.isInInventory
+        // todo: look up food image/stats based on name
+        return newFood
     }
 }

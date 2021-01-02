@@ -1,6 +1,6 @@
 class Toy extends GameObject {
-    constructor(width = 16, height = 16) {
-        super(width, height)
+    constructor() {
+        super(24, 24)
 
         this.name = 'toy'
         this.pos = randomPoint()
@@ -17,6 +17,8 @@ class Toy extends GameObject {
     }
 
     update() {
+        if (this.isBeingDragged) return
+
         if (this.goal) {
             let d = Vector.sub(this.goal, this.pos)
             d.setMag(this.speed)
@@ -35,20 +37,35 @@ class Toy extends GameObject {
     }
 
     draw() {
-        push()
-
         // find upper-left corner of sprite
         let x = floor(this.pos.x - (this.width / 2) + this.offsetX)
         let y = floor(this.pos.y - this.height + this.offsetY - this.jumpY)
-        translate(x, y)
-
+        
         // draw debug lines
         if (DEBUG) {
             noFill()
             stroke('lightblue')
-            rect(0, 0, this.width, this.height)
+            rect(x, y, this.width, this.height)
         }
+    }
 
-        pop()
+    export() {
+        let data = {
+            type: 'toy',
+            name: this.name,
+            x: this.pos.x,
+            y: this.pos.y,
+            isInInventory: this.isInInventory
+        }
+        return data
+    }
+
+    static importToy(data) {
+        let newToy = new Toy()
+        newToy.name = data.name
+        newToy.pos = createVector(data.x, data.y)
+        newToy.isInInventory = data.isInInventory
+        // todo: look up toy image/stats based on name
+        return newToy
     }
 }

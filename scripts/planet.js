@@ -66,6 +66,7 @@ class Planet {
 
     close() {
         if (DEBUG) console.log('close planet', this.index, this.name)
+        saveState()
         this.objects = gameObjects.slice()
         gameObjects = null
     }
@@ -86,6 +87,7 @@ class Planet {
         if (!this.isUnlocked) return
 
         stroke('#999')
+        strokeWeight(1)
         this.connectedPlanets.forEach(i => {
             let connectedPlanet = planets[i]
             line(this.x, this.y, connectedPlanet.x, connectedPlanet.y)
@@ -98,8 +100,6 @@ class Planet {
     drawPlanet() {
         if (!this.isUnlocked) return
 
-        let bunbons = this.objects.filter(o => o instanceof BunBon)
-
         push()
 
         translate(this.x, this.y)
@@ -107,10 +107,16 @@ class Planet {
         fill(this.color)
         ellipse(0, 0, this.radius * 2, this.radius * 2)
 
+        let bunbonCount = this.objects.filter(o => o instanceof BunBon).length
         let bunbonSpacing = 11
-        translate(-(bunbonSpacing / 2) * (bunbons.length - 1), -this.radius - 6)
-        bunbons.forEach((bunbon, i) => {
-            bunbon.drawIcon(i * bunbonSpacing, 0)
+        translate(-(bunbonSpacing / 2) * (bunbonCount - 1), -this.radius - 6)
+
+        let i = 0
+        this.objects.forEach(obj => {
+            if (obj instanceof BunBon) {
+                obj.drawIcon(i * bunbonSpacing, 0)
+                i++
+            }
         })
 
         pop()
@@ -127,35 +133,32 @@ class Planet {
         // draw background
         image(planetBG, 0, 0)
 
+        // draw user interface
+        image(userinterfaceImg, 0, 0)
+
         // draw inventory
-        noStroke()
-        fill('#eee')
-        rect(0, WORLD_HEIGHT, SCREEN_WIDTH, SCREEN_WIDTH - WORLD_HEIGHT)
-        fill('white')
-        rect(inventory.x, inventory.y, inventory.width, inventory.height)
         inventoryObjects.forEach(obj => {
-            obj.draw()
+            if (obj) obj.draw()
         })
 
         // draw bunbon stats
-        if (selectedBunbon) {
-            selectedBunbon.drawScore()
-            if (DEBUG) selectedBunbon.drawStatOrb()
-        }
-
-        // draw button
-        noStroke()
-        fill('black')
-        rect(spaceButton.x, spaceButton.y, spaceButton.width, spaceButton.height)
+        // if (selectedBunbon) {
+        //     selectedBunbon.drawScore()
+        //     if (DEBUG) selectedBunbon.drawStatOrb()
+        // }
 
         // update and draw game objects
+        let cleanUpObjects = false
         gameObjects.forEach(obj => {
-            obj.update()
+            if (!obj.isInInventory) obj.update() // obj should only be in gameObjects with isInInventory = true when dragging from inventory
             obj.draw()
+            if (obj.removeMe) cleanUpObjects = true
         })
 
         // clean up objects
-        gameObjects = gameObjects.filter(obj => !obj.removeMe)
+        if (cleanUpObjects) {
+            gameObjects = gameObjects.filter(obj => !obj.removeMe)
+        }
 
         // go to space
         if (this.goToSpace) {
@@ -173,6 +176,7 @@ class Planet {
                 if (obj.isOnPointer(x, y)) {
                     selectedObject = obj
                     if (selectedObject instanceof BunBon) selectedBunbon = obj
+                    selectedObject.isBeingDragged = true
                 }
             })
         }
@@ -183,9 +187,9 @@ class Planet {
                 selectedObject = inventoryObjects[slot]
                 if (selectedObject instanceof BunBon) selectedBunbon = selectedObject
 
-                delete inventoryObjects[slot]
+                inventoryObjects[slot] = null
                 gameObjects.push(selectedObject)
-                selectedObject.isInInventory = false
+                selectedObject.isBeingDragged = true
             }
         }
     }
@@ -193,8 +197,7 @@ class Planet {
     mouseDragged(x, y, dx, dy) {
         if (selectedObject && selectedObject.isDraggable) {
             let distSquared = dx * dx + dy * dy
-            let dragDist = min(selectedObject.width, selectedObject.height)
-            if (distSquared >= dragDist * dragDist) {
+            if (!(selectedObject instanceof BunBon) || distSquared >= 1024) {
 
                 isDragging = true
         
@@ -223,7 +226,10 @@ class Planet {
         isDragging = false
 
         if (selectedObject && selectedObject.isDraggable) {
+            selectedObject.isBeingDragged = false
+
             if (y >= WORLD_HEIGHT) {
+
                 let slot = getInventorySlot(x, y)
                 if (!inventoryObjects[slot]) {
                     // add object to inventory
@@ -236,8 +242,11 @@ class Planet {
                     if (selectedObject === selectedBunbon) selectedBunbon = null
                     selectedObject = null
                 }
-            }
-            else {
+
+            } else {
+
+                selectedObject.isInInventory = false
+
                 boundPosition(selectedObject)
 
                 let distSquared = dx * dx + dy * dy
@@ -329,7 +338,7 @@ class Planet {
             color: this.color,
             x: this.x,
             y: this.y,
-            objects: this.objects.map(o => o.export()).filter(o => !!o)
+            objects: gameObjects.map(o => o.export()).filter(o => !!o)
         }
         return data
     }

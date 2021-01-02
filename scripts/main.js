@@ -1,19 +1,24 @@
 /*
 
 TODO:
-- fix save/load
+- import/export bunbons (at least from command line)
 - planet images
-- toy and food images
-- ui graphics
+- toy images
+- finish food images
+- progress indicator graphics
 - confirm before blasting off
-- prevent clicking when blasting off
 
 BUGS:
-- clicking on a planet brings up one of two different planets?!
-- ?? bunbons can spawn in masked areas of the bg, causes the game to bug out (this looks like it should work)
+- prevent clicking when blasting off
+- random pauses every so often, at least in Firefox (cause: cc graph reduction, aka c++ garbage collection)
+- slowdown over time?
+- dragging bunbons sometimes doesn't work?
+- clicking outside main window can open a planet
+- fix save & load - better saving strategy, new planet has the same bunbons as the old planet after blasting off
+
 */
 
-let DEBUG = true
+let DEBUG = false
 
 let FRAME_RATE = 30
 
@@ -31,23 +36,23 @@ let SCREEN_HEIGHT = 240
 
 let inventory = {
     x: 40,
-    y: WORLD_HEIGHT + 4,
+    y: WORLD_HEIGHT + 5,
     slotCount: 6,
     slotWidth: 40,
     width: 40 * 6,
     height: 32
-}
+} 
 
 let spaceButton = {
     x: 4,
-    y: WORLD_HEIGHT + 4,
+    y: WORLD_HEIGHT + 5,
     width: 32,
     height: 32
 }
 
 let blastOffButton = {
     x: WORLD_WIDTH - 36,
-    y: WORLD_HEIGHT + 4,
+    y: WORLD_HEIGHT + 5,
     width: 32,
     height: 32
 }
@@ -64,6 +69,8 @@ let Vector = p5.Vector
 
 let spritesheet, spritesheetImg, baseSpritesheet
 let colorSpritesheets = {}
+
+let userinterfaceImg
 
 let gameObjects = []
 let inventoryObjects = Array(inventory.slotCount)
@@ -152,6 +159,7 @@ function preload() {
     myFont = loadFont('fonts/UbuntuMono-Bold.woff')
 
     spritesheetImg = loadImage('../images/spritesheet.png')
+    userinterfaceImg = loadImage('../images/userinterface.png')
 
     planetBGs = {
         mossyforest: loadImage('../images/planets/mossyforest.png'),
@@ -249,8 +257,6 @@ function mouseReleased() {
     let dy = startY - y
 
     currentScreen.mouseReleased(x, y, dx, dy)
-
-    saveState()
 }
 
 function keyPressed() {
@@ -258,16 +264,16 @@ function keyPressed() {
 }
 
 function saveState() {
-    let data = {
-        planets: planets.map(p => p.export()),
-        inventoryObjects: inventoryObjects.map(o => o.export())
-    }
-    try {
-        dataString = JSON.stringify(data)
-        window.localStorage.setItem('bunbons', dataString)
-    } catch(e) {
-        if (DEBUG) console.error('unable to save', e)
-    }
+    // let data = {
+    //     planets: planets.map(p => p.export()),
+    //     inventoryObjects: inventoryObjects.map(o => o ? o.export() : null)
+    // }
+    // try {
+    //     dataString = JSON.stringify(data)
+    //     window.localStorage.setItem('bunbons', dataString)
+    // } catch(e) {
+    //     if (DEBUG) console.error('unable to save', e)
+    // }
 }
 
 function loadState() {
@@ -282,6 +288,6 @@ function loadState() {
     //         throw 'bad data'
     //     }
     // } catch(e) {
-    //     if (DEBUG) console.error('unable to load', e)
+    //     if (DEBUG) console.error('unable to load:', e)
     // }
 }

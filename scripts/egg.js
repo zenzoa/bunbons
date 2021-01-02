@@ -5,13 +5,13 @@ let bunbonEggs = [
 ]
 
 class Egg extends Toy {
-    constructor(bunbonDNA, x, y) {
+    constructor(bunbonDNA, pos) {
         super(22, 24)
 
         this.name = 'egg'
-        this.pos = randomPoint()
+        this.pos = pos || randomPoint()
 
-        this.offsetX = -5
+        this.offsetX = -4
         this.offsetY = -7
 
         this.bunbonDNA = bunbonDNA || BunBon.randomDNA()
@@ -31,7 +31,7 @@ class Egg extends Toy {
     }
 
     update() {
-        if (selectedObject === this && mouseIsPressed) return
+        if (this.isBeingDragged) return
 
         // update hatching progress
         this.timeToHatch--
@@ -44,12 +44,9 @@ class Egg extends Toy {
     }
 
     draw() {
-        push()
-
         // find upper-left corner of sprite
         let x = floor(this.pos.x - (this.width / 2) + this.offsetX)
         let y = floor(this.pos.y - this.height + this.offsetY)
-        translate(x, y)
 
         let frame = bunbonEggs[0]
         if (this.isShaking || this.timeToHatch < 32) {
@@ -64,15 +61,40 @@ class Egg extends Toy {
             }
         }
 
-        image(colorSpritesheets[this.color].get(frame), 0, 0)
+        image(colorSpritesheets[this.color].get(frame), x, y)
 
         // draw debug lines
         if (DEBUG) {
             noFill()
             stroke('lightblue')
-            rect(-this.offsetX, -this.offsetY, this.width, this.height)
+            rect(x - this.offsetX, y - this.offsetY, this.width, this.height)
         }
+    }
 
-        pop()
+    export() {
+        let data = {
+            type: 'egg',
+            name: this.name,
+            x: this.pos.x,
+            y: this.pos.y,
+            bunbonDNA: this.bunbonDNA,
+            timeToHatch: this.timeToHatch,
+            isShaking: this.isShaking,
+            shakingTimer: this.shakingTimer,
+            isInInventory: this.isInInventory
+        }
+        return data
+    }
+
+    static importEgg(data) {
+        let pos = createVector(data.x, data.y)
+        let newEgg = new Egg(data.bunbonDNA, pos)
+        newEgg.name = data.name
+        newEgg.pos = createVector(data.x, data.y)
+        newEgg.timeToHatch = data.timeToHatch
+        newEgg.isShaking = data.isShaking
+        newEgg.shakingTimer = data.shakingTimer
+        newEgg.isInInventory = data.isInInventory
+        return newEgg
     }
 }

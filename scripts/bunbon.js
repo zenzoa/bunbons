@@ -202,7 +202,7 @@ let bunbonThoughts = {
 class BunBon extends GameObject {
     constructor(pos, bunbonDNA) {
         super(24, 22)
-
+        
         if (!bunbonDNA) bunbonDNA = BunBon.randomDNA()
         this.dna = bunbonDNA
         this.parents = this.dna.parents
@@ -275,6 +275,65 @@ class BunBon extends GameObject {
         this.foodOpinions = {}
         this.toyOpinions = {}
         this.friendOpinions = {}
+
+        // get all the images
+
+        let body1 = bunbonBodies[0]
+        let body2 = bunbonBodies[1]
+        let pattern1 = bunbonPatterns[this.pattern]
+        let pattern2 = bunbonPatterns[this.pattern] + 10
+        let ears = bunbonEars[this.ears]
+        let tail = bunbonTails[this.tail]
+        let back = bunbonBacks[this.back]
+        let head = bunbonHeads[this.head]
+        let rocket1 = bunbonBlastoffImages['rocket1']
+        let rocket2 = bunbonBlastoffImages['rocket2']
+
+        this.outlineImages = {
+            'body1': colorSpritesheets[this.color].get(body1 + 10, false),
+            'body1-flipped': colorSpritesheets[this.color].get(body1 + 10, true),
+            'body2': colorSpritesheets[this.color].get(body2 + 10, false),
+            'body2-flipped': colorSpritesheets[this.color].get(body2 + 10, true),
+            'ears': colorSpritesheets[this.color].get(ears + 10, false),
+            'ears-flipped': colorSpritesheets[this.color].get(ears + 10, true),
+            'tail': colorSpritesheets[this.color].get(tail + 10, false),
+            'tail-flipped': colorSpritesheets[this.color].get(tail + 10, true),
+            'back': colorSpritesheets[this.secondaryColor].get(back + 10, false),
+            'back-flipped': colorSpritesheets[this.secondaryColor].get(back + 10, true),
+            'head': colorSpritesheets[this.secondaryColor].get(head + 10, false),
+            'head-flipped': colorSpritesheets[this.secondaryColor].get(head + 10, true),
+            'rocket1': colorSpritesheets[this.color].get(rocket1 + 10, false),
+            'rocket1-flipped': colorSpritesheets[this.color].get(rocket1 + 10, true),
+            'rocket2': colorSpritesheets[this.color].get(rocket2 + 10, false),
+            'rocket2-flipped': colorSpritesheets[this.color].get(rocket2 + 10, true)
+        }
+
+        this.images = {
+            'body1': colorSpritesheets[this.color].get(body1, false),
+            'body1-flipped': colorSpritesheets[this.color].get(body1, true),
+            'body2': colorSpritesheets[this.color].get(body2, false),
+            'body2-flipped': colorSpritesheets[this.color].get(body2, true),
+            'pattern1': colorSpritesheets[this.secondaryColor].get(pattern1, false),
+            'pattern1-flipped': colorSpritesheets[this.secondaryColor].get(pattern1, true),
+            'pattern2': colorSpritesheets[this.secondaryColor].get(pattern2, false),
+            'pattern2-flipped': colorSpritesheets[this.secondaryColor].get(pattern2, true),
+            'ears': colorSpritesheets[this.color].get(ears, false),
+            'ears-flipped': colorSpritesheets[this.color].get(ears, true),
+            'tail': colorSpritesheets[this.color].get(tail, false),
+            'tail-flipped': colorSpritesheets[this.color].get(tail, true),
+            'back': colorSpritesheets[this.secondaryColor].get(back, false),
+            'back-flipped': colorSpritesheets[this.secondaryColor].get(back, true),
+            'head': colorSpritesheets[this.secondaryColor].get(head, false),
+            'head-flipped': colorSpritesheets[this.secondaryColor].get(head, true),
+            'rocket1': colorSpritesheets[this.color].get(rocket1, false),
+            'rocket1-flipped': colorSpritesheets[this.color].get(rocket1, true),
+            'rocket2': colorSpritesheets[this.color].get(rocket2, false),
+            'rocket2-flipped': colorSpritesheets[this.color].get(rocket2, true)
+        }
+
+        this.faceImages = {
+
+        }
     }
 
     static randomDNA() {
@@ -979,8 +1038,6 @@ class BunBon extends GameObject {
     }
 
     draw() {
-        push()
-
         // find upper-left corner of sprite
         let jumpOffset = (this.state === 'jumping' && !this.isInInventory) ? this.jumpY : 0
         let x = floor(this.pos.x - (this.width / 2) + this.offsetX)
@@ -994,53 +1051,60 @@ class BunBon extends GameObject {
             image(colorSpritesheets[this.color].get(body, this.isFlipped), x, y)
 
         } else {
-
+            let pattern = bunbonPatterns[this.pattern]
             let ears = bunbonEars[this.ears]
             let tail = bunbonTails[this.tail]
             let back = bunbonBacks[this.back]
             let head = bunbonHeads[this.head]
-            let pattern = bunbonPatterns[this.pattern]
-            let face = bunbonFaces[this.face]
 
+            let bodyFrame = this.animationFrame === 0 ? 'body1' : 'body2'
+            let patternFrame = this.animationFrame === 0 ? 'pattern1' : 'pattern2'
             let rocketFrame = (this.blastOffTimer % 10) < 5 ? 'rocket2' : 'rocket1'
-            let rocket = this.state === 'blasting-off' ? bunbonBlastoffImages[rocketFrame] : null
 
-            let body = this.animationFrame === 0 ? bunbonBodies[0] : bunbonBodies[1]
-            if (pattern && this.animationFrame !== 0) pattern += 10
+            let flipped = this.isFlipped ? '-flipped' : ''
+            let headX = this.isFlipped ? x - 1 : x + 1
+            let tailX = this.isFlipped ? x + 1 : x - 1
+            let rocketX = this.isFlipped ? x + 6 : x - 6
             let decorationY = y + (this.animationFrame === 0 ? 0 : 1)
 
             // draw white outline
-            image(colorSpritesheets[this.color].get(body + 10, this.isFlipped), x, y)
-            if (tail) image(colorSpritesheets[this.color].get(tail + 10, this.isFlipped), x - 1, decorationY)
-            if (back) image(colorSpritesheets[this.secondaryColor].get(back + 10, this.isFlipped), x, decorationY)
-            if (rocket) image(colorSpritesheets[this.color].get(rocket + 10, this.isFlipped), x - 6, decorationY + 2)
-            if (ears) image(colorSpritesheets[this.color].get(ears + 10, this.isFlipped), x + 1, decorationY)
-            if (head) image(colorSpritesheets[this.secondaryColor].get(head + 10, this.isFlipped), x + 1, decorationY)
+            image(this.outlineImages[bodyFrame + flipped], x, y)
+            if (tail) image(this.outlineImages['tail' + flipped], tailX, decorationY)
+            if (back) image(this.outlineImages['back' + flipped], x, decorationY)
+            if (this.state === 'blasting-off') image(this.outlineImages[rocketFrame + flipped], rocketX, decorationY + 2)
+            if (ears) image(this.outlineImages['ears' + flipped], headX, decorationY)
+            if (head) image(this.outlineImages['head' + flipped], headX, decorationY)
 
             // draw layers
-            image(colorSpritesheets[this.color].get(body, this.isFlipped), x, y)
-            if (pattern) image(colorSpritesheets[this.secondaryColor].get(pattern, this.isFlipped), x, y)
-            if (tail) image(colorSpritesheets[this.color].get(tail, this.isFlipped), x - 1, decorationY)
-            if (back) image(colorSpritesheets[this.secondaryColor].get(back, this.isFlipped), x, decorationY)
-            if (rocket) image(colorSpritesheets[this.color].get(rocket, this.isFlipped), x - 6, decorationY + 2)
-            if (ears) image(colorSpritesheets[this.color].get(ears, this.isFlipped), x + 1, decorationY)
-            if (head) image(colorSpritesheets[this.secondaryColor].get(head, this.isFlipped), x + 1, decorationY)
+            image(this.images[bodyFrame + flipped], x, y)
+            if (pattern) image(this.images[patternFrame + flipped], tailX, decorationY)
+            if (tail) image(this.images['tail' + flipped], tailX, decorationY)
+            if (back) image(this.images['back' + flipped], x, decorationY)
+            if (this.state === 'blasting-off') image(this.images[rocketFrame + flipped], rocketX, decorationY + 2)
+            if (ears) image(this.images['ears' + flipped], headX, decorationY)
+            if (head) image(this.images['head' + flipped], headX, decorationY)
+            
+            let face = bunbonFaces[this.face]
             image(colorSpritesheets[this.color].get(face, this.isFlipped), x, decorationY)
 
         }
+
+        if (this.isInInventory || this.isBeingDragged) return
 
         if (this.state === 'blasting-off') {
             // do nothing
         } else if (this.state === 'sleeping') {
             // draw dream bubble
             let dreamBubbleImage = this.isFlipped ? bunbonDreamBubbleFlipped : bunbonDreamBubble
-            let dreamBubbleY = Math.sin(this.sleepTimer * .1)
-            image(baseSpritesheet.get(dreamBubbleImage, this.isFlipped), x + 26, y + dreamBubbleY)
+            let dreamBubbleX = this.isFlipped ? x - 26 : x + 26
+            let dreamBubbleY = y + Math.sin(this.sleepTimer * .1)
+            image(baseSpritesheet.get(dreamBubbleImage, this.isFlipped), dreamBubbleX, dreamBubbleY)
         } else if (this.state === 'chatting') {
             // draw speech bubble
             if (this.speechBubbleTimer > 0) {
-                let speechBubbleY = Math.sin(this.speechBubbleTimer * 0.33) - 2
-                image(baseSpritesheet.get(bunbonSpeechBubble, this.isFlipped), x + 20, y + speechBubbleY)
+                let speechBubbleX = this.isFlipped ? x - 20 : x + 20
+                let speechBubbleY = y + Math.sin(this.speechBubbleTimer * 0.33) - 2
+                image(baseSpritesheet.get(bunbonSpeechBubble, this.isFlipped), speechBubbleX, speechBubbleY)
             }
         } else if (this.isThinking) {
             // draw thought bubble
@@ -1048,22 +1112,21 @@ class BunBon extends GameObject {
             if (this.isFlipped && this.thoughtType === 'sleep') {
                 thoughtBubbleImage = bunbonThoughts['sleep-flipped']
             }
-            image(baseSpritesheet.get(thoughtBubbleImage, this.isFlipped), x + 20, y - 4)
+            let thoughtBubbleX = this.isFlipped ? x - 20 : x + 20
+            let thoughtBubbleY = y - 4
+            image(baseSpritesheet.get(thoughtBubbleImage, this.isFlipped), thoughtBubbleX, thoughtBubbleY)
         }
-
-        if (this.isInInventory && !(selectedObject === this && mouseIsPressed)) return
 
         // draw selection info
         if (selectedBunbon === this && this.state !== 'blasting-off') {
-            push()
             fill('#444')
             stroke('white')
             strokeWeight(1)
-            translate(this.pos.x, this.pos.y - this.height - this.jumpY - 3)
-            triangle(0, 2, -3, -4, 3, -4)
+            let selectionX = floor(this.pos.x)
+            let selectionY = floor(this.pos.y - this.height - this.jumpY - 3)
+            triangle(selectionX, selectionY + 2, selectionX - 3, selectionY - 4, selectionX + 3, selectionY - 4)
             strokeWeight(2)
-            text(this.name, 0, -5)
-            pop()
+            text(this.name, selectionX, selectionY - 5)
         }
         
         // draw debug lines
@@ -1080,32 +1143,30 @@ class BunBon extends GameObject {
     }
 
     drawScore() {
-        let percentScore = this.score / this.maxScore
-        let normalizedScore = log(percentScore * (Math.E - 1) + 1)
-        let scoreSize = (normalizedScore * 29) + 3
+        // let percentScore = this.score / this.maxScore
+        // let normalizedScore = log(percentScore * (Math.E - 1) + 1)
+        // let scoreSize = (normalizedScore * 29) + 3
 
-        push()
-        translate(SCREEN_WIDTH - 36, SCREEN_HEIGHT - 36)
+        // let scoreX = SCREEN_WIDTH - 36
+        // let scoreY = SCREEN_HEIGHT - 36
 
-        fill('#ccc')
-        circle(16, 16, 32)
+        // fill('#ccc')
+        // circle(scoreX + 16, scoreY + 16, 32)
 
-        if (this.canBlastOff) {
-            fill('magenta')
-        } else if (this.scoreIncreased) {
-            fill('#444')
-        } else {
-            fill('#888')
-        }
-        circle(16, 32 - (scoreSize / 2), scoreSize)
+        // if (this.canBlastOff) {
+        //     fill('magenta')
+        // } else if (this.scoreIncreased) {
+        //     fill('#444')
+        // } else {
+        //     fill('#888')
+        // }
+        // circle(scoreX + 16, scoreY + 32 - (scoreSize / 2), scoreSize)
 
-        if (!this.canBlastOff) {
-            noFill()
-            stroke('#444')
-            circle(16, 16, 32)
-        }
-
-        pop()
+        // if (!this.canBlastOff) {
+        //     noFill()
+        //     stroke('#444')
+        //     circle(scoreX + 16, scoreY + 16, 32)
+        // }
     }
 
     drawStatOrb() {
@@ -1120,23 +1181,18 @@ class BunBon extends GameObject {
         let lonelinessBar = barLength(this.drives.loneliness)
         let sleepinessBar = barLength(this.drives.sleepiness)
 
-        push()
-        translate(18, 18)
-
         stroke('white')
         noFill()
-        ellipse(0, 0, 32, 32)
+        ellipse(18, 18, 32, 32)
 
         noStroke()
         fill('white')
         quad(
-            -sleepinessBar, 0,
-            0, -hungerBar,
-            boredomBar, 0,
-            0, lonelinessBar
+            18 - sleepinessBar, 18,
+            18, 18 - hungerBar,
+            18 + boredomBar, 18,
+            18, 18 + lonelinessBar
         )
-        
-        pop()
     }
 
     drawIcon(x, y) {
@@ -1166,12 +1222,13 @@ class BunBon extends GameObject {
             drives: this.drives,
             foodOpinions: this.foodOpinions,
             toyOpinions: this.toyOpinions,
-            friendOpinions: this.friendOpinions
+            friendOpinions: this.friendOpinions,
+            isInInventory: this.isInInventory
         }
         return data
     }
 
-    static importBunBon(data) {
+    static importBunBon(data) {   
         let pos = createVector(data.x, data.y)
         let newBunBon = new BunBon(pos, data.dna)
         newBunBon.name = data.name
@@ -1183,6 +1240,7 @@ class BunBon extends GameObject {
         newBunBon.foodOpinions = data.foodOpinions
         newBunBon.toyOpinions = data.toyOpinions
         newBunBon.friendOpinions = data.friendOpinions
+        newBunBon.isInInventory = data.isInInventory
         return newBunBon
     }
 }

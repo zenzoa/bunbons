@@ -40,7 +40,6 @@ class NameGenerator {
         let badWords = ['anus', 'clit', 'cock', 'coon', 'cunt', 'dick', 'fag', 'fuck', 'gook', 'jap', 'kike', 'nigg', 'penis', 'shit', 'slut', 'tard']
         badWords.forEach(badWord => {
             if (name.includes(badWord)) {
-                //console.log('cursed name:', name)
                 name = NameGenerator.generate()
             }
         })

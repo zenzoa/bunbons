@@ -59,8 +59,16 @@ class GameObject {
     export() {}
 
     static import(data) {
-        if (data.type === 'bunbon') {
+        if (!data) {
+            return null
+        } else if (data.type === 'bunbon') {
             return BunBon.importBunBon(data)
+        } else if (data.type === 'egg') {
+            return Egg.importEgg(data)
+        } else if (data.type === 'food') {
+            return Food.importFood(data)
+        } else if (data.type === 'toy') {
+            return Toy.importToy(data)
         }
     }
 }
