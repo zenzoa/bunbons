@@ -1,13 +1,10 @@
 /*
 
 TODO:
-- import/export bunbons (at least from command line)
 - planet images
 - toy images
 - finish food images
 - pre-load face images
-- progress indicator graphics
-- confirm before blasting off
 
 BUGS:
 - random pauses every so often, at least in Firefox (cause: cc graph reduction, aka c++ garbage collection)
@@ -16,7 +13,7 @@ BUGS:
 
 */
 
-let DEBUG = false
+let DEBUG = true
 
 let FRAME_RATE = 30
 
@@ -64,13 +61,15 @@ let isClicking = false
 let isDragging = false
 let preventClicking = false
 
+let confirmingBlastOff = false
+
 p5.disableFriendlyErrors = true
 let Vector = p5.Vector
 
 let spritesheet, spritesheetImg, baseSpritesheet
 let colorSpritesheets = {}
 
-let userinterfaceImg
+let userinterfaceImg, spaceButtonImg
 
 let gameObjects = []
 let inventoryObjects = Array(inventory.slotCount)
@@ -80,6 +79,7 @@ let selectedObject = null
 
 let spaceScreen = new Space()
 let planets = []
+let unlockedPlanetCount = 0
 
 let planetBGs = {}
 let planetMasks = {}
@@ -191,6 +191,8 @@ function setup() {
     Object.keys(bunbonColors).forEach(colorName => {
         colorSpritesheets[colorName] = baseSpritesheet.recolor(colorName)
     })
+ 
+    spaceButtonImg = spritesheetImg.get(0, 606, 34, 34)
 
     planetBG = planetBGs.park
     planetMask = planetMasks.park
@@ -203,7 +205,13 @@ function setup() {
         planets[0].isUnlocked = true
     }
 
-    openScreen('space', 0)
+    let unlockedPlanets = planets.filter(p => p.isUnlocked)
+    unlockedPlanetCount = unlockedPlanets.length
+    if (unlockedPlanetCount === 1) {
+        openScreen('planet', unlockedPlanets[0].index)
+    } else {
+        openScreen('space', 0)
+    }
 }
 
 function draw() {

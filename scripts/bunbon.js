@@ -1052,6 +1052,7 @@ class BunBon extends GameObject {
             image(colorSpritesheets[this.color].get(body, this.isFlipped), x, y)
 
         } else {
+
             let pattern = bunbonPatterns[this.pattern]
             let ears = bunbonEars[this.ears]
             let tail = bunbonTails[this.tail]
@@ -1090,44 +1091,48 @@ class BunBon extends GameObject {
 
         }
 
-        if (this.isInInventory || this.isBeingDragged) return
+        if (!this.isInInventory && !this.isBeingDragged && this.state !== 'blasting-off') {
 
-        if (this.state === 'blasting-off') {
-            // do nothing
-        } else if (this.state === 'sleeping') {
-            // draw dream bubble
-            let dreamBubbleImage = this.isFlipped ? bunbonDreamBubbleFlipped : bunbonDreamBubble
-            let dreamBubbleX = this.isFlipped ? x - 26 : x + 26
-            let dreamBubbleY = y + Math.sin(this.sleepTimer * .1)
-            image(baseSpritesheet.get(dreamBubbleImage, this.isFlipped), dreamBubbleX, dreamBubbleY)
-        } else if (this.state === 'chatting') {
-            // draw speech bubble
-            if (this.speechBubbleTimer > 0) {
-                let speechBubbleX = this.isFlipped ? x - 20 : x + 20
-                let speechBubbleY = y + Math.sin(this.speechBubbleTimer * 0.33) - 2
-                image(baseSpritesheet.get(bunbonSpeechBubble, this.isFlipped), speechBubbleX, speechBubbleY)
+            if (this.state === 'sleeping') {
+                // draw dream bubble
+                let dreamBubbleImage = this.isFlipped ? bunbonDreamBubbleFlipped : bunbonDreamBubble
+                let dreamBubbleX = this.isFlipped ? x - 26 : x + 26
+                let dreamBubbleY = y + Math.sin(this.sleepTimer * .1)
+                image(baseSpritesheet.get(dreamBubbleImage, this.isFlipped), dreamBubbleX, dreamBubbleY)
             }
-        } else if (this.isThinking) {
-            // draw thought bubble
-            let thoughtBubbleImage = bunbonThoughts[this.thoughtType]
-            if (this.isFlipped && this.thoughtType === 'sleep') {
-                thoughtBubbleImage = bunbonThoughts['sleep-flipped']
+            
+            else if (this.state === 'chatting') {
+                // draw speech bubble
+                if (this.speechBubbleTimer > 0) {
+                    let speechBubbleX = this.isFlipped ? x - 20 : x + 20
+                    let speechBubbleY = y + Math.sin(this.speechBubbleTimer * 0.33) - 2
+                    image(baseSpritesheet.get(bunbonSpeechBubble, this.isFlipped), speechBubbleX, speechBubbleY)
+                }
             }
-            let thoughtBubbleX = this.isFlipped ? x - 20 : x + 20
-            let thoughtBubbleY = y - 4
-            image(baseSpritesheet.get(thoughtBubbleImage, this.isFlipped), thoughtBubbleX, thoughtBubbleY)
-        }
+            
+            else if (this.isThinking) {
+                // draw thought bubble
+                let thoughtBubbleImage = bunbonThoughts[this.thoughtType]
+                if (this.isFlipped && this.thoughtType === 'sleep') {
+                    thoughtBubbleImage = bunbonThoughts['sleep-flipped']
+                }
+                let thoughtBubbleX = this.isFlipped ? x - 20 : x + 20
+                let thoughtBubbleY = y - 4
+                image(baseSpritesheet.get(thoughtBubbleImage, this.isFlipped), thoughtBubbleX, thoughtBubbleY)
+            }
 
-        // draw selection info
-        if (selectedBunbon === this && this.state !== 'blasting-off') {
-            fill('#444')
-            stroke('white')
-            strokeWeight(1)
-            let selectionX = floor(this.pos.x)
-            let selectionY = floor(this.pos.y - this.height - this.jumpY - 3)
-            triangle(selectionX, selectionY + 2, selectionX - 3, selectionY - 4, selectionX + 3, selectionY - 4)
-            strokeWeight(2)
-            text(this.name, selectionX, selectionY - 5)
+            // draw selection info
+            if (selectedBunbon === this) {
+                fill('#444')
+                stroke('white')
+                strokeWeight(1)
+                let selectionX = floor(this.pos.x)
+                let selectionY = floor(this.pos.y - this.height - this.jumpY - 3)
+                triangle(selectionX, selectionY + 2, selectionX - 3, selectionY - 4, selectionX + 3, selectionY - 4)
+                strokeWeight(2)
+                text(this.name, selectionX, selectionY - 5)
+            }
+
         }
         
         // draw debug lines
@@ -1141,33 +1146,6 @@ class BunBon extends GameObject {
             stroke('blue')
             line(this.pos.x, this.pos.y, this.farGoal.x, this.farGoal.y)
         }
-    }
-
-    drawScore() {
-        // let percentScore = this.score / this.maxScore
-        // let normalizedScore = log(percentScore * (Math.E - 1) + 1)
-        // let scoreSize = (normalizedScore * 29) + 3
-
-        // let scoreX = SCREEN_WIDTH - 36
-        // let scoreY = SCREEN_HEIGHT - 36
-
-        // fill('#ccc')
-        // circle(scoreX + 16, scoreY + 16, 32)
-
-        // if (this.canBlastOff) {
-        //     fill('magenta')
-        // } else if (this.scoreIncreased) {
-        //     fill('#444')
-        // } else {
-        //     fill('#888')
-        // }
-        // circle(scoreX + 16, scoreY + 32 - (scoreSize / 2), scoreSize)
-
-        // if (!this.canBlastOff) {
-        //     noFill()
-        //     stroke('#444')
-        //     circle(scoreX + 16, scoreY + 16, 32)
-        // }
     }
 
     drawStatOrb() {

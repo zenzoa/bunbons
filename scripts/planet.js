@@ -62,6 +62,7 @@ class Planet {
         planetBG = planetBGs[this.name]
         planetMask = planetMasks[this.name]
         this.isBlastingOff = false
+        unlockedPlanetCount = planets.filter(p => p.isUnlocked).length
     }
 
     close() {
@@ -135,6 +136,9 @@ class Planet {
 
         // draw user interface
         image(userinterfaceImg, 0, 0)
+        if (unlockedPlanetCount > 1) {
+            image(spaceButtonImg, 3, WORLD_HEIGHT + 3)
+        }
 
         // draw inventory
         inventoryObjects.forEach(obj => {
@@ -142,10 +146,13 @@ class Planet {
         })
 
         // draw bunbon stats
-        // if (selectedBunbon) {
-        //     selectedBunbon.drawScore()
-        //     if (DEBUG) selectedBunbon.drawStatOrb()
-        // }
+        if (selectedBunbon) {
+            let normalizedScore = selectedBunbon.score / selectedBunbon.maxScore
+            let scoreImageIndex = floor(normalizedScore * 10)
+            if (confirmingBlastOff) scoreImageIndex = 11
+            image(baseSpritesheet.get(scoreImageIndex + 260), WORLD_WIDTH - 40, WORLD_HEIGHT + 4)
+            if (DEBUG) selectedBunbon.drawStatOrb()
+        }
 
         // update and draw game objects
         let cleanUpObjects = false
@@ -261,38 +268,53 @@ class Planet {
                 
             }
         }
+
         else {
+
             if (
+                unlockedPlanetCount > 1 &&
                 x >= spaceButton.x && x < spaceButton.x + spaceButton.width &&
                 y >= spaceButton.y && y < spaceButton.y + spaceButton.height
             ) {
                 openScreen('space')
             }
+
             else if (
                 selectedBunbon && selectedBunbon.canBlastOff &&
                 x >= blastOffButton.x && x < blastOffButton.x + blastOffButton.width &&
                 y >= blastOffButton.y && y < blastOffButton.y + blastOffButton.height
             ) {
-                this.isBlastingOff = true
-                selectedBunbon.startBlastOff()
+                if (confirmingBlastOff) {
+                    this.isBlastingOff = true
+                    confirmingBlastOff = false
+                    selectedBunbon.startBlastOff()
+                } else {
+                    confirmingBlastOff = true
+                }
             }
+
+            else {
+                confirmingBlastOff = false
+            }
+            
         }
+
     }
 
     keyPressed() {
-        if (key === '~') {
-            DEBUG = !DEBUG
-            if (DEBUG) console.log('~ DEBUG MODE ON ~')
-            else console.log('~ DEBUG MODE OFF ~')
-        }
-        
-        else if (DEBUG && key === ' ') {
+        if (keyIsDown(CONTROL) && key === 'p') {
             this.isPaused = !this.isPaused
             if (this.isPaused) noLoop()
             else loop()
         }
+        
+        else if (keyIsDown(CONTROL) && key === '~') {
+            DEBUG = !DEBUG
+            if (DEBUG) console.log('~ DEBUG MODE ON ~')
+            else console.log('~ DEBUG MODE OFF ~')
+        }
 
-        else if (DEBUG && key === 'p') {
+        else if (DEBUG && key === 'u') {
             this.unlockConnections()
         }
 
