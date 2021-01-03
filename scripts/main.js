@@ -324,3 +324,38 @@ function loadState() {
     //     if (DEBUG) console.error('unable to load:', e)
     // }
 }
+
+function exportBunBon() {
+    if (!(currentScreen instanceof Planet)) return
+
+    if (selectedObject && selectedObject instanceof BunBon) {
+        console.log('~ exporting ' + selectedObject.name + ' ~')
+        let data = selectedObject.export()
+        try {
+            let dataString = JSON.stringify(data)
+            console.log(dataString)
+        } catch(e) {
+            console.error('unable to export:', e)
+        }
+    }
+}
+
+function importBunBon(dataString) {
+    if (!(currentScreen instanceof Planet)) return
+
+    try {
+        let data = dataString ? JSON.parse(dataString) : null
+        if (data) {
+            if (data.type === 'bunbon') {
+                console.log('~ importing ' + data.name + ' ~')
+                let newBunBon = BunBon.import(data)
+                currentScreen.objects.push(newBunBon)
+                // todo: load the bunbon in a random valid location
+            }
+        } else {
+            throw 'bad data'
+        }
+    } catch(e) {
+        console.error('unable to import:', e)
+    }
+}
