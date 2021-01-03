@@ -70,6 +70,7 @@ let spritesheet, spritesheetImg, baseSpritesheet
 let colorSpritesheets = {}
 
 let userinterfaceImg, spaceButtonImg
+let shadowImgs = {}
 
 let gameObjects = []
 let inventoryObjects = Array(inventory.slotCount)
@@ -191,6 +192,13 @@ function setup() {
     Object.keys(bunbonColors).forEach(colorName => {
         colorSpritesheets[colorName] = baseSpritesheet.recolor(colorName)
     })
+
+    shadowImgs = {
+        'small': baseSpritesheet.get(42),
+        'big': baseSpritesheet.get(43),
+        'small-jump': baseSpritesheet.get(44),
+        'big-jump': baseSpritesheet.get(45)
+    }
  
     spaceButtonImg = spritesheetImg.get(0, 606, 34, 34)
 

@@ -1049,6 +1049,14 @@ class BunBon extends GameObject {
 
             let body = this.animationFrame === 0 ? bunbonBabyBodies[0] : bunbonBabyBodies[1]
             if (this.face === 'blink' || this.face.startsWith('sleep') || this.face.startsWith('eat')) body += 2
+            
+            // draw shadow
+            if (!this.isInInventory && !this.isBeingDragged) {
+                let shadowImg = this.state === 'jumping' ? 'small-jump' : 'small'
+                image(shadowImgs[shadowImg], x, floor(y + jumpOffset) - 1)
+            }
+
+            // draw body
             image(colorSpritesheets[this.color].get(body, this.isFlipped), x, y)
 
         } else {
@@ -1069,6 +1077,12 @@ class BunBon extends GameObject {
             let rocketX = this.isFlipped ? x + 6 : x - 6
             let decorationY = y + (this.animationFrame === 0 ? 0 : 1)
 
+            // draw shadow
+            if (!this.isInInventory && !this.isBeingDragged) {
+                let shadowImg = this.state === 'jumping' ? 'big-jump' : 'big'
+                image(shadowImgs[shadowImg], x, floor(y + jumpOffset))
+            }
+
             // draw white outline
             image(this.outlineImages[bodyFrame + flipped], x, y)
             if (tail) image(this.outlineImages['tail' + flipped], tailX, decorationY)
@@ -1077,7 +1091,7 @@ class BunBon extends GameObject {
             if (ears) image(this.outlineImages['ears' + flipped], headX, decorationY)
             if (head) image(this.outlineImages['head' + flipped], headX, decorationY)
 
-            // draw layers
+            // draw body
             image(this.images[bodyFrame + flipped], x, y)
             if (pattern) image(this.images[patternFrame + flipped], x, y)
             if (tail) image(this.images['tail' + flipped], tailX, decorationY)
@@ -1086,6 +1100,7 @@ class BunBon extends GameObject {
             if (ears) image(this.images['ears' + flipped], headX, decorationY)
             if (head) image(this.images['head' + flipped], headX, decorationY)
             
+            // draw face
             let face = bunbonFaces[this.face]
             image(colorSpritesheets[this.color].get(face, this.isFlipped), x, decorationY)
 

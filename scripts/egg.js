@@ -61,6 +61,7 @@ class Egg extends Toy {
             }
         }
 
+        if (!this.isInInventory && !this.isBeingDragged) image(shadowImgs.small, x, y + 1)
         image(colorSpritesheets[this.color].get(frame), x, y)
 
         // draw debug lines

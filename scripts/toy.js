@@ -5,6 +5,9 @@ class Toy extends GameObject {
         this.name = 'toy'
         this.pos = randomPoint()
 
+        this.offsetX = -4
+        this.offsetY = -8
+
         this.bounce = random(0, 30)
         this.speed = random(0.5, 4)
 
@@ -39,7 +42,9 @@ class Toy extends GameObject {
     draw() {
         // find upper-left corner of sprite
         let x = floor(this.pos.x - (this.width / 2) + this.offsetX)
-        let y = floor(this.pos.y - this.height + this.offsetY - this.jumpY)
+        let y = floor(this.pos.y - this.height + this.offsetY)
+
+        if (!this.isInInventory && !this.isBeingDragged) image(shadowImgs.small, x, y + 1)
         
         // draw debug lines
         if (DEBUG) {
