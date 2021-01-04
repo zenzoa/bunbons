@@ -3,8 +3,8 @@
 TODO:
 - planet images
 - toy images
-- finish food images
 - pre-load face images
+- pick a better pause key command (ctrl-p is print)
 
 BUGS:
 - random pauses every so often, at least in Firefox (cause: cc graph reduction, aka c++ garbage collection)
@@ -61,9 +61,6 @@ let isClicking = false
 let isDragging = false
 let preventClicking = false
 
-let confirmingBlastOff = false
-
-p5.disableFriendlyErrors = true
 let Vector = p5.Vector
 
 let spritesheet, spritesheetImg, baseSpritesheet
@@ -77,6 +74,7 @@ let inventoryObjects = Array(inventory.slotCount)
 let blastedOffBunbons = []
 let selectedBunbon = null
 let selectedObject = null
+let confirmingBlastOff = false
 
 let spaceScreen = new Space()
 let planets = []

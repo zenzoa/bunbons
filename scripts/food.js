@@ -5,7 +5,9 @@ let foodSprites = {
     'flowers': 183,
     'dragon-fruit': 184,
     'rock-candy': 185,
-    'ice-cream': 186
+    'ice-cream': 186,
+    'sandwich': 187,
+    'seaweed': 188
 }
 
 class Food extends GameObject {
@@ -68,6 +70,10 @@ class Food extends GameObject {
                 image(shadowImgs.small, x + 1, y + 1)
             } else if (this.name === 'ice-cream') {
                 image(shadowImgs.small, x, y + 1)
+            } else if (this.name === 'sandwich') {
+                image(shadowImgs.big, x, y)
+            } else if (this.name === 'seaweed') {
+                image(shadowImgs.big, x, y + 1)
             }
         }
         
