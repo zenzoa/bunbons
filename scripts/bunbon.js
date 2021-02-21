@@ -909,35 +909,38 @@ class BunBon extends GameObject {
         }
     }
 
-    update() {
-        // update age
-        this.ageTimer++
-        if (this.ageTimer >= FRAME_RATE) {
-            this.age++
-            this.ageTimer = 0
-            if (this.isBaby && this.age >= this.ageToAdulthood) {
-                if (DEBUG) console.log(this.name, 'has grown up')
-                this.isBaby = false
+    update(forCredits) {
+        let highestDrive, highestDriveValue, averageDriveValue
+        if (!forCredits) {
+            // update age
+            this.ageTimer++
+            if (this.ageTimer >= FRAME_RATE) {
+                this.age++
+                this.ageTimer = 0
+                if (this.isBaby && this.age >= this.ageToAdulthood) {
+                    if (DEBUG) console.log(this.name, 'has grown up')
+                    this.isBaby = false
+                }
             }
-        }
 
-        // update drives
-        Object.keys(this.drives).forEach(drive => this.updateDrive(drive))
-        let highestDrive = this.highestDrive()
-        let highestDriveValue = this.drives[highestDrive]
-        let averageDriveValue = (this.drives.hunger + this.drives.boredom + this.drives.loneliness + this.drives.sleepiness) / 4
+            // update drives
+            Object.keys(this.drives).forEach(drive => this.updateDrive(drive))
+            highestDrive = this.highestDrive()
+            highestDriveValue = this.drives[highestDrive]
+            averageDriveValue = (this.drives.hunger + this.drives.boredom + this.drives.loneliness + this.drives.sleepiness) / 4
 
-        // update score
-        if (!this.isBaby && !this.canBlastOff && averageDriveValue < 33 && highestDriveValue < 50) {
-            this.score += 1 / FRAME_RATE
-            this.scoreIncreased = true
-            if (this.score > this.maxScore) {
-                this.score = this.maxScore
-                this.canBlastOff = true
-                if (DEBUG) console.log(this.name, 'is ready to blast off!')
+            // update score
+            if (!this.isBaby && !this.canBlastOff && averageDriveValue < 33 && highestDriveValue < 50) {
+                this.score += 1 / FRAME_RATE
+                this.scoreIncreased = true
+                if (this.score > this.maxScore) {
+                    this.score = this.maxScore
+                    this.canBlastOff = true
+                    if (DEBUG) console.log(this.name, 'is ready to blast off!')
+                }
+            } else {
+                this.scoreIncreased = false
             }
-        } else {
-            this.scoreIncreased = false
         }
 
         // update facial expression timer

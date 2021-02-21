@@ -1,4 +1,8 @@
-class Space {
+class Space extends ScreenState {
+    constructor() {
+        super()
+    }
+
     setup() {
         this.offsetX = 0
         this.offsetY = 0

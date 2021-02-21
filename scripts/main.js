@@ -1,15 +1,18 @@
 /*
 
 TODO:
+- add dragging + selecting to credits screen (may need to refactor that code out of planet class)
+- add credits to credits screen
+- provide means of entering + exiting credits screen
 - planet images
-- toy images
-- pre-load face images
 - pick a better pause key command (ctrl-p is print)
+- review breeding mechanics
 
 BUGS:
 - random pauses every so often, at least in Firefox (cause: cc graph reduction, aka c++ garbage collection)
 - slowdown over time?
 - fix save & load - better saving strategy, new planet has the same bunbons as the old planet after blasting off
+- egg shaking no longer works
 
 */
 
@@ -66,7 +69,7 @@ let Vector = p5.Vector
 let spritesheet, spritesheetImg, baseSpritesheet
 let colorSpritesheets = {}
 
-let userinterfaceImg, spaceButtonImg
+let userinterfaceImg, spaceButtonImg, spaceButtonForCreditsImg
 let shadowImgs = {}
 
 let gameObjects = []
@@ -84,6 +87,8 @@ let planetBGs = {}
 let planetMasks = {}
 let planetBG = null
 let planetMask = null
+
+let creditsScreen = new Credits()
 
 let currentScreen = spaceScreen
 let lastPlanet = null
@@ -105,13 +110,20 @@ function isPointPassable(x, y) {
     x = floor(x)
     y = floor(y)
 
-    // out of bounds
-    if (x < 0 || x >= WORLD_WIDTH) return false
-    if (y < 0 || y >= WORLD_HEIGHT) return false
+    if (currentScreen instanceof Credits) {
+        // out of bounds
+        if (x < 0 || x >= SCREEN_WIDTH) return false
+        if (y < 0 || y >= SCREEN_HEIGHT) return false
 
-    // masked area
-    let pixel = planetMask.get(x, y)
-    if (pixel[0] >= 128) return false
+    } else {
+        // out of bounds
+        if (x < 0 || x >= WORLD_WIDTH) return false
+        if (y < 0 || y >= WORLD_HEIGHT) return false
+
+        // masked area
+        let pixel = planetMask.get(x, y)
+        if (pixel[0] >= 128) return false
+    }
 
     return true
 }
@@ -149,9 +161,15 @@ function inventorySlotY() {
 
 function boundPosition(obj) {
     if (obj.pos.x < 0) obj.pos.x = 0
-    if (obj.pos.x > WORLD_WIDTH) obj.pos.x = WORLD_WIDTH
     if (obj.pos.y < 0) obj.pos.y = 0
-    if (obj.pos.y > WORLD_HEIGHT) obj.pos.y = WORLD_HEIGHT
+
+    if (currentScreen instanceof Credits) {
+        if (obj.pos.x > SCREEN_WIDTH) obj.pos.x = SCREEN_WIDTH
+        if (obj.pos.y > SCREEN_HEIGHT) obj.pos.y = SCREEN_HEIGHT
+    } else {
+        if (obj.pos.x > WORLD_WIDTH) obj.pos.x = WORLD_WIDTH
+        if (obj.pos.y > WORLD_HEIGHT) obj.pos.y = WORLD_HEIGHT
+    }
 }
 
 function preload() {
@@ -199,6 +217,7 @@ function setup() {
     }
  
     spaceButtonImg = spritesheetImg.get(0, 606, 34, 34)
+    spaceButtonForCreditsImg = spritesheetImg.get(34, 606, 34, 34)
 
     planetBG = planetBGs.park
     planetMask = planetMasks.park
@@ -299,7 +318,12 @@ function mouseReleased() {
 }
 
 function keyPressed() {
-    currentScreen.keyPressed()
+    if (key === 'o') {
+        currentScreen = creditsScreen
+        currentScreen.open()
+    } else {
+        currentScreen.keyPressed()
+    }
 }
 
 function saveState() {

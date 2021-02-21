@@ -1,6 +1,22 @@
+let toySprites = {
+    'moss-ball': 220,
+    'paper-airplane': 221,
+    'unknown': 222,
+    'dancing-flower': 223,
+    'pull-turtle': 224,
+    'magic-wand': 225,
+    'snow-bun': 226,
+    'bun-doll': 227,
+    'beach-ball': 228
+}
+
 class Toy extends GameObject {
     constructor() {
         super(24, 24)
+
+        // temp
+        let toyType = name || random(Object.keys(toySprites))
+        let toySpriteIndex = toySprites[toyType]
 
         this.name = 'toy'
         this.pos = randomPoint()
@@ -8,6 +24,10 @@ class Toy extends GameObject {
         this.offsetX = -4
         this.offsetY = -8
 
+        this.inactiveSpriteIndex = toySpriteIndex
+        this.activeSpriteIndex = toySpriteIndex + 20
+
+        this.isActive = false
         this.bounce = random(0, 30)
         this.speed = random(0.5, 4)
 
@@ -17,6 +37,7 @@ class Toy extends GameObject {
     onPush() {
         let d = Vector.mult(Vector.random2D(), this.bounce)
         this.goal = Vector.add(this.pos, d)
+        this.isActive = true
     }
 
     update() {
@@ -36,21 +57,28 @@ class Toy extends GameObject {
             else {
                 this.goal = null
             }
+        } else {
+            this.isActive = false
         }
     }
 
     draw() {
+        // TODO: add animation when active
+
         // find upper-left corner of sprite
         let x = floor(this.pos.x - (this.width / 2) + this.offsetX)
         let y = floor(this.pos.y - this.height + this.offsetY)
 
         if (!this.isInInventory && !this.isBeingDragged) image(shadowImgs.small, x, y + 1)
+
+        let spriteIndex = this.isActive ? this.activeSpriteIndex : this.inactiveSpriteIndex
+        image(baseSpritesheet.get(spriteIndex), x, y)
         
         // draw debug lines
         if (DEBUG) {
             noFill()
             stroke('lightblue')
-            rect(x, y, this.width, this.height)
+            rect(x - this.offsetX, y - this.offsetY, this.width, this.height)
         }
     }
 
