@@ -72,7 +72,12 @@ let spritesheet, spritesheetImg, baseSpritesheet
 let colorSpritesheets = {}
 
 let userinterfaceImg, spaceButtonImg, spaceButtonForCreditsImg
-let shadowImgs = {}
+let shadowImgs = {
+    'small': 42,
+    'big': 43,
+    'small-jump': 44,
+    'big-jump': 45
+}
 
 let blastedOffBunbons = []
 let confirmingBlastOff = false
@@ -141,15 +146,8 @@ function setup() {
 
     baseSpritesheet = new Spritesheet(spritesheetImg, 32, 32)
     Object.keys(bunbonColors).forEach(colorName => {
-        colorSpritesheets[colorName] = baseSpritesheet.recolor(colorName)
+        colorSpritesheets[colorName] = new Spritesheet(spritesheetImg, 32, 32, colorName)
     })
-
-    shadowImgs = {
-        'small': baseSpritesheet.get(42),
-        'big': baseSpritesheet.get(43),
-        'small-jump': baseSpritesheet.get(44),
-        'big-jump': baseSpritesheet.get(45)
-    }
  
     spaceButtonImg = spritesheetImg.get(0, 606, 34, 34)
     spaceButtonForCreditsImg = spritesheetImg.get(34, 606, 34, 34)

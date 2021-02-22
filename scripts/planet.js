@@ -164,7 +164,7 @@ class Planet extends ScreenState {
             let normalizedScore = selectedBunbon.score / selectedBunbon.maxScore
             let scoreImageIndex = floor(normalizedScore * 10)
             if (confirmingBlastOff) scoreImageIndex = 11
-            image(baseSpritesheet.get(scoreImageIndex + 260), WORLD_WIDTH - 40, WORLD_HEIGHT + 4)
+            baseSpritesheet.drawSprite({ x: WORLD_WIDTH - 40, y: WORLD_HEIGHT + 4 }, scoreImageIndex + 260)
             if (DEBUG) selectedBunbon.drawStatOrb()
         }
 

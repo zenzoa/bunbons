@@ -77,10 +77,10 @@ class Toy extends GameObject {
         let x = floor(this.pos.x - (this.width / 2) + this.offsetX)
         let y = floor(this.pos.y - this.height + this.offsetY)
 
-        if (!this.isInInventory && !this.isBeingDragged) image(shadowImgs.small, x, y + 1)
+        if (!this.isInInventory && !this.isBeingDragged) baseSpritesheet.drawSprite({ x, y: y + 1 }, shadowImgs.small)
 
         let spriteIndex = this.isActive ? this.activeSpriteIndex : this.inactiveSpriteIndex
-        image(baseSpritesheet.get(spriteIndex), x, y)
+        baseSpritesheet.drawSprite({ x, y }, spriteIndex)
         
         // draw debug lines
         if (DEBUG) {

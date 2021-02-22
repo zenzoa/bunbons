@@ -68,9 +68,9 @@ class Egg extends Toy {
                 frame += 1
             }
         }
-
-        if (!this.isInInventory && !this.isBeingDragged) image(shadowImgs.small, x, y + 1)
-        image(colorSpritesheets[this.color].get(frame), x, y)
+        
+        if (!this.isInInventory && !this.isBeingDragged) baseSpritesheet.drawSprite({ x, y: y + 1 }, shadowImgs.small)
+        colorSpritesheets[this.color].drawSprite({ x, y }, frame)
 
         // draw debug lines
         if (DEBUG) {

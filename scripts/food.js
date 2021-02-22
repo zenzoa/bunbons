@@ -67,28 +67,28 @@ class Food extends GameObject {
 
         if (!this.isInInventory && !this.isBeingDragged) {
             if (this.name === 'mushrooms') {
-                image(shadowImgs.big, x, y + 1)
+                baseSpritesheet.drawSprite({ x, y: y + 1 }, shadowImgs.big)
             } else if (this.name === 'cloud-dumplings') {
-                image(shadowImgs.big, x, y + 1)
+                baseSpritesheet.drawSprite({ x, y: y + 1 }, shadowImgs.big)
             } else if (this.name === 'juice-orb') {
-                image(shadowImgs.small, x, y + 1)
+                baseSpritesheet.drawSprite({ x, y: y + 1 }, shadowImgs.small)
             } else if (this.name === 'flowers') {
-                image(shadowImgs.small, x, y - 2)
+                baseSpritesheet.drawSprite({ x, y: y - 2 }, shadowImgs.small)
             } else if (this.name === 'dragon-fruit') {
-                image(shadowImgs.small, x, y + 1)
+                baseSpritesheet.drawSprite({ x, y: y + 1 }, shadowImgs.small)
             } else if (this.name === 'rock-candy') {
-                image(shadowImgs.small, x + 1, y + 1)
+                baseSpritesheet.drawSprite({ x: x + 1, y: y + 1 }, shadowImgs.small)
             } else if (this.name === 'ice-cream') {
-                image(shadowImgs.small, x, y + 1)
+                baseSpritesheet.drawSprite({ x, y: y + 1 }, shadowImgs.small)
             } else if (this.name === 'sandwich') {
-                image(shadowImgs.big, x, y)
+                baseSpritesheet.drawSprite({ x, y }, shadowImgs.big)
             } else if (this.name === 'seaweed') {
-                image(shadowImgs.big, x, y + 1)
+                baseSpritesheet.drawSprite({ x, y: y + 1 }, shadowImgs.big)
             }
         }
         
         let spriteIndex = this.isRefilling ? this.eatenSpriteIndex : this.uneatenSpriteIndex
-        image(baseSpritesheet.get(spriteIndex), x, y)
+        baseSpritesheet.drawSprite({ x, y }, spriteIndex)
 
         // draw debug lines
         if (DEBUG) {

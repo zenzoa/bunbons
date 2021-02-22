@@ -1,58 +1,59 @@
 class Spritesheet {
 
-    constructor(img, spriteWidth, spriteHeight) {
+    constructor(img, spriteWidth, spriteHeight, colorName) {
 
-        this.img = img
+        this.img = img.get()
+
         this.spriteWidth = spriteWidth
         this.spriteHeight = spriteHeight
         this.spriteCols = floor(img.width / spriteWidth)
         this.spriteRows = floor(img.height / spriteHeight)
-        this.flip()
+
+        if (colorName) this.changeColor(colorName)
+
+        this.flippedImg = null
+        this.makeFlippedVersion()
 
     }
 
-    get(spriteIndex, isFlipped) {
+    drawSprite(pos, spriteIndex, isFlipped) {
 
-        if (isFlipped) {
-            let x = this.spriteWidth * floor(spriteIndex % this.spriteRows)
-            let y = this.spriteHeight * floor(spriteIndex / this.spriteRows)
-            return this.flippedImg.get(x, y, this.spriteWidth, this.spriteHeight)
-        } else {
-            let x = this.spriteWidth * floor(spriteIndex % this.spriteRows)
-            let y = this.spriteHeight * floor(spriteIndex / this.spriteRows)
-            return this.img.get(x, y, this.spriteWidth, this.spriteHeight)
-        }
+        let img = isFlipped ? this.flippedImg : this.img
+
+        let x = this.spriteWidth * floor(spriteIndex % this.spriteRows)
+        let y = this.spriteHeight * floor(spriteIndex / this.spriteRows)
+
+        image(img.get(x, y, this.spriteWidth, this.spriteHeight), pos.x, pos.y)
 
     }
 
-    recolor(colorName) {
+    changeColor(colorName) {
 
-        let img = this.img.get()
-        img.loadPixels()
+        this.img.loadPixels()
 
         let newColors = bunbonColors[colorName]
         if (!newColors) return
 
-        let pixelCount = 4 * img.width * img.height
+        let pixelCount = 4 * this.img.width * this.img.height
         for (let i = 0; i < pixelCount; i += 4) {
             replacementColors.forEach((oldColor, j) => {
-                let rDiff = abs(oldColor[0] - img.pixels[i])
-                let gDiff = abs(oldColor[1] - img.pixels[i + 1])
-                let bDiff = abs(oldColor[2] - img.pixels[i + 2])
+                let rDiff = abs(oldColor[0] - this.img.pixels[i])
+                let gDiff = abs(oldColor[1] - this.img.pixels[i + 1])
+                let bDiff = abs(oldColor[2] - this.img.pixels[i + 2])
                 if (rDiff < 25 && gDiff < 25 && bDiff < 25) {
                     let newColor = newColors[j]
-                    img.pixels[i] = newColor[0]
-                    img.pixels[i + 1] = newColor[1]
-                    img.pixels[i + 2] = newColor[2]
+                    this.img.pixels[i] = newColor[0]
+                    this.img.pixels[i + 1] = newColor[1]
+                    this.img.pixels[i + 2] = newColor[2]
                 }
             })
         }
-        img.updatePixels()
-        return new Spritesheet(img, this.spriteWidth, this.spriteHeight)
+
+        this.img.updatePixels()
 
     }
 
-    flip() {
+    makeFlippedVersion() {
 
         this.flippedImg = createImage(this.img.width, this.img.height)
         this.flippedImg.copy(this.img, 0, 0, this.img.width, this.img.height, 0, 0, this.img.width, this.img.height)

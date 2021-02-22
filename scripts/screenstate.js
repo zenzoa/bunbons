@@ -76,7 +76,7 @@ class ScreenState {
             }
             attempts++
         }
-        if (DEBUG && attempts >= 100) console.log('TOO MANY ATTEMPTS (random point)')
+        if (DEBUG && attempts >= MAX_ATTEMPTS) console.log('TOO MANY ATTEMPTS (random point)')
         return pos
     
     }
