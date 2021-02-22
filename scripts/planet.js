@@ -23,6 +23,7 @@ class Planet extends ScreenState {
         this.y = floor(random(this.radius, SPACE_HEIGHT - this.radius))
 
         this.mask = planetMasks[this.name]
+        this.mask.loadPixels()
         this.background = planetBGs[this.name]
 
         this.objects = []

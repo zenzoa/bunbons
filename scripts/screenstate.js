@@ -54,8 +54,9 @@ class ScreenState {
 
         // collides with world geometry
         if (this.mask) {
-            let pixel = this.mask.get(x, y)
-            if (pixel[0] >= 128) return false
+            let pixelIndex = 4 * (y * WORLD_WIDTH + x)
+            let pixelValue = this.mask.pixels[pixelIndex]
+            if (pixelValue >= 128) return false
         }
     
         return true
