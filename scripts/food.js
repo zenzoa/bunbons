@@ -11,7 +11,9 @@ let foodSprites = {
 }
 
 class Food extends GameObject {
-    constructor(name) {
+
+    constructor(pos, name) {
+
         super(24, 24)
         
         // temp
@@ -19,7 +21,7 @@ class Food extends GameObject {
         let foodSpriteIndex = foodSprites[foodType]
 
         this.name = foodType
-        this.pos = randomPoint()
+        this.pos = pos
 
         this.offsetX = -4
         this.offsetY = -8
@@ -32,14 +34,20 @@ class Food extends GameObject {
         this.refillTimer = 0
 
         this.driveReduction = floor(random(30, 100))
+
     }
 
-    onPush() {
-        this.refillTimer = 0
-        this.isRefilling = true
+    onPush(byPlayer) {
+
+        if (!byPlayer) {
+            this.refillTimer = 0
+            this.isRefilling = true
+        }
+
     }
 
     update() {
+
         if (this.isBeingDragged) return
 
         if (this.isRefilling) {
@@ -48,9 +56,11 @@ class Food extends GameObject {
                 this.isRefilling = false
             }
         }
+
     }
 
     draw() {
+
         // find upper-left corner of sprite
         let x = floor(this.pos.x - (this.width / 2) + this.offsetX)
         let y = floor(this.pos.y - this.height + this.offsetY)
@@ -86,9 +96,11 @@ class Food extends GameObject {
             stroke('lightblue')
             rect(x - this.offsetX, y - this.offsetY, this.width, this.height)
         }
+
     }
 
     export() {
+
         let data = {
             type: 'food',
             name: this.name,
@@ -100,16 +112,20 @@ class Food extends GameObject {
             isInInventory: this.isInInventory
         }
         return data
+
     }
 
     static importFood(data) {
-        let newFood = new Food(data.name)
-        newFood.pos = createVector(data.x, data.y)
+
+        let pos = createVector(data.x, data.y)
+        let newFood = new Food(pos, data.name)
         newFood.isRefilling = data.isRefilling
         newFood.refillLength = data.refillLength
         newFood.refillTimer = data.refillTimer
         newFood.isInInventory = data.isInInventory
         // todo: look up food image/stats based on name
         return newFood
+
     }
+
 }

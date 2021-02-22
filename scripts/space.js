@@ -1,9 +1,13 @@
 class Space extends ScreenState {
+
     constructor() {
+
         super()
+
     }
 
     setup() {
+
         this.offsetX = 0
         this.offsetY = 0
 
@@ -14,9 +18,11 @@ class Space extends ScreenState {
         this.drawTransition = false
         this.transitionRadius = 0
         this.transitionReversed = false
+
     }
 
     open(planetIndex, showBlastOff) {
+
         if (!isNaN(planetIndex)) {
             let planet = planets[planetIndex]
             this.offsetX = planet.x - SCREEN_WIDTH / 2
@@ -26,24 +32,30 @@ class Space extends ScreenState {
                 this.startBlastOff(planet.x - this.offsetX, planet.y - this.offsetY)
             }
         }
+
     }
 
-    close() {}
+    close() {
+    }
 
     startBlastOff(x, y) {
+
         this.isBlastingOff = true
         this.blastOffTimer = 0
         this.blastOffX = x
         this.blastOffY = y
         this.blastOffAngle = 0
+
     }
 
     blastOff() {
+
         this.blastOffTimer++
         this.blastOffFrame = (this.blastOffTimer % 10) < 5 ? 0 : 1
         this.blastOffAngle += TAU / 100
         this.blastOffX += this.blastOffAngle * cos(this.blastOffAngle) * 1
         this.blastOffY += this.blastOffAngle * sin(this.blastOffAngle) * 1
+
         if ((this.blastOffX < -64 || this.blastOffX > SCREEN_WIDTH + 64) || (this.blastOffY < -64 || this.blastOffY > SCREEN_HEIGHT + 64)) {
             this.isBlastingOff = false
             this.drawTransition = true
@@ -51,16 +63,20 @@ class Space extends ScreenState {
             this.transitionReversed = false
             preventClicking = false
         }
+
     }
 
     adjustOffset() {
+
         if (this.offsetX < 0) this.offsetX = 0
         if (this.offsetX >= SPACE_WIDTH - SCREEN_WIDTH) this.offsetX = SPACE_WIDTH - SCREEN_WIDTH
         if (this.offsetY < 0) this.offsetY = 0
         if (this.offsetY >= SPACE_HEIGHT - SCREEN_HEIGHT) this.offsetY = SPACE_HEIGHT - SCREEN_HEIGHT
+
     }
 
     draw() {
+
         noStroke()
         fill('#222')
         rect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT)
@@ -99,23 +115,29 @@ class Space extends ScreenState {
                 this.drawTransition = false
             }
         }
+
     }
 
     mousePressed(x, y) {
+
         this.oldOffsetX = this.offsetX
         this.oldOffsetY = this.offsetY
+
     }
 
     mouseDragged(x, y, dx, dy) {
+
         let distSquared = dx * dx + dy * dy
         if (distSquared >= 64) {
             this.offsetX = this.oldOffsetX + dx
             this.offsetY = this.oldOffsetY + dy
             this.adjustOffset()
         }
+
     }
 
     mouseReleased(x, y, dx, dy) {
+
         let distSquared = dx * dx + dy * dy
         if (distSquared < 64) {
 
@@ -134,8 +156,10 @@ class Space extends ScreenState {
             })
 
         }
+
     }
 
     keyPressed() {
     }
+    
 }

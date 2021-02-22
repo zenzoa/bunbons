@@ -5,16 +5,18 @@ let bunbonEggs = [
 ]
 
 class Egg extends Toy {
-    constructor(bunbonDNA, pos) {
+
+    constructor(pos, bunbonDNA) {
+
         super(22, 24)
 
         this.name = 'egg'
-        this.pos = pos || randomPoint()
+        this.pos = pos
 
         this.offsetX = -4
         this.offsetY = -7
 
-        this.bunbonDNA = bunbonDNA || BunBon.randomDNA()
+        this.bunbonDNA = bunbonDNA || Bunbon.randomDNA()
         this.timeToHatch = FRAME_RATE * 60 // 1 minute
         this.color = this.bunbonDNA.color
 
@@ -22,28 +24,34 @@ class Egg extends Toy {
         this.shakingTimer = 0
 
         this.driveReduction = 10
+
     }
 
     onPush() {
+
         if (DEBUG) console.log('shake the egg')
         this.timeToHatch -= 10
         this.isShaking = true
+
     }
 
     update() {
+
         if (this.isBeingDragged) return
 
         // update hatching progress
         this.timeToHatch--
         if (this.timeToHatch <= 0) {
-            let bunbon = new BunBon(this.pos, this.bunbonDNA)
-            gameObjects.push(bunbon)
+            let bunbon = new Bunbon(this.pos, this.bunbonDNA)
+            currentScreen.objects.push(bunbon)
             if (DEBUG) console.log(bunbon.name, 'has hatched')
             this.removeMe = true
         }
+
     }
 
     draw() {
+
         // find upper-left corner of sprite
         let x = floor(this.pos.x - (this.width / 2) + this.offsetX)
         let y = floor(this.pos.y - this.height + this.offsetY)
@@ -70,9 +78,11 @@ class Egg extends Toy {
             stroke('lightblue')
             rect(x - this.offsetX, y - this.offsetY, this.width, this.height)
         }
+
     }
 
     export() {
+
         let data = {
             type: 'egg',
             name: this.name,
@@ -85,11 +95,13 @@ class Egg extends Toy {
             isInInventory: this.isInInventory
         }
         return data
+
     }
 
     static importEgg(data) {
+
         let pos = createVector(data.x, data.y)
-        let newEgg = new Egg(data.bunbonDNA, pos)
+        let newEgg = new Egg(pos, data.bunbonDNA)
         newEgg.name = data.name
         newEgg.pos = createVector(data.x, data.y)
         newEgg.timeToHatch = data.timeToHatch
@@ -97,5 +109,7 @@ class Egg extends Toy {
         newEgg.shakingTimer = data.shakingTimer
         newEgg.isInInventory = data.isInInventory
         return newEgg
+
     }
+
 }

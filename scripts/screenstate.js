@@ -1,5 +1,17 @@
 class ScreenState {
+    
     constructor() {
+
+        this.objects = []
+        this.objectsInDrawOrder = []
+        this.selectedObjectIndex = -1
+        this.selectedBunbonIndex = -1
+
+        this.inventoryIsVisible = false
+
+        this.mask = null
+        this.background = null
+
     }
 
     setup() {
@@ -26,106 +38,221 @@ class ScreenState {
     keyPressed() {
     }
 
+    isPositionClear(x, y) {
+
+        x = floor(x)
+        y = floor(y)
+
+        // out of bounds
+        if (this.inventoryIsVisible) {
+            if (x < 0 || x >= WORLD_WIDTH) return false
+            if (y < 0 || y >= WORLD_HEIGHT) return false
+        } else {
+            if (x < 0 || x >= SCREEN_WIDTH) return false
+            if (y < 0 || y >= SCREEN_HEIGHT) return false
+        }
+
+        // collides with world geometry
+        if (this.mask) {
+            let pixel = this.mask.get(x, y)
+            if (pixel[0] >= 128) return false
+        }
+    
+        return true
+
+    }
+
+    randomPoint() {
+
+        let pos = null
+        let attempts = 0
+        while (!pos && attempts < MAX_ATTEMPTS) {
+            let maxX = this.inventoryIsVisible ? WORLD_WIDTH : SCREEN_WIDTH
+            let maxY = this.inventoryIsVisible ? WORLD_HEIGHT : SCREEN_HEIGHT
+            let x = floor(random(0, maxX))
+            let y = floor(random(0, maxY))
+            if (this.isPositionClear(x, y)) {
+                pos = createVector(x, y)
+            }
+            attempts++
+        }
+        if (DEBUG && attempts >= 100) console.log('TOO MANY ATTEMPTS (random point)')
+        return pos
+    
+    }
+
+    getInventorySlotIndex(x) {
+
+        return min(max(floor((x - inventory.x) / inventory.slotWidth), 0), inventory.slotCount - 1)
+
+    }
+
     clickInWorld(x, y) {
-        gameObjects.forEach(obj => {
+
+        this.objects.forEach((obj, objectIndex) => {
             if (obj.isOnPointer(x, y)) {
-                selectedObject = obj
-                if (selectedObject instanceof BunBon) selectedBunbon = obj
+                this.selectedObjectIndex = objectIndex
+                if (this.objects[this.selectedObjectIndex] instanceof Bunbon) {
+                    this.selectedBunbonIndex = objectIndex
+                }
             }
         })
+
     }
 
     clickInInventory(x, y) {
-        let slot = getInventorySlot(x, y)
-        if (inventoryObjects[slot]) {
-            // click in inventory
-            selectedObject = inventoryObjects[slot]
-            if (selectedObject instanceof BunBon) selectedBunbon = selectedObject
-            inventoryObjects[slot] = null
-            gameObjects.push(selectedObject)
+
+        let slotIndex = this.getInventorySlotIndex(x, y)
+        let inventoryObject = inventory.objects[slotIndex]
+        if (inventoryObject) {
+
+            this.objects.push(inventoryObject)
+            this.selectedObjectIndex = this.objects.length - 1
+            inventory.objects[slotIndex] = null
+
+            if (this.objects[this.selectedObjectIndex] instanceof Bunbon) {
+                this.selectedBunbonIndex = this.selectedObjectIndex
+            }
+
         }
+
     }
 
-    dragObject(x, y, dx, dy, includeInventory) {
+    addObjectToInventory(slotIndex) {
+
+        if (!inventory.objects[slotIndex]) {
+
+            let selectedObject = this.objects[this.selectedObjectIndex]
+
+            if (selectedObject) {
+                // add object to inventory slot
+                inventory.objects[slotIndex] = selectedObject
+
+                // remove object from objects
+                this.objects.splice(this.selectedObjectIndex, 1)
+
+                // set properties of object to being in inventory
+                selectedObject.isInInventory = true
+                selectedObject.pos.x = inventory.slotXs[slotIndex]
+                selectedObject.pos.y = inventory.slotY + (selectedObject.height / 2)
+
+                // de-select object
+                if (this.selectedBunbonIndex === this.selectedObjectIndex) {
+                    this.selectedBunbonIndex = -1
+                }
+                this.selectedObjectIndex = -1
+            }  
+
+        }
+
+    }
+
+    fixObjectPosition(obj) {
+
+        if (this.inventoryIsVisible) {
+            obj.fixPosition(WORLD_WIDTH, WORLD_HEIGHT)
+        } else {
+            obj.fixPosition(SCREEN_WIDTH, SCREEN_HEIGHT)
+        }
+
+    }
+
+    dragObject(x, y, dx, dy) {
+
+        let selectedObject = this.objects[this.selectedObjectIndex]
         if (selectedObject && selectedObject.isDraggable) {
+
             let distSquared = dx * dx + dy * dy
-            if (!(selectedObject instanceof BunBon) || distSquared >= 1024) {
+            if (!(selectedObject instanceof Bunbon) || distSquared >= 1024) {
 
                 isDragging = true
                 selectedObject.isBeingDragged = true
 
-                if (includeInventory && y >= WORLD_HEIGHT) {
-                    let slot = getInventorySlot(x, y)
-                    if (!inventoryObjects[slot]) {
-                        selectedObject.pos.x = inventorySlotX(slot)
-                        selectedObject.pos.y = inventorySlotY(slot) + (selectedObject.height / 2)
+                if (this.inventoryIsVisible && y >= WORLD_HEIGHT) {
+
+                    let slotIndex = this.getInventorySlotIndex(x, y)
+                    if (!inventory.objects[slotIndex]) {
+                        selectedObject.pos.x = inventory.slotXs[slotIndex]
+                        selectedObject.pos.y = inventory.slotY + (selectedObject.height / 2)
                     }
-                }
-                
-                else {
-                    // move object in world
+
+                } else {
+
                     let posX = mouseX / CANVAS_SCALE
                     let posY = mouseY / CANVAS_SCALE + selectedObject.height / 2
-                    if (isPointPassable(posX, posY)) {
+                    if (this.isPositionClear(posX, posY)) {
                         selectedObject.pos.x = posX
                         selectedObject.pos.y = posY
-                        boundPosition(selectedObject)
+                        this.fixObjectPosition(selectedObject)
                     }
+
                 }
+
             }
+
         }
+
     }
 
-    dropObject(x, y, dx, dy, includeInventory) {
+    dropObject(x, y, dx, dy) {
+
         isDragging = false
 
-        if (selectedObject && selectedObject.isBeingDragged) {
-            selectedObject.isBeingDragged = false
+        let interactedWithObject = false
+        let selectedObject = this.objects[this.selectedObjectIndex]
 
-            if (includeInventory && y >= WORLD_HEIGHT) {
-                let slot = getInventorySlot(x, y)
-                if (!inventoryObjects[slot]) {
-                    // add object to inventory
-                    inventoryObjects[slot] = selectedObject
-                    gameObjects = gameObjects.filter(obj => obj !== selectedObject)
-                    selectedObject.isInInventory = true
-                    selectedObject.inventorySlot = slot
-                    selectedObject.pos.x = inventorySlotX(slot)
-                    selectedObject.pos.y = inventorySlotY(slot) + (selectedObject.height / 2)
-                    if (selectedObject === selectedBunbon) selectedBunbon = null
-                    selectedObject = null
-                }
-            }
-            
-            else {
-                selectedObject.isInInventory = false
-                boundPosition(selectedObject)
-                let distSquared = dx * dx + dy * dy
-                let dragDist = min(selectedObject.width, selectedObject.height)
-                if (distSquared < dragDist * dragDist) {
-                    // clicked object
-                    if (selectedObject instanceof Toy) {
-                        selectedObject.onPush()
-                    }
+        if (selectedObject) {
+
+            interactedWithObject = true
+
+            if (selectedObject.isBeingDragged) {
+
+                selectedObject.isBeingDragged = false
+
+                if (this.inventoryIsVisible && y >= WORLD_HEIGHT) {
+
+                    let slotIndex = this.getInventorySlotIndex(x, y)
+                    this.addObjectToInventory(slotIndex)
+
                 } else {
-                    // dragged and dropped object
-                    selectedObject.onDrop()
+
+                    selectedObject.isInInventory = false
+                    this.fixObjectPosition(selectedObject)
+                    let distSquared = dx * dx + dy * dy
+                    let dragDist = min(selectedObject.width, selectedObject.height)
+                    if (distSquared < dragDist * dragDist) {
+                        // clicked object
+                        selectedObject.onPush(/* byPlayer */ true)
+                    } else {
+                        // dragged and dropped object
+                        selectedObject.onDrop(this.objects)
+                    }
+
                 }
 
+            } else {
+                // clicked object
+                selectedObject.onPush(/* byPlayer */ true)
             }
 
-            return true
-
-        } else {
-            return false
         }
+
+        this.selectedObjectIndex = -1
+        return interactedWithObject
+
     }
 
-    sortGameObjects() {
-        gameObjects.sort((a, b) => {
+    sortGameObjectsByPos() {
+
+        this.objectsInDrawOrder = this.objects.map((_, i) => i)
+        this.objectsInDrawOrder.sort((aIndex, bIndex) => {
+            let a = this.objects[aIndex]
+            let b = this.objects[bIndex]
             if (a.pos.y < b.pos.y) return -1
             if (a.pos.y > b.pos.y) return 1
             return 0
         })
+
     }
+
 }

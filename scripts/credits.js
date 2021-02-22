@@ -1,4 +1,5 @@
 class Credits extends ScreenState {
+
     constructor() {
         super()
     }
@@ -7,15 +8,14 @@ class Credits extends ScreenState {
     }
 
     open() {
-        gameObjects = blastedOffBunbons.slice()
-        gameObjects.forEach(bunbon => {
-            bunbon.pos = randomPoint()
+        this.objects = blastedOffBunbons.slice()
+        this.objects.forEach(bunbon => {
+            bunbon.pos = this.randomPoint()
             bunbon.state = ''
         })
     }
 
     close() {
-        gameObjects = null
     }
 
     draw() {
@@ -25,18 +25,18 @@ class Credits extends ScreenState {
 
         image(spaceButtonForCreditsImg, 3, WORLD_HEIGHT + 3)
 
-        this.sortGameObjects()
-
-        gameObjects.forEach(bunbon => {
-            bunbon.update(true)
-            bunbon.draw()
-            bunbon.drives.hunger = 0
-            bunbon.drives.boredom = 0
+        this.sortGameObjectsByPos()
+        this.objectsInDrawOrder.forEach(objectIndex => {
+            let obj = this.objects[objectIndex]
+            obj.update(/* forCredits */ true)
+            obj.draw()
+            obj.drives.hunger = 0
+            obj.drives.boredom = 0
         })
     }
 
     mousePressed(x, y) {
-        selectedObject = null
+        this.selectedObjectIndex = -1
         this.clickInWorld(x, y)
     }
 
@@ -57,4 +57,5 @@ class Credits extends ScreenState {
 
     keyPressed() {
     }
+
 }

@@ -1,7 +1,9 @@
 let generatedNames = []
 
 class NameGenerator {
+
     static generate() {
+
         let name = ''
         let vowels = ['a', 'e', 'i', 'o', 'u']
         let initials = ['b', 'b', 'ch', 'd', 'd', 'f', 'g', 'h', 'j', 'k', 'l', 'm', 'm', 'n', 'p', 'p', 'r', 'r', 's', 's', 's', 'sh', 't', 't', 'th', 'v', 'w', 'y', 'z']
@@ -49,5 +51,7 @@ class NameGenerator {
     
         generatedNames.push(name)
         return name
+        
     }
+
 }

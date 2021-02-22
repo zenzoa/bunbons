@@ -10,6 +10,16 @@ class GameObject {
         this.jumpY = 0
 
         this.isDraggable = true
+
+        this.isInInventory = false
+        this.inventorySlotIndex = -1
+    }
+
+    fixPosition(maxWidth, maxHeight) {
+        if (this.pos.x < 0) this.pos.x = 0
+        if (this.pos.y < 0) this.pos.y = 0
+        if (this.pos.x > maxWidth) this.pos.x = maxWidth
+        if (this.pos.y > maxHeight) this.pos.y = maxHeight
     }
 
     isOnPointer(mx, my) {
@@ -34,35 +44,42 @@ class GameObject {
         return true
     }
 
-    onDrop() {
+    onPush() {
+    }
+
+    onDrop(objectsOnScreen) {
+
         if (this.nearGoal) {
             this.nearGoal.x  = this.pos.x
             this.nearGoal.y  = this.pos.y
         }
 
-        gameObjects.forEach(obj => {
+        objectsOnScreen.forEach(obj => {
             if (obj !== this && this.isTouching(obj)) {
-                if (this instanceof BunBon) {
+                if (this instanceof Bunbon) {
                     this.lookAt(obj)
-                }
-                else if (obj instanceof BunBon) {
+                } else if (obj instanceof Bunbon) {
                     obj.lookAt(this)
                 }
             }
         })
+
     }
 
-    update() {}
+    update() {
+    }
 
-    draw() {}
+    draw() {
+    }
 
-    export() {}
+    export() {
+    }
 
     static import(data) {
         if (!data) {
             return null
         } else if (data.type === 'bunbon') {
-            return BunBon.importBunBon(data)
+            return Bunbon.importBunbon(data)
         } else if (data.type === 'egg') {
             return Egg.importEgg(data)
         } else if (data.type === 'food') {

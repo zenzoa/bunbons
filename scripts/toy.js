@@ -11,15 +11,17 @@ let toySprites = {
 }
 
 class Toy extends GameObject {
-    constructor() {
+
+    constructor(pos, name) {
+
         super(24, 24)
 
         // temp
         let toyType = name || random(Object.keys(toySprites))
         let toySpriteIndex = toySprites[toyType]
 
-        this.name = 'toy'
-        this.pos = randomPoint()
+        this.name = toyType
+        this.pos = pos
 
         this.offsetX = -4
         this.offsetY = -8
@@ -32,15 +34,21 @@ class Toy extends GameObject {
         this.speed = random(0.5, 4)
 
         this.driveReduction = floor(random(10, 50))
+
     }
 
     onPush() {
+
+        if (DEBUG) console.log('push the toy')
+
         let d = Vector.mult(Vector.random2D(), this.bounce)
         this.goal = Vector.add(this.pos, d)
         this.isActive = true
+
     }
 
     update() {
+
         if (this.isBeingDragged) return
 
         if (this.goal) {
@@ -50,19 +58,19 @@ class Toy extends GameObject {
 
             if (Vector.dist(this.pos, this.goal) <= this.width / 4) {
                 this.goal = null
-            }
-            else if (isPointPassable(newPos.x, newPos.y)) {
+            } else if (currentScreen.isPositionClear(newPos.x, newPos.y)) {
                 this.pos = newPos
-            }
-            else {
+            } else {
                 this.goal = null
             }
         } else {
             this.isActive = false
         }
+
     }
 
     draw() {
+
         // TODO: add animation when active
 
         // find upper-left corner of sprite
@@ -80,9 +88,11 @@ class Toy extends GameObject {
             stroke('lightblue')
             rect(x - this.offsetX, y - this.offsetY, this.width, this.height)
         }
+
     }
 
     export() {
+
         let data = {
             type: 'toy',
             name: this.name,
@@ -91,14 +101,17 @@ class Toy extends GameObject {
             isInInventory: this.isInInventory
         }
         return data
+
     }
 
     static importToy(data) {
-        let newToy = new Toy()
-        newToy.name = data.name
-        newToy.pos = createVector(data.x, data.y)
+
+        let pos = createVector(data.x, data.y)
+        let newToy = new Toy(pos, data.name)
         newToy.isInInventory = data.isInInventory
         // todo: look up toy image/stats based on name
         return newToy
+
     }
+
 }

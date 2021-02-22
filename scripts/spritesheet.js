@@ -1,14 +1,18 @@
 class Spritesheet {
+
     constructor(img, spriteWidth, spriteHeight) {
+
         this.img = img
         this.spriteWidth = spriteWidth
         this.spriteHeight = spriteHeight
         this.spriteCols = floor(img.width / spriteWidth)
         this.spriteRows = floor(img.height / spriteHeight)
         this.flip()
+
     }
 
     get(spriteIndex, isFlipped) {
+
         if (isFlipped) {
             let x = this.spriteWidth * floor(spriteIndex % this.spriteRows)
             let y = this.spriteHeight * floor(spriteIndex / this.spriteRows)
@@ -18,9 +22,11 @@ class Spritesheet {
             let y = this.spriteHeight * floor(spriteIndex / this.spriteRows)
             return this.img.get(x, y, this.spriteWidth, this.spriteHeight)
         }
+
     }
 
     recolor(colorName) {
+
         let img = this.img.get()
         img.loadPixels()
 
@@ -43,9 +49,11 @@ class Spritesheet {
         }
         img.updatePixels()
         return new Spritesheet(img, this.spriteWidth, this.spriteHeight)
+
     }
 
     flip() {
+
         this.flippedImg = createImage(this.img.width, this.img.height)
         this.flippedImg.copy(this.img, 0, 0, this.img.width, this.img.height, 0, 0, this.img.width, this.img.height)
         this.flippedImg.loadPixels()
@@ -79,5 +87,7 @@ class Spritesheet {
         })
 
         this.flippedImg.updatePixels()
+        
     }
+
 }

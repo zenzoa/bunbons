@@ -1,24 +1,23 @@
 /*
 
 TODO:
-- add dragging + selecting to credits screen (may need to refactor that code out of planet class)
 - add credits to credits screen
 - provide means of entering + exiting credits screen
-- planet images
-- pick a better pause key command (ctrl-p is print)
+- planet images/locations
 - review breeding mechanics
+- different behaviors for each toy
 
 BUGS:
-- random pauses every so often, at least in Firefox (cause: cc graph reduction, aka c++ garbage collection)
-- slowdown over time?
-- fix save & load - better saving strategy, new planet has the same bunbons as the old planet after blasting off
-- egg shaking no longer works
+- memory leak: JS heap keeps increasing over time, needs to be cleared periodically with big garbage collection
+- fix save & load: better saving strategy, new planet has the same bunbons as the old planet after blasting off
 
 */
 
 let DEBUG = true
 
 let FRAME_RATE = 30
+
+let MAX_ATTEMPTS = 100
 
 let CANVAS_SCALE = 2
 
@@ -38,7 +37,10 @@ let inventory = {
     slotCount: 6,
     slotWidth: 40,
     width: 40 * 6,
-    height: 32
+    height: 32,
+    objects: Array(6),
+    slotXs: [ 60, 100, 140, 180, 220, 260 ],
+    slotY: WORLD_HEIGHT + 21
 } 
 
 let spaceButton = {
@@ -72,11 +74,7 @@ let colorSpritesheets = {}
 let userinterfaceImg, spaceButtonImg, spaceButtonForCreditsImg
 let shadowImgs = {}
 
-let gameObjects = []
-let inventoryObjects = Array(inventory.slotCount)
 let blastedOffBunbons = []
-let selectedBunbon = null
-let selectedObject = null
 let confirmingBlastOff = false
 
 let spaceScreen = new Space()
@@ -85,8 +83,6 @@ let unlockedPlanetCount = 0
 
 let planetBGs = {}
 let planetMasks = {}
-let planetBG = null
-let planetMask = null
 
 let creditsScreen = new Credits()
 
@@ -96,6 +92,7 @@ let lastPlanet = null
 let myFont
 
 function openScreen(type, index, arg) {
+
     currentScreen.close()
     if (type === 'space') {
         currentScreen = spaceScreen
@@ -104,75 +101,11 @@ function openScreen(type, index, arg) {
         currentScreen = planets[index]
     }
     currentScreen.open(index, arg)
-}
 
-function isPointPassable(x, y) {
-    x = floor(x)
-    y = floor(y)
-
-    if (currentScreen instanceof Credits) {
-        // out of bounds
-        if (x < 0 || x >= SCREEN_WIDTH) return false
-        if (y < 0 || y >= SCREEN_HEIGHT) return false
-
-    } else {
-        // out of bounds
-        if (x < 0 || x >= WORLD_WIDTH) return false
-        if (y < 0 || y >= WORLD_HEIGHT) return false
-
-        // masked area
-        let pixel = planetMask.get(x, y)
-        if (pixel[0] >= 128) return false
-    }
-
-    return true
-}
-
-function randomPoint() {
-    let pos = null
-    while (!pos) {
-        let x = floor(random(0, WORLD_WIDTH))
-        let y = floor(random(0, WORLD_HEIGHT))
-        if (isPointPassable(x, y)) {
-            pos = createVector(x, y)
-        }
-    }
-    return pos
-}
-
-function isInInventory(x, y) {
-    return (
-        x >= inventory.x && x < inventory.x + inventory.width &&
-        y >= inventory.y && y < inventory.y + inventory.height
-    )
-}
-
-function getInventorySlot(x) {
-    return min(max(floor((x - inventory.x) / inventory.slotWidth), 0), inventory.slotCount - 1)
-}
-
-function inventorySlotX(slot) {
-    return inventory.x + (slot * inventory.slotWidth) + floor(inventory.slotWidth / 2)
-}
-
-function inventorySlotY() {
-    return inventory.y + floor(inventory.height / 2) 
-}
-
-function boundPosition(obj) {
-    if (obj.pos.x < 0) obj.pos.x = 0
-    if (obj.pos.y < 0) obj.pos.y = 0
-
-    if (currentScreen instanceof Credits) {
-        if (obj.pos.x > SCREEN_WIDTH) obj.pos.x = SCREEN_WIDTH
-        if (obj.pos.y > SCREEN_HEIGHT) obj.pos.y = SCREEN_HEIGHT
-    } else {
-        if (obj.pos.x > WORLD_WIDTH) obj.pos.x = WORLD_WIDTH
-        if (obj.pos.y > WORLD_HEIGHT) obj.pos.y = WORLD_HEIGHT
-    }
 }
 
 function preload() {
+
     myFont = loadFont('fonts/UbuntuMono-Bold.woff')
 
     spritesheetImg = loadImage('../images/spritesheet.png')
@@ -189,9 +122,11 @@ function preload() {
         park: loadImage('../images/planets/park-mask.png'),
         volcano: loadImage('../images/planets/volcano-mask.png')
     }
+
 }
 
 function setup() {
+
     frameRate(FRAME_RATE)
 
     createCanvas(SCREEN_WIDTH * 2, SCREEN_HEIGHT * 2)
@@ -219,9 +154,6 @@ function setup() {
     spaceButtonImg = spritesheetImg.get(0, 606, 34, 34)
     spaceButtonForCreditsImg = spritesheetImg.get(34, 606, 34, 34)
 
-    planetBG = planetBGs.park
-    planetMask = planetMasks.park
-
     spaceScreen.setup()
     let isLoadSuccessful = loadState()
     if (!isLoadSuccessful) {
@@ -237,9 +169,11 @@ function setup() {
     } else {
         openScreen('space', 0)
     }
+
 }
 
 function draw() {
+
     let dx = abs(mouseX - lastX)
     let dy = abs(mouseY - lastY)
     lastX = mouseX
@@ -249,9 +183,12 @@ function draw() {
     clear()
     scale(CANVAS_SCALE)
     currentScreen.draw()
+
 }
 
+// TODO: this might be fixed in new version?
 function touchStarted() {
+
     // duplicating mousePressed here because p5js has a bug in it
     if (preventClicking) return
 
@@ -265,9 +202,11 @@ function touchStarted() {
         currentScreen.mousePressed(x, y)
         isClicking = true
     }
+
 }
 
 function mousePressed() {
+
     if (preventClicking) return
 
     let x = mouseX / CANVAS_SCALE
@@ -280,9 +219,11 @@ function mousePressed() {
         currentScreen.mousePressed(x, y)
         isClicking = true
     }
+
 }
 
 function mouseDragged() {
+
     if (!isClicking) return
 
     let x = mouseX / CANVAS_SCALE
@@ -297,9 +238,11 @@ function mouseDragged() {
     let dy = startY - y
 
     currentScreen.mouseDragged(x, y, dx, dy)
+
 }
 
 function mouseReleased() {
+
     if (!isClicking) return
 
     let x = mouseX / CANVAS_SCALE
@@ -315,18 +258,22 @@ function mouseReleased() {
 
     currentScreen.mouseReleased(x, y, dx, dy)
     isClicking = false
+
 }
 
 function keyPressed() {
+
     if (key === 'o') {
         currentScreen = creditsScreen
         currentScreen.open()
     } else {
         currentScreen.keyPressed()
     }
+
 }
 
 function saveState() {
+
     // let data = {
     //     planets: planets.map(p => p.export()),
     //     inventoryObjects: inventoryObjects.map(o => o ? o.export() : null)
@@ -337,9 +284,11 @@ function saveState() {
     // } catch(e) {
     //     if (DEBUG) console.error('unable to save', e)
     // }
+
 }
 
 function loadState() {
+
     // try {
     //     let dataString = window.localStorage.getItem('bunbons')
     //     let data = dataString ? JSON.parse(dataString) : null
@@ -353,39 +302,41 @@ function loadState() {
     // } catch(e) {
     //     if (DEBUG) console.error('unable to load:', e)
     // }
+
 }
 
-function exportBunBon() {
-    if (!(currentScreen instanceof Planet)) return
+// TODO: move this into Planet code
+// function exportBunbon() {
+//     if (!(currentScreen instanceof Planet)) return
 
-    if (selectedObject && selectedObject instanceof BunBon) {
-        console.log('~ exporting ' + selectedObject.name + ' ~')
-        let data = selectedObject.export()
-        try {
-            let dataString = JSON.stringify(data)
-            console.log(dataString)
-        } catch(e) {
-            console.error('unable to export:', e)
-        }
-    }
-}
+//     if (selectedObject && selectedObject instanceof Bunbon) {
+//         console.log('~ exporting ' + selectedObject.name + ' ~')
+//         let data = selectedObject.export()
+//         try {
+//             let dataString = JSON.stringify(data)
+//             console.log(dataString)
+//         } catch(e) {
+//             console.error('unable to export:', e)
+//         }
+//     }
+// }
 
-function importBunBon(dataString) {
-    if (!(currentScreen instanceof Planet)) return
+// function importBunbon(dataString) {
+//     if (!(currentScreen instanceof Planet)) return
 
-    try {
-        let data = dataString ? JSON.parse(dataString) : null
-        if (data) {
-            if (data.type === 'bunbon') {
-                console.log('~ importing ' + data.name + ' ~')
-                let newBunBon = BunBon.import(data)
-                currentScreen.objects.push(newBunBon)
-                // todo: load the bunbon in a random valid location
-            }
-        } else {
-            throw 'bad data'
-        }
-    } catch(e) {
-        console.error('unable to import:', e)
-    }
-}
+//     try {
+//         let data = dataString ? JSON.parse(dataString) : null
+//         if (data) {
+//             if (data.type === 'bunbon') {
+//                 console.log('~ importing ' + data.name + ' ~')
+//                 let newBunbon = Bunbon.import(data)
+//                 currentScreen.objects.push(newBunbon)
+//                 // todo: load the bunbon in a random valid location
+//             }
+//         } else {
+//             throw 'bad data'
+//         }
+//     } catch(e) {
+//         console.error('unable to import:', e)
+//     }
+// }
