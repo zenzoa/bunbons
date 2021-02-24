@@ -25,6 +25,12 @@ class Egg extends Toy {
 
         this.driveReduction = 10
 
+        this.spriteImgs = [
+            colorSpritesheets[this.color].getSprite(bunbonEggs[0]),
+            colorSpritesheets[this.color].getSprite(bunbonEggs[1]),
+            colorSpritesheets[this.color].getSprite(bunbonEggs[2])
+        ]
+
     }
 
     onPush() {
@@ -56,21 +62,21 @@ class Egg extends Toy {
         let x = floor(this.pos.x - (this.width / 2) + this.offsetX)
         let y = floor(this.pos.y - this.height + this.offsetY)
 
-        let frame = bunbonEggs[0]
+        let frame = 0
         if (this.isShaking || this.timeToHatch < 32) {
             this.shakingTimer++
             if (this.shakingTimer >= 8) {
                 this.isShaking = false
                 this.shakingTimer = 0
             } else if (this.shakingTimer >= 4) {
-                frame += 2
+                frame = 2
             } else {
-                frame += 1
+                frame = 1
             }
         }
         
-        if (!this.isInInventory && !this.isBeingDragged) baseSpritesheet.drawSprite({ x, y: y + 1 }, shadowImgs.small)
-        colorSpritesheets[this.color].drawSprite({ x, y }, frame)
+        if (!this.isInInventory && !this.isBeingDragged) image(shadowImgs.small, x, y + 1)
+        image(this.spriteImgs[frame], x, y)
 
         // draw debug lines
         if (DEBUG) {

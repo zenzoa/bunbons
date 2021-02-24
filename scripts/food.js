@@ -26,14 +26,16 @@ class Food extends GameObject {
         this.offsetX = -4
         this.offsetY = -8
 
-        this.uneatenSpriteIndex = foodSpriteIndex
-        this.eatenSpriteIndex = foodSpriteIndex + 20
-
         this.isRefilling = false
         this.refillLength = floor(random(600, 2100))
         this.refillTimer = 0
 
         this.driveReduction = floor(random(30, 100))
+
+        this.spriteImgs = [
+            baseSpritesheet.getSprite(foodSpriteIndex),
+            baseSpritesheet.getSprite(foodSpriteIndex + 20)
+        ]
 
     }
 
@@ -67,28 +69,31 @@ class Food extends GameObject {
 
         if (!this.isInInventory && !this.isBeingDragged) {
             if (this.name === 'mushrooms') {
-                baseSpritesheet.drawSprite({ x, y: y + 1 }, shadowImgs.big)
+                image(shadowImgs.big, x, y + 1)
             } else if (this.name === 'cloud-dumplings') {
-                baseSpritesheet.drawSprite({ x, y: y + 1 }, shadowImgs.big)
+                image(shadowImgs.big, x, y + 1)
             } else if (this.name === 'juice-orb') {
-                baseSpritesheet.drawSprite({ x, y: y + 1 }, shadowImgs.small)
+                image(shadowImgs.small, x, y + 1)
             } else if (this.name === 'flowers') {
-                baseSpritesheet.drawSprite({ x, y: y - 2 }, shadowImgs.small)
+                image(shadowImgs.small, x, y - 2)
             } else if (this.name === 'dragon-fruit') {
-                baseSpritesheet.drawSprite({ x, y: y + 1 }, shadowImgs.small)
+                image(shadowImgs.small, x, y + 1)
             } else if (this.name === 'rock-candy') {
-                baseSpritesheet.drawSprite({ x: x + 1, y: y + 1 }, shadowImgs.small)
+                image(shadowImgs.small, x + 1, y + 1)
             } else if (this.name === 'ice-cream') {
-                baseSpritesheet.drawSprite({ x, y: y + 1 }, shadowImgs.small)
+                image(shadowImgs.small, x, y + 1)
             } else if (this.name === 'sandwich') {
-                baseSpritesheet.drawSprite({ x, y }, shadowImgs.big)
+                image(shadowImgs.big, x, y)
             } else if (this.name === 'seaweed') {
-                baseSpritesheet.drawSprite({ x, y: y + 1 }, shadowImgs.big)
+                image(shadowImgs.big, x, y + 1)
             }
         }
         
-        let spriteIndex = this.isRefilling ? this.eatenSpriteIndex : this.uneatenSpriteIndex
-        baseSpritesheet.drawSprite({ x, y }, spriteIndex)
+        if (this.isRefilling) {
+            image(this.spriteImgs[1], x, y)
+        } else {
+            image(this.spriteImgs[0], x, y)
+        }
 
         // draw debug lines
         if (DEBUG) {

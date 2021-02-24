@@ -26,14 +26,22 @@ class Toy extends GameObject {
         this.offsetX = -4
         this.offsetY = -8
 
-        this.inactiveSpriteIndex = toySpriteIndex
-        this.activeSpriteIndex = toySpriteIndex + 20
 
         this.isActive = false
         this.bounce = random(0, 30)
         this.speed = random(0.5, 4)
 
         this.driveReduction = floor(random(10, 50))
+
+        this.spriteImgs = [
+            baseSpritesheet.getSprite(toySpriteIndex),
+            baseSpritesheet.getSprite(toySpriteIndex + 20)
+        ]
+
+        this.spriteImgsFlipped = [
+            baseSpritesheet.getSprite(toySpriteIndex, /* isFlipped */ true),
+            baseSpritesheet.getSprite(toySpriteIndex + 20, /* isFlipped */ true)
+        ]
 
     }
 
@@ -77,10 +85,13 @@ class Toy extends GameObject {
         let x = floor(this.pos.x - (this.width / 2) + this.offsetX)
         let y = floor(this.pos.y - this.height + this.offsetY)
 
-        if (!this.isInInventory && !this.isBeingDragged) baseSpritesheet.drawSprite({ x, y: y + 1 }, shadowImgs.small)
+        if (!this.isInInventory && !this.isBeingDragged) image(shadowImgs.small, x, y + 1)
 
-        let spriteIndex = this.isActive ? this.activeSpriteIndex : this.inactiveSpriteIndex
-        baseSpritesheet.drawSprite({ x, y }, spriteIndex)
+        if (this.isActive) {
+            image(this.spriteImgs[1], x, y)
+        } else {
+            image(this.spriteImgs[0], x, y)
+        }
         
         // draw debug lines
         if (DEBUG) {

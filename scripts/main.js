@@ -6,6 +6,7 @@ TODO:
 - planet images/locations
 - review breeding mechanics
 - different behaviors for each toy
+- create loading screen
 
 BUGS:
 - memory leak: JS heap keeps increasing over time, needs to be cleared periodically with big garbage collection
@@ -72,12 +73,9 @@ let spritesheet, spritesheetImg, baseSpritesheet
 let colorSpritesheets = {}
 
 let userinterfaceImg, spaceButtonImg, spaceButtonForCreditsImg
-let shadowImgs = {
-    'small': 42,
-    'big': 43,
-    'small-jump': 44,
-    'big-jump': 45
-}
+let scoreButtonImgs = []
+let shadowImgs = {}
+let bubbleImgs = {}
 
 let blastedOffBunbons = []
 let confirmingBlastOff = false
@@ -148,9 +146,46 @@ function setup() {
     Object.keys(bunbonColors).forEach(colorName => {
         colorSpritesheets[colorName] = new Spritesheet(spritesheetImg, 32, 32, colorName)
     })
+
+    shadowImgs = {
+        'small': baseSpritesheet.getSprite(42),
+        'big': baseSpritesheet.getSprite(43),
+        'small-jump': baseSpritesheet.getSprite(44),
+        'big-jump': baseSpritesheet.getSprite(45)
+    }
+
+    bubbleImgs = {
+        'dreambubble': baseSpritesheet.getSprite(15),
+        'dreambubble-flipped': baseSpritesheet.getSprite(16, /* isFlipped */ true),
+        'speechbubble': baseSpritesheet.getSprite(9),
+        'speechbubble-flipped': baseSpritesheet.getSprite(9, /* isFlipped */ true),
+        'thoughtbubble-food': baseSpritesheet.getSprite(10),
+        'thoughtbubble-food-flipped': baseSpritesheet.getSprite(10, /* isFlipped */ true),
+        'thoughtbubble-toy': baseSpritesheet.getSprite(11),
+        'thoughtbubble-toy-flipped': baseSpritesheet.getSprite(11, /* isFlipped */ true),
+        'thoughtbubble-friend': baseSpritesheet.getSprite(12),
+        'thoughtbubble-friend-flipped': baseSpritesheet.getSprite(12, /* isFlipped */ true),
+        'thoughtbubble-sleep': baseSpritesheet.getSprite(13),
+        'thoughtbubble-sleep-flipped': baseSpritesheet.getSprite(14, /* isFlipped */ true)
+    }
  
     spaceButtonImg = spritesheetImg.get(0, 606, 34, 34)
     spaceButtonForCreditsImg = spritesheetImg.get(34, 606, 34, 34)
+
+    scoreButtonImgs = [
+        baseSpritesheet.getSprite(260),
+        baseSpritesheet.getSprite(261),
+        baseSpritesheet.getSprite(262),
+        baseSpritesheet.getSprite(263),
+        baseSpritesheet.getSprite(264),
+        baseSpritesheet.getSprite(265),
+        baseSpritesheet.getSprite(266),
+        baseSpritesheet.getSprite(267),
+        baseSpritesheet.getSprite(268),
+        baseSpritesheet.getSprite(269),
+        baseSpritesheet.getSprite(270),
+        baseSpritesheet.getSprite(271)
+    ]
 
     spaceScreen.setup()
     let isLoadSuccessful = loadState()

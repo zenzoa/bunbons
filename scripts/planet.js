@@ -4,8 +4,6 @@ class Planet extends ScreenState {
 
         super()
 
-        if (DEBUG) console.log('create planet', index, name)
-
         this.index = index
         this.name = name
         this.isUnlocked = startUnlocked
@@ -70,8 +68,6 @@ class Planet extends ScreenState {
 
     open() {
 
-        if (DEBUG) console.log('open planet', this.index, this.name)
-
         this.isBlastingOff = false
         unlockedPlanetCount = planets.filter(p => p.isUnlocked).length
 
@@ -79,7 +75,6 @@ class Planet extends ScreenState {
 
     close() {
 
-        if (DEBUG) console.log('close planet', this.index, this.name)
         saveState()
 
     }
@@ -165,7 +160,7 @@ class Planet extends ScreenState {
             let normalizedScore = selectedBunbon.score / selectedBunbon.maxScore
             let scoreImageIndex = floor(normalizedScore * 10)
             if (confirmingBlastOff) scoreImageIndex = 11
-            baseSpritesheet.drawSprite({ x: WORLD_WIDTH - 40, y: WORLD_HEIGHT + 4 }, scoreImageIndex + 260)
+            image(scoreButtonImgs[scoreImageIndex], WORLD_WIDTH - 40, WORLD_HEIGHT + 4)
             if (DEBUG) selectedBunbon.drawStatOrb()
         }
 

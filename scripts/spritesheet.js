@@ -16,15 +16,20 @@ class Spritesheet {
 
     }
 
-    drawSprite(pos, spriteIndex, isFlipped) {
+    getSprite(spriteIndex, isFlipped) {
 
         let img = isFlipped ? this.flippedImg : this.img
 
         let x = this.spriteWidth * floor(spriteIndex % this.spriteRows)
         let y = this.spriteHeight * floor(spriteIndex / this.spriteRows)
 
-        image(img.get(x, y, this.spriteWidth, this.spriteHeight), pos.x, pos.y)
+        return img.get(x, y, this.spriteWidth, this.spriteHeight)
 
+    }
+
+    copySprite(imageTarget, spriteIndex, isFlipped, x, y) {
+        let sprite = this.getSprite(spriteIndex, isFlipped)
+        imageTarget.copy(sprite, 0, 0, this.spriteWidth, this.spriteHeight, x, y, this.spriteWidth, this.spriteHeight)
     }
 
     changeColor(colorName) {
