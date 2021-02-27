@@ -1,20 +1,20 @@
 /*
 
 TODO:
-- add credits to credits screen
-- provide means of entering + exiting credits screen
 - planet images/locations
 - review breeding mechanics
 - different behaviors for each toy
 - create loading screen
+- sound effects
+- bg music for each planet + space + credits
 
 BUGS:
-- memory leak: JS heap keeps increasing over time, needs to be cleared periodically with big garbage collection
-- fix save & load: better saving strategy, new planet has the same bunbons as the old planet after blasting off
+- fix save & load: better saving strategy
+- new planet has the same bunbons as the old planet after blasting off
 
 */
 
-let DEBUG = true
+let DEBUG = false
 
 let FRAME_RATE = 30
 
@@ -92,6 +92,8 @@ let creditsScreen = new Credits()
 let currentScreen = spaceScreen
 let lastPlanet = null
 
+let bunbonCount = 0
+
 let myFont
 
 function openScreen(type, index, arg) {
@@ -99,9 +101,10 @@ function openScreen(type, index, arg) {
     currentScreen.close()
     if (type === 'space') {
         currentScreen = spaceScreen
-    }
-    else if (type === 'planet') {
+    } else if (type === 'planet') {
         currentScreen = planets[index]
+    } else if (type === 'credits') {
+        currentScreen = creditsScreen
     }
     currentScreen.open(index, arg)
 
@@ -190,7 +193,9 @@ function setup() {
     spaceScreen.setup()
     let isLoadSuccessful = loadState()
     if (!isLoadSuccessful) {
-        planets = Array(16).fill(0).map((x, i) => (new Planet(i, 'park')))
+        Object.keys(planetTypes).forEach(planetType => {
+            planets.push(new Planet(planetType))
+        })
         planets.forEach(planet => planet.setup())
         planets[0].isUnlocked = true
     }
@@ -203,6 +208,21 @@ function setup() {
         openScreen('space', 0)
     }
 
+}
+
+function printDebugCommands() {
+    console.log('DEBUG COMMANDS')
+    console.log('p - pause')
+    console.log('u - unlock planet\'s connections')
+    console.log('h - hatch carried egg')
+    console.log('a - make bunbon an adult')
+    console.log('s - increase bunbon\'s score')
+    console.log('b - make bunbon blast off')
+    console.log('e - make bunbon lay egg')
+    console.log('1 - make bunbon look for food')
+    console.log('2 - make bunbon look for toy')
+    console.log('3 - make bunbon look for friend')
+    console.log('4 - make bunbon go to sleep')
 }
 
 function draw() {
@@ -296,12 +316,7 @@ function mouseReleased() {
 
 function keyPressed() {
 
-    if (key === 'o') {
-        currentScreen = creditsScreen
-        currentScreen.open()
-    } else {
-        currentScreen.keyPressed()
-    }
+    currentScreen.keyPressed()
 
 }
 

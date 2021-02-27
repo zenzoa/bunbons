@@ -151,7 +151,11 @@ class Space extends ScreenState {
                     relY >= planet.y - planet.radius &&
                     relY < planet.y + planet.radius
                 ) {
-                    openScreen('planet', i)
+                    if (planet.name === 'credits') {
+                        openScreen('credits')
+                    } else {
+                        openScreen('planet', i)
+                    }
                 }
             })
 

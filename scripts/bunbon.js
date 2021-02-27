@@ -185,6 +185,8 @@ class Bunbon extends GameObject {
     constructor(pos, bunbonDNA) {
 
         super(24, 22)
+
+        bunbonCount++
         
         if (!bunbonDNA) bunbonDNA = Bunbon.randomDNA()
         this.dna = bunbonDNA
@@ -553,8 +555,6 @@ class Bunbon extends GameObject {
                 attempts++
             }
 
-            if (DEBUG && attempts >= MAX_ATTEMPTS) console.log('TOO MANY ATTEMPTS (pick far goal)', this.name)
-
             if (newGoal) {
                 this.goalType = 'wander'
                 this.farGoal = newGoal
@@ -622,8 +622,6 @@ class Bunbon extends GameObject {
                 }
                 attempts++
             }
-
-            if (DEBUG && attempts >= MAX_ATTEMPTS) console.log('TOO MANY ATTEMPTS (pick near goal)', this.name)
 
             if (newGoal) this.nearGoal = newGoal
 
@@ -975,6 +973,7 @@ class Bunbon extends GameObject {
             currentScreen.blastOff()
             blastedOffBunbons.push(this)
             this.removeMe = true
+            bunbonCount--
         }
 
     }

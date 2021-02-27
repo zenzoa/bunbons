@@ -1,13 +1,50 @@
+let planetTypes = {
+    'park': {
+        index: 0,
+        x: 320,
+        y: 240,
+        connectedPlanets: [1],
+        color: 'pink' // TEMP
+    },
+    'mossyforest': {
+        index: 1,
+        x: 420,
+        y: 200,
+        connectedPlanets: [0, 2],
+        color: 'green' // TEMP
+    },
+    'volcano': {
+        index: 2,
+        x: 520,
+        y: 300,
+        connectedPlanets: [1,3],
+        color: 'red' // TEMP
+    },
+    'credits': {
+        index: 3,
+        x: 560,
+        y: 100,
+        connectedPlanets: [2],
+        color: 'yellow' // TEMP
+    }
+}
+
 class Planet extends ScreenState {
 
-    constructor(index, name, connectedPlanets = [], startUnlocked = false) {
+    constructor(type, startUnlocked = false) {
 
         super()
 
-        this.index = index
-        this.name = name
+        let planetType = planetTypes[type]
+
+        this.name = type
+        this.index = planetType.index
+        this.x = planetType.x
+        this.y = planetType.y
+        this.connectedPlanets = planetType.connectedPlanets
+        this.color = planetType.color // TEMP
+
         this.isUnlocked = startUnlocked
-        this.connectedPlanets = connectedPlanets
 
         this.inventoryIsVisible = true
 
@@ -15,53 +52,33 @@ class Planet extends ScreenState {
 
     setup() {
 
-        this.radius = floor(random(8, 16))
-        this.color = random(['red', 'orange', 'yellow', 'green', 'cyan', 'blue', 'purple', 'magenta', 'pink'])
-        this.x = floor(random(this.radius, SPACE_WIDTH - this.radius))
-        this.y = floor(random(this.radius, SPACE_HEIGHT - this.radius))
+        // setup icon
+        this.radius = floor(random(8, 16)) // TEMP
 
+        // skip if this planet opens credits screen
+        if (this.name === 'credits') return
+
+        // setup bg + collision mask
         this.mask = planetMasks[this.name]
         this.mask.loadPixels()
         this.background = planetBGs[this.name]
 
+        // place objects
         this.objects = []
-        this.objects.push(new Bunbon(this.randomPoint()))
-        this.objects.push(new Bunbon(this.randomPoint()))
-        this.objects.push(new Bunbon(this.randomPoint()))
-        this.objects.push(new Food(this.randomPoint()))
-        this.objects.push(new Food(this.randomPoint()))
-        this.objects.push(new Food(this.randomPoint()))
-        this.objects.push(new Toy(this.randomPoint()))
-        this.objects.push(new Toy(this.randomPoint()))
-        this.objects.push(new Toy(this.randomPoint()))
-        this.objects.push(new Egg(this.randomPoint()))
-
-        let maxConnections = 3
-        let numConnections = floor(random(1, maxConnections + 1)) - this.connectedPlanets.length
-        for (let i = 0; i < numConnections; i++) {
-            let connectionFound = false
-            let planetsTried = 0
-            while(!connectionFound) {
-                let connection = floor(random(planets.length))
-                let connectedPlanet = planets[connection]
-                if (connection === this.index) {
-                    // do nothing
-                }
-                else if (connectedPlanet.connectedPlanets.includes[this.index]) {
-                    connectionFound = true
-                }
-                else if (connectedPlanet.connectedPlanets.length < maxConnections) {
-                    connectionFound = true
-                    connectedPlanet.connectedPlanets.push(this.index)
-                    this.connectedPlanets.push(connection)
-                }
-                else if (planetsTried > 100) {
-                    connectionFound = true
-                }
-                else {
-                    planetsTried++
-                }
-            }
+        if (this.name === 'park') {
+            this.objects.push(new Toy(this.randomPoint(), 'bun-doll'))
+            this.objects.push(new Food(this.randomPoint(), 'sandwich'))
+            this.objects.push(new Egg(this.randomPoint()))
+            this.objects.push(new Egg(this.randomPoint()))
+            this.objects.push(new Egg(this.randomPoint()))
+        } else if (this.name === 'mossyforest') {
+            this.objects.push(new Toy(this.randomPoint(), 'moss-ball'))
+            this.objects.push(new Food(this.randomPoint(), 'mushrooms'))
+            this.objects.push(new Egg(this.randomPoint()))
+        } else if (this.name === 'volcano') {
+            this.objects.push(new Toy(this.randomPoint(), 'pull-turtle'))
+            this.objects.push(new Food(this.randomPoint(), 'dragon-fruit'))
+            this.objects.push(new Egg(this.randomPoint()))
         }
 
     }
@@ -159,7 +176,11 @@ class Planet extends ScreenState {
         if (selectedBunbon && selectedBunbon instanceof Bunbon) {
             let normalizedScore = selectedBunbon.score / selectedBunbon.maxScore
             let scoreImageIndex = floor(normalizedScore * 10)
-            if (confirmingBlastOff) scoreImageIndex = 11
+            if (confirmingBlastOff) {
+                scoreImageIndex = 11
+            } else if (!selectedBunbon.canBlastOff || bunbonCount < 3) {
+                scoreImageIndex = Math.min(scoreImageIndex, 9)
+            }
             image(scoreButtonImgs[scoreImageIndex], WORLD_WIDTH - 40, WORLD_HEIGHT + 4)
             if (DEBUG) selectedBunbon.drawStatOrb()
         }
@@ -230,7 +251,7 @@ class Planet extends ScreenState {
             }
 
             else if (
-                selectedBunbon && selectedBunbon.canBlastOff &&
+                selectedBunbon && selectedBunbon.canBlastOff && bunbonCount >= 3 &&
                 x >= blastOffButton.x && x < blastOffButton.x + blastOffButton.width &&
                 y >= blastOffButton.y && y < blastOffButton.y + blastOffButton.height
             ) {
@@ -252,14 +273,19 @@ class Planet extends ScreenState {
 
     keyPressed() {
 
-        if (keyIsDown(CONTROL) && key === '~') {
+        if (key === '~') {
             DEBUG = !DEBUG
-            if (DEBUG) console.log('~ DEBUG MODE ON ~')
-            else console.log('~ DEBUG MODE OFF ~')
+            if (DEBUG) {
+                console.log('~ DEBUG MODE ON ~')
+                printDebugCommands()
+            } else {
+                console.log('~ DEBUG MODE OFF ~')
+            }
 
         } else if (DEBUG) {
 
             let selectedBunbon = this.objects[this.selectedBunbonIndex]
+            let selectedObject = this.objects[this.selectedObjectIndex]
 
             if (key === 'u') {
                 this.unlockConnections()
@@ -285,6 +311,8 @@ class Planet extends ScreenState {
                 selectedBunbon.startBlastOff()
             } else if (key === 'e') {
                 selectedBunbon.layEgg()
+            } else if (key === 'h') {
+                if (selectedObject instanceof Egg) selectedObject.hatch()
             }
 
         }
