@@ -77,7 +77,6 @@ class ScreenState {
             }
             attempts++
         }
-        if (DEBUG && attempts >= MAX_ATTEMPTS) console.log('TOO MANY ATTEMPTS (random point)')
         return pos
     
     }
@@ -206,7 +205,7 @@ class ScreenState {
 
             interactedWithObject = true
 
-            if (selectedObject.isBeingDragged) {
+            if (selectedObject.isBeingDragged || selectedObject.isInInventory) {
 
                 selectedObject.isBeingDragged = false
 
@@ -231,7 +230,7 @@ class ScreenState {
 
                 }
 
-            } else {
+            } else if (!selectedObject.isInInventory) {
                 // clicked object
                 selectedObject.onPush(/* byPlayer */ true)
             }
