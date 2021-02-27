@@ -23,6 +23,21 @@ class Credits extends ScreenState {
         fill('#222')
         rect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT)
 
+        fill('#ddd')
+        text('~ bunbons ~', SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2 - 60)
+
+        fill('#bbb')
+        text('created by sg', SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2 - 40)
+        text('background art by tati', SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2 - 10)
+        text('sound effects by ??', SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2 + 20)
+        text('music by ??', SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2 + 50)
+
+        fill('#999')
+        text('zenzoa.itch.io', SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2 - 30)
+        text('[tati website]', SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2)
+        text('[sound website]', SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2 + 30)
+        text('[music website]', SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2 + 60)
+
         image(spaceButtonForCreditsImg, 3, WORLD_HEIGHT + 3)
 
         this.sortGameObjectsByPos()
