@@ -17,7 +17,7 @@ class Egg extends Toy {
         this.offsetY = -7
 
         this.bunbonDNA = bunbonDNA || Bunbon.randomDNA()
-        this.timeToHatch = FRAME_RATE * 60 // 1 minute
+        this.timeToHatch = Math.floor(FRAME_RATE * 60 * random(0.8, 1.2))
         this.color = this.bunbonDNA.color
 
         this.isShaking = false
@@ -41,6 +41,13 @@ class Egg extends Toy {
 
     }
 
+    hatch() {
+        let bunbon = new Bunbon(this.pos, this.bunbonDNA)
+        currentScreen.objects.push(bunbon)
+        if (DEBUG) console.log(bunbon.name, 'has hatched')
+        this.removeMe = true
+    }
+
     update() {
 
         if (this.isBeingDragged) return
@@ -48,10 +55,7 @@ class Egg extends Toy {
         // update hatching progress
         this.timeToHatch--
         if (this.timeToHatch <= 0) {
-            let bunbon = new Bunbon(this.pos, this.bunbonDNA)
-            currentScreen.objects.push(bunbon)
-            if (DEBUG) console.log(bunbon.name, 'has hatched')
-            this.removeMe = true
+            this.hatch()
         }
 
     }
