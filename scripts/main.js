@@ -2,11 +2,12 @@
 
 TODO:
 - planet images/locations
-- review breeding mechanics
 - different behaviors for each toy
 - create loading screen
 - sound effects
 - bg music for each planet + space + credits
+- bg for space view
+- make sure you can select bunbons in credits screen to see their names
 
 BUGS:
 - fix save & load: better saving strategy
@@ -14,7 +15,7 @@ BUGS:
 
 */
 
-let DEBUG = false
+let DEBUG = true
 
 let FRAME_RATE = 30
 
@@ -72,7 +73,7 @@ let Vector = p5.Vector
 let spritesheet, spritesheetImg, baseSpritesheet
 let colorSpritesheets = {}
 
-let userinterfaceImg, spaceButtonImg, spaceButtonForCreditsImg
+let userinterfaceImg, spaceButtonImg, spaceButtonForCreditsImg, heartImg
 let scoreButtonImgs = []
 let shadowImgs = {}
 let bubbleImgs = {}
@@ -171,6 +172,8 @@ function setup() {
         'thoughtbubble-sleep': baseSpritesheet.getSprite(13),
         'thoughtbubble-sleep-flipped': baseSpritesheet.getSprite(14, /* isFlipped */ true)
     }
+
+    heartImg = spritesheetImg.get(608, 0, 12, 10)
  
     spaceButtonImg = spritesheetImg.get(0, 606, 34, 34)
     spaceButtonForCreditsImg = spritesheetImg.get(34, 606, 34, 34)

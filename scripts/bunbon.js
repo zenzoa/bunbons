@@ -390,10 +390,17 @@ class Bunbon extends GameObject {
 
     static canBreed(parent1, parent2) {
 
-        if (parent1.isBaby || parent2.isBaby) {
-            if (DEBUG) console.log('PROBLEM:', parent1.name, 'and', parent2.name, 'are not both fully grown')
+        // don't breed if parents have laid an egg recently
+        if (parent1.eggCooldownTimer || parent2.eggCooldownTimer) {
             return false
         }
+
+        // don't breed if either parent is too young
+        if (parent1.isBaby || parent2.isBaby) {
+            return false
+        }
+
+        // don't breed if parents are too closely related
         let sharedParents = parent1.parents.filter(p => parent2.parents.includes(p))
         if (
             sharedParents.length >= 1 ||
@@ -401,34 +408,70 @@ class Bunbon extends GameObject {
             parent2.parents.includes(parent1.name) ||
             parent1.name === parent2.name
         ) {
-            if (DEBUG) console.log('PROBLEM:', parent1.name, 'and', parent2.name, 'are too closely related')
             return false
         }
+
+        // don't breed if on credits screen
+        if (currentScreen instanceof Credits) {
+            return false
+        }
+
+        // don't breed if there are too many bunbons on the current planet
+        let bunbonCount = currentScreen.objects.filter(o => o instanceof Bunbon).length
+        if (bunbonCount >= 6) {
+            return false
+        }
+
         return true
 
     }
 
     static breed(parent1, parent2) {
 
+        // make sure bunbons can breed
+        if (!Bunbon.canBreed(parent1, parent2)) return
+
         if (DEBUG) console.log('breeding:', parent1.name, 'and', parent2.name)
 
+        // set up baby's dna
         let dna1 = parent1.dna
         let dna2 = parent2.dna
-
         let chromosome1 = random(dna1.chromosomes)
         let chromosome2 = random(dna2.chromosomes)
-
         let combinedDNA = {
             parents: [parent1.name, parent2.name],
             chromosomes: [chromosome1, chromosome2]
         }
 
+        // pick random parent for each of baby's gene
         Object.keys(chromosome1).forEach(gene => {
             let chromosome = combinedDNA.chromosomes[random([0, 1])]
             combinedDNA[gene] = chromosome[gene]
         })
 
-        return combinedDNA
+        // TODO: small chance of random mutation?
+
+        // lay egg between the two parents
+        let x = (parent1.pos.x + parent2.pos.x) / 2
+        let y = (parent1.pos.y + parent2.pos.y) / 2
+        Bunbon.layEgg(combinedDNA, { x, y })
+
+        // set cooldown timer on parents
+        parent1.eggCooldownTimer = FRAME_RATE * 60
+        parent2.eggCooldownTimer = FRAME_RATE * 60
+
+        // draw heart
+        parent1.heartTimer = SCREEN_HEIGHT
+        parent1.heartX = x
+        parent1.heartY = Math.min(parent1.pos.y, parent2.pos.y) - parent1.height
+
+    }
+
+    static layEgg(bunbonDNA, pos) {
+
+        pos = pos || currentScreen.randomPoint()
+        let egg = new Egg(pos, bunbonDNA)
+        currentScreen.objects.push(egg)
 
     }
 
@@ -566,14 +609,11 @@ class Bunbon extends GameObject {
             if (!this.goalType) {
                 if (drive === 'hunger' || setGoal === 'food') {
                     foodGoal(setGoal === 'food')
-                }
-                else if (drive === 'boredom' || setGoal === 'toy') {
+                } else if (drive === 'boredom' || setGoal === 'toy') {
                     toyGoal(setGoal === 'toy')
-                }
-                else if (drive === 'loneliness' || setGoal === 'friend') {
+                } else if (drive === 'loneliness' || setGoal === 'friend') {
                     friendGoal(setGoal === 'friend')
-                }
-                else if (drive === 'sleepiness' || setGoal === 'sleep') {
+                } else if (drive === 'sleepiness' || setGoal === 'sleep') {
                     sleepGoal(setGoal === 'sleep')
                 }
             }
@@ -703,6 +743,7 @@ class Bunbon extends GameObject {
         let goalName = this.goalObject ? this.goalObject.name : ''
 
         if (this.goalType === 'food') {
+
             if (!this.goalObject.isRefilling) {
                 this.startEat()
                 this.goalObject.onPush()
@@ -714,9 +755,9 @@ class Bunbon extends GameObject {
                 let rate = opinion >= 50 ? 2 : 1
                 this.reduceDrive('hunger', this.goalObject.driveReduction * rate)
             }
-        }
 
-        else if (this.goalType === 'toy') {
+        } else if (this.goalType === 'toy') {
+
             this.startPlay()
             this.goalObject.onPush()
             if (!this.toyOpinions[goalName]) {
@@ -726,16 +767,15 @@ class Bunbon extends GameObject {
             let opinion = this.toyOpinions[goalName]
             let rate = opinion >= 50 ? 2 : 1
             this.reduceDrive('boredom', this.goalObject.driveReduction * rate)
-        }
 
-        else if (this.goalType === 'friend') {
+        } else if (this.goalType === 'friend') {
+
             if (!this.friendOpinions[goalName]) {
                 this.friendOpinions[goalName] = floor(random(0, 100))
                 if (DEBUG) console.log(this.name, 'met a new friend,', goalName, '(opinion', this.friendOpinions[goalName] + '%)')
-            } else if (this.friendOpinions[goalName] > 50 && this.goalObject.friendOpinions[this.name] > 50) {
-                Bunbon.breed(this, this.goalObject)
             }
             this.startChat(this.goalObject)
+            
         }
 
         this.pickFarGoal()
@@ -925,6 +965,7 @@ class Bunbon extends GameObject {
         this.state = null
         if (chatPartner && chatPartner.chatPartner === this) {
             if (this.friendOpinions[chatPartner.name]) {
+
                 let opinionBoost = floor(random(0, 11))
                 let newOpinion = min(this.friendOpinions[chatPartner.name] + opinionBoost, 100)
                 if (DEBUG && opinionBoost) {
@@ -934,16 +975,15 @@ class Bunbon extends GameObject {
                     )
                 }
                 this.friendOpinions[chatPartner.name] = newOpinion
+
+                if (this.friendOpinions[chatPartner.name] > 50 && chatPartner.friendOpinions[this.name] > 50) {
+                    let willBreed = random() < 0.1
+                    if (willBreed) Bunbon.breed(this, this.goalObject)
+                }
+
             }
             chatPartner.endChat()
         }
-
-    }
-
-    layEgg(bunbonDNA) {
-
-        let egg = new Egg(currentScreen.randomPoint(), bunbonDNA)
-        currentScreen.objects.push(egg)
 
     }
 
@@ -995,14 +1035,6 @@ class Bunbon extends GameObject {
         
         this.pickFarGoal(null, obj)
         this.pickNearGoal()
-        
-        if (DEBUG && obj instanceof Bunbon) {
-            if (Bunbon.canBreed(this, obj)) {
-                let combinedDNA = Bunbon.breed(this, obj)
-                this.layEgg(combinedDNA)
-                if (DEBUG) console.log(this.name, 'and', obj.name, 'laid an egg')
-            }
-        }
 
     }
 
@@ -1068,34 +1100,25 @@ class Bunbon extends GameObject {
         // check state
         if (this.state === 'blasting-off') {
             this.blastOff()
-        }
-        else if (this.state === 'being-dragged') {
+        } else if (this.state === 'being-dragged') {
             updateFace = true
-        }
-        else if (this.state === 'eating') {
+        } else if (this.state === 'eating') {
             this.eat()
-        }
-        else if (this.state === 'chatting') {
+        } else if (this.state === 'chatting') {
             this.chat()
-        }
-        else if (this.state === 'sleeping') {
+        } else if (this.state === 'sleeping') {
             this.sleep()
-        }
-        else if (this.state === 'being-pet') {
+        } else if (this.state === 'being-pet') {
             this.pet()
-        }
-        else if (this.state === 'playing') {
+        } else if (this.state === 'playing') {
             this.play()
-        }
-        else if (this.state === 'resting') {
+        } else if (this.state === 'resting') {
             this.rest()
             updateFace = true
-        }
-        else if (this.state === 'jumping') {
+        } else if (this.state === 'jumping') {
             this.jump()
             updateFace = true
-        }
-        else {
+        } else {
             this.moveToGoal()
             updateFace = true
         }
@@ -1210,22 +1233,29 @@ class Bunbon extends GameObject {
                 let dreamBubbleX = this.isFlipped ? x - 26 : x + 26
                 let dreamBubbleY = y + Math.sin(this.sleepTimer * .1)
                 image(bubbleImgs['dreambubble' + (this.isFlipped ? '-flipped' : '')], dreamBubbleX, dreamBubbleY)
-            }
-            
-            else if (this.state === 'chatting') {
+            } else if (this.state === 'chatting') {
                 // draw speech bubble
                 if (this.speechBubbleTimer > 0) {
                     let speechBubbleX = this.isFlipped ? x - 20 : x + 20
                     let speechBubbleY = y + Math.sin(this.speechBubbleTimer * 0.33) - 2
                     image(bubbleImgs['speechbubble' + (this.isFlipped ? '-flipped' : '')], speechBubbleX, speechBubbleY)
                 }
-            }
-            
-            else if (this.isThinking) {
+            } else if (this.isThinking) {
                 // draw thought bubble
                 let thoughtBubbleX = this.isFlipped ? x - 20 : x + 20
                 let thoughtBubbleY = y - 4
                 image(bubbleImgs['thoughtbubble-' + this.thoughtType + (this.isFlipped ? '-flipped' : '')], thoughtBubbleX, thoughtBubbleY)
+            }
+
+            if (this.heartTimer) {
+                image(heartImg, this.heartX - 6, this.heartY - 5)
+                this.heartTimer--
+                this.heartY--
+                this.heartX += random([-1, 0, 0, 0, 0, 0, 0, 0, 0, 1])
+            }
+
+            if (this.eggCooldownTimer) {
+                this.eggCooldownTimer--
             }
 
             // draw selection info

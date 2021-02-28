@@ -11,7 +11,7 @@ class Egg extends Toy {
         super(22, 24)
 
         this.name = 'egg'
-        this.pos = pos
+        this.pos = createVector(pos.x, pos.y)
 
         this.offsetX = -4
         this.offsetY = -7
