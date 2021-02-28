@@ -977,8 +977,8 @@ class Bunbon extends GameObject {
                 this.friendOpinions[chatPartner.name] = newOpinion
 
                 if (this.friendOpinions[chatPartner.name] > 50 && chatPartner.friendOpinions[this.name] > 50) {
-                    let willBreed = random() < 0.1
-                    if (willBreed) Bunbon.breed(this, this.goalObject)
+                    let willBreed = random() < 0.2
+                    if (willBreed) Bunbon.breed(this, chatPartner)
                 }
 
             }
