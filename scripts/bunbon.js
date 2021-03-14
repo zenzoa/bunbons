@@ -348,31 +348,31 @@ class Bunbon extends GameObject {
         this.rocketIcon2 = colorSpritesheets[this.color].getSprite(18)
     }
 
+    static randomChromosome() {
+        return {
+            color: random(Object.keys(bunbonColors)),
+            secondaryColor: random(Object.keys(bunbonColors)),
+
+            ears: random(Object.keys(bunbonEars)),
+            tail: random(Object.keys(bunbonTails)),
+            back: random(Object.keys(bunbonBacks)),
+            head: random(Object.keys(bunbonHeads)),
+            pattern: random(Object.keys(bunbonPatterns)),
+
+            ageToAdulthood: random(120, 480), // 2 - 8 minutes
+            maxSpeed: random(0.2, 0.8),
+            restChance: random(0.001, 0.02),
+            jumpChance: random(0.01, 0.1),
+            hungerRate: floor(random() * 100),
+            boredomRate: floor(random() * 100),
+            lonelinessRate: floor(random() * 100),
+            sleepinessRate: floor(random() * 100)
+        }
+    }
+
     static randomDNA() {
 
-        let randomChromosome = () => {
-            return {
-                color: random(Object.keys(bunbonColors)),
-                secondaryColor: random(Object.keys(bunbonColors)),
-
-                ears: random(Object.keys(bunbonEars)),
-                tail: random(Object.keys(bunbonTails)),
-                back: random(Object.keys(bunbonBacks)),
-                head: random(Object.keys(bunbonHeads)),
-                pattern: random(Object.keys(bunbonPatterns)),
-
-                ageToAdulthood: random(120, 480), // 2 - 8 minutes
-                maxSpeed: random(0.2, 0.8),
-                restChance: random(0.001, 0.02),
-                jumpChance: random(0.01, 0.1),
-                hungerRate: floor(random() * 100),
-                boredomRate: floor(random() * 100),
-                lonelinessRate: floor(random() * 100),
-                sleepinessRate: floor(random() * 100)
-            }
-        }
-
-        let chromosome = randomChromosome()
+        let chromosome = Bunbon.randomChromosome()
 
         let dna = {
             parents: [],
@@ -429,9 +429,9 @@ class Bunbon extends GameObject {
     static breed(parent1, parent2) {
 
         // make sure bunbons can breed
-        if (!Bunbon.canBreed(parent1, parent2)) return
+        if (!DEBUG && !Bunbon.canBreed(parent1, parent2)) return
 
-        if (DEBUG) console.log('breeding:', parent1.name, 'and', parent2.name)
+        if (LOG_STORIES) console.log(parent1.name, 'and', parent2.name, 'laid an egg')
 
         // set up baby's dna
         let dna1 = parent1.dna
@@ -443,13 +443,17 @@ class Bunbon extends GameObject {
             chromosomes: [chromosome1, chromosome2]
         }
 
-        // pick random parent for each of baby's gene
+        // pick random parent for each of baby's gene (or a random mutation)
         Object.keys(chromosome1).forEach(gene => {
-            let chromosome = combinedDNA.chromosomes[random([0, 1])]
+            let chromosome
+            if (random() < MUTATION_RATE) {
+                chromosome = Bunbon.randomChromosome()
+                if (DEBUG) console.log('a mutation occurred in gene', gene)
+            } else {
+                chromosome = combinedDNA.chromosomes[random([0, 1])]
+            }
             combinedDNA[gene] = chromosome[gene]
         })
-
-        // TODO: small chance of random mutation?
 
         // lay egg between the two parents
         let x = (parent1.pos.x + parent2.pos.x) / 2
@@ -749,7 +753,7 @@ class Bunbon extends GameObject {
                 this.goalObject.onPush()
                 if (!this.foodOpinions[goalName]) {
                     this.foodOpinions[goalName] = floor(random(0, 100))
-                    if (DEBUG) console.log(this.name, 'tried new food,', goalName, '(opinion', this.foodOpinions[goalName] + '%)')
+                    if (LOG_STORIES) console.log(this.name, 'tried new food,', goalName, '(opinion:', this.foodOpinions[goalName] + '%)')
                 }
                 let opinion = this.foodOpinions[goalName]
                 let rate = opinion >= 50 ? 2 : 1
@@ -762,7 +766,7 @@ class Bunbon extends GameObject {
             this.goalObject.onPush()
             if (!this.toyOpinions[goalName]) {
                 this.toyOpinions[goalName] = floor(random(0, 100))
-                if (DEBUG) console.log(this.name, 'tried new toy,', goalName, '(opinion', this.toyOpinions[goalName] + '%)')
+                if (LOG_STORIES) console.log(this.name, 'tried new toy,', goalName, '(opinion:', this.toyOpinions[goalName] + '%)')
             }
             let opinion = this.toyOpinions[goalName]
             let rate = opinion >= 50 ? 2 : 1
@@ -772,7 +776,7 @@ class Bunbon extends GameObject {
 
             if (!this.friendOpinions[goalName]) {
                 this.friendOpinions[goalName] = floor(random(0, 100))
-                if (DEBUG) console.log(this.name, 'met a new friend,', goalName, '(opinion', this.friendOpinions[goalName] + '%)')
+                if (LOG_STORIES) console.log(this.name, 'met a new friend,', goalName, '(opinion:', this.friendOpinions[goalName] + '%)')
             }
             this.startChat(this.goalObject)
             
@@ -788,7 +792,7 @@ class Bunbon extends GameObject {
         this.thoughtType = thoughtType
         this.thoughtTimer = 0
         this.thoughtLength = floor(random(60, 120))
-        if (DEBUG) console.log(this.name, 'is thinking about', this.thoughtType)
+        if (LOG_STORIES) console.log(this.name, 'is thinking about', this.thoughtType)
     
     }
 
@@ -868,7 +872,7 @@ class Bunbon extends GameObject {
 
     startSleep() {
 
-        if (DEBUG) console.log(this.name, 'went to sleep')
+        if (LOG_STORIES) console.log(this.name, 'went to sleep')
         this.state = 'sleeping'
         this.sleepTimer = 0
         this.originalPos = this.pos
@@ -890,7 +894,7 @@ class Bunbon extends GameObject {
         this.sleepTimer++
 
         if (this.sleepTimer > this.sleepLength) { //} || this.drives.sleepiness <= 0) {
-            if (DEBUG) console.log(this.name, 'woke up')
+            if (LOG_STORIES) console.log(this.name, 'woke up')
             this.state = null
             this.pos = this.originalPos
         }
@@ -921,7 +925,7 @@ class Bunbon extends GameObject {
 
         if (this.state === 'chatting' || chatPartner.state === 'sleeping') return
         this.chatPartner = chatPartner
-        if (DEBUG) console.log(this.name, 'is chatting with', this.chatPartner.name)
+        if (LOG_STORIES) console.log(this.name, 'is chatting with', this.chatPartner.name)
         this.state = 'chatting'
         this.chatTimer = 0
         this.chatLength = floor(random(this.maxChatLength / 2, this.maxChatLength))
@@ -968,7 +972,7 @@ class Bunbon extends GameObject {
 
                 let opinionBoost = floor(random(0, 11))
                 let newOpinion = min(this.friendOpinions[chatPartner.name] + opinionBoost, 100)
-                if (DEBUG && opinionBoost) {
+                if (LOG_STORIES && opinionBoost) {
                     console.log(
                         this.name + '\'s opinion of', chatPartner.name, 'went from',
                         this.friendOpinions[chatPartner.name] + '%', 'to', newOpinion + '%'
@@ -989,7 +993,7 @@ class Bunbon extends GameObject {
 
     startBlastOff() {
 
-        if (DEBUG) console.log(this.name, 'is blasting off!')
+        if (LOG_STORIES) console.log(this.name, 'is blasting off!')
 
         this.state = 'blasting-off'
         this.blastOffTimer = 0
@@ -1036,6 +1040,10 @@ class Bunbon extends GameObject {
         this.pickFarGoal(null, obj)
         this.pickNearGoal()
 
+        if (DEBUG && obj instanceof Bunbon) {
+            Bunbon.breed(this, obj)
+        }
+
     }
 
     updateAge() {
@@ -1045,7 +1053,7 @@ class Bunbon extends GameObject {
             this.age++
             this.ageTimer = 0
             if (this.isBaby && this.age >= this.ageToAdulthood) {
-                if (DEBUG) console.log(this.name, 'has grown up')
+                if (LOG_STORIES) console.log(this.name, 'has grown up')
                 this.isBaby = false
             }
         }
@@ -1060,7 +1068,7 @@ class Bunbon extends GameObject {
             if (this.score > this.maxScore) {
                 this.score = this.maxScore
                 this.canBlastOff = true
-                if (DEBUG) console.log(this.name, 'is ready to blast off!')
+                if (LOG_STORIES) console.log(this.name, 'is ready to blast off!')
             }
         } else {
             this.scoreIncreased = false

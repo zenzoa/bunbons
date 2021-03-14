@@ -44,7 +44,7 @@ class Egg extends Toy {
     hatch() {
         let bunbon = new Bunbon(this.pos, this.bunbonDNA)
         currentScreen.objects.push(bunbon)
-        if (DEBUG) console.log(bunbon.name, 'has hatched')
+        if (LOG_STORIES) console.log(bunbon.name, 'has hatched')
         this.removeMe = true
     }
 

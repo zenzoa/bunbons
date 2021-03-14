@@ -15,10 +15,13 @@ BUGS:
 */
 
 let DEBUG = false
+let LOG_STORIES = true
 
 let FRAME_RATE = 30
 
 let MAX_ATTEMPTS = 100
+
+let MUTATION_RATE = 0.1
 
 let CANVAS_SCALE = 2
 
