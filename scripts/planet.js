@@ -290,23 +290,23 @@ class Planet extends ScreenState {
                 this.isPaused = !this.isPaused
                 if (this.isPaused) noLoop()
                 else loop()
-            } else if (key === '1') {
+            } else if (key === '1' && selectedBunbon) {
                 selectedBunbon.pickFarGoal('food')
-            } else if (key === '2') {
+            } else if (key === '2' && selectedBunbon) {
                 selectedBunbon.pickFarGoal('toy')
-            } else if (key === '3') {
+            } else if (key === '3' && selectedBunbon) {
                 selectedBunbon.pickFarGoal('friend')
-            } else if (key === '4') {
+            } else if (key === '4' && selectedBunbon) {
                 selectedBunbon.pickFarGoal('sleep')
-            } else if (key === 'a') {
+            } else if (key === 'a' && selectedBunbon) {
                 selectedBunbon.isBaby = !selectedBunbon.isBaby
-            } else if (key === 's') {
+            } else if (key === 's' && selectedBunbon) {
                 selectedBunbon.score += 60
                 selectedBunbon.score = min(selectedBunbon.score, selectedBunbon.maxScore)
-            } else if (key === 'b') {
+            } else if (key === 'b' && selectedBunbon) {
                 this.isBlastingOff = true
                 selectedBunbon.startBlastOff()
-            } else if (key === 'e') {
+            } else if (key === 'e' && selectedBunbon) {
                 selectedBunbon.layEgg()
             } else if (key === 'h') {
                 if (selectedObject instanceof Egg) selectedObject.hatch()
