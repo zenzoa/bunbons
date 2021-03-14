@@ -114,19 +114,19 @@ function preload() {
 
     myFont = loadFont('fonts/UbuntuMono-Bold.woff')
 
-    spritesheetImg = loadImage('../images/spritesheet.png')
-    userinterfaceImg = loadImage('../images/userinterface.png')
+    spritesheetImg = loadImage('images/spritesheet.png')
+    userinterfaceImg = loadImage('images/userinterface.png')
 
     planetBGs = {
-        mossyforest: loadImage('../images/planets/mossyforest.png'),
-        park: loadImage('../images/planets/park.png'),
-        volcano: loadImage('../images/planets/volcano.png')
+        mossyforest: loadImage('images/planets/mossyforest.png'),
+        park: loadImage('images/planets/park.png'),
+        volcano: loadImage('images/planets/volcano.png')
     }
 
     planetMasks = {
-        mossyforest: loadImage('../images/planets/mossyforest-mask.png'),
-        park: loadImage('../images/planets/park-mask.png'),
-        volcano: loadImage('../images/planets/volcano-mask.png')
+        mossyforest: loadImage('images/planets/mossyforest-mask.png'),
+        park: loadImage('images/planets/park-mask.png'),
+        volcano: loadImage('images/planets/volcano-mask.png')
     }
 
 }
