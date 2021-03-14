@@ -13,9 +13,11 @@ class Credits extends ScreenState {
             bunbon.pos = this.randomPoint()
             bunbon.state = ''
         })
+        planetSoundtracks['credits'].play()
     }
 
     close() {
+        planetSoundtracks['credits'].stop()
     }
 
     draw() {
@@ -30,13 +32,13 @@ class Credits extends ScreenState {
         text('created by sg', SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2 - 40)
         text('background art by tati', SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2 - 10)
         text('sound effects by ??', SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2 + 20)
-        text('music by ??', SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2 + 50)
+        text('music by visager', SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2 + 50)
 
         fill('#999')
         text('zenzoa.itch.io', SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2 - 30)
-        text('[tati website]', SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2)
+        text('tatianasoutar.com', SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2)
         text('[sound website]', SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2 + 30)
-        text('[music website]', SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2 + 60)
+        text('freemusicarchive.org/music/visager', SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2 + 60)
 
         image(spaceButtonForCreditsImg, 3, WORLD_HEIGHT + 3)
 

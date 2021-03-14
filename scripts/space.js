@@ -32,10 +32,14 @@ class Space extends ScreenState {
                 this.startBlastOff(planet.x - this.offsetX, planet.y - this.offsetY)
             }
         }
+        planetSoundtracks['space'].play()
 
     }
 
     close() {
+
+        planetSoundtracks['space'].stop()
+        
     }
 
     startBlastOff(x, y) {

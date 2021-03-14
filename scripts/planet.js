@@ -88,11 +88,15 @@ class Planet extends ScreenState {
         this.isBlastingOff = false
         unlockedPlanetCount = planets.filter(p => p.isUnlocked).length
 
+        planetSoundtracks[this.name].play()
+
     }
 
     close() {
 
         saveState()
+
+        planetSoundtracks[this.name].stop()
 
     }
 
@@ -286,6 +290,8 @@ class Planet extends ScreenState {
 
             if (key === 'u') {
                 this.unlockConnections()
+            } else if (key === 'c') {
+                openScreen('credits')
             } else if (key === 'p') {
                 this.isPaused = !this.isPaused
                 if (this.isPaused) noLoop()

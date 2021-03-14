@@ -1,15 +1,12 @@
 /*
 
 TODO:
-- confetti on credits screen
-- bunbon breeding mutations
-- planet images/locations
-- create loading screen
+- mute button
+- create splash/loading screen
 - sound effects
-- bg music for each planet + space + credits
+- planet images/locations
 - bg for space view
-
-BUGS:
+- confetti on credits screen
 - fix save & load: better saving strategy
 
 */
@@ -90,6 +87,8 @@ let unlockedPlanetCount = 0
 let planetBGs = {}
 let planetMasks = {}
 
+let planetSoundtracks = {}
+
 let creditsScreen = new Credits()
 
 let currentScreen = spaceScreen
@@ -117,13 +116,32 @@ function preload() {
 
     myFont = loadFont('fonts/UbuntuMono-Bold.woff')
 
+    soundFormats('mp3')
+
+    let makeSoundtrack = (fileName) => {
+        let newSoundtrack = loadSound(fileName)
+        newSoundtrack.setLoop(true)
+        newSoundtrack.setVolume(0.1)
+        return newSoundtrack
+    }
+
+    planetSoundtracks = {
+        mossyforest: makeSoundtrack('music/the_great_tree'),
+        park: makeSoundtrack('music/streamside_hotel'),
+        volcano: makeSoundtrack('music/in_the_branches'),
+        space: makeSoundtrack('music/shoots'),
+        credits: makeSoundtrack('music/overgrown_labyrinth')
+    }
+
     spritesheetImg = loadImage('images/spritesheet.png')
     userinterfaceImg = loadImage('images/userinterface.png')
 
     planetBGs = {
         mossyforest: loadImage('images/planets/mossyforest.png'),
         park: loadImage('images/planets/park.png'),
-        volcano: loadImage('images/planets/volcano.png')
+        volcano: loadImage('images/planets/volcano.png'),
+        space: null,
+        credits: null
     }
 
     planetMasks = {
@@ -219,6 +237,7 @@ function printDebugCommands() {
     console.log('DEBUG COMMANDS')
     console.log('p - pause')
     console.log('u - unlock planet\'s connections')
+    console.log('c - open credits screen')
     console.log('h - hatch carried egg')
     console.log('a - make bunbon an adult')
     console.log('s - increase bunbon\'s score')
