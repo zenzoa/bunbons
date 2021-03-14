@@ -30,7 +30,7 @@ class Food extends GameObject {
         this.refillLength = floor(random(600, 2100))
         this.refillTimer = 0
 
-        this.driveReduction = floor(random(30, 100))
+        this.driveReduction = 60
 
         this.spriteImgs = [
             baseSpritesheet.getSprite(foodSpriteIndex),

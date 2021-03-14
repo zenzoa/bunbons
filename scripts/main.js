@@ -1,21 +1,20 @@
 /*
 
 TODO:
+- confetti on credits screen
+- bunbon breeding mutations
 - planet images/locations
-- different behaviors for each toy
 - create loading screen
 - sound effects
 - bg music for each planet + space + credits
 - bg for space view
-- make sure you can select bunbons in credits screen to see their names
 
 BUGS:
 - fix save & load: better saving strategy
-- new planet has the same bunbons as the old planet after blasting off
 
 */
 
-let DEBUG = true
+let DEBUG = false
 
 let FRAME_RATE = 30
 

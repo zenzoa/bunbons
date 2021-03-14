@@ -66,18 +66,18 @@ class Planet extends ScreenState {
         // place objects
         this.objects = []
         if (this.name === 'park') {
-            this.objects.push(new Toy(this.randomPoint(), 'bun-doll'))
-            this.objects.push(new Food(this.randomPoint(), 'sandwich'))
+            this.objects.push(new Toy(this.randomPoint()))
+            this.objects.push(new Food(this.randomPoint()))
             this.objects.push(new Egg(this.randomPoint()))
             this.objects.push(new Egg(this.randomPoint()))
             this.objects.push(new Egg(this.randomPoint()))
         } else if (this.name === 'mossyforest') {
-            this.objects.push(new Toy(this.randomPoint(), 'moss-ball'))
-            this.objects.push(new Food(this.randomPoint(), 'mushrooms'))
+            this.objects.push(new Toy(this.randomPoint()))
+            this.objects.push(new Food(this.randomPoint()))
             this.objects.push(new Egg(this.randomPoint()))
         } else if (this.name === 'volcano') {
-            this.objects.push(new Toy(this.randomPoint(), 'pull-turtle'))
-            this.objects.push(new Food(this.randomPoint(), 'dragon-fruit'))
+            this.objects.push(new Toy(this.randomPoint()))
+            this.objects.push(new Food(this.randomPoint()))
             this.objects.push(new Egg(this.randomPoint()))
         }
 
@@ -218,8 +218,7 @@ class Planet extends ScreenState {
 
         if (y < WORLD_HEIGHT) {
             this.clickInWorld(x, y)
-        }
-        else if (
+        } else if (
             x >= inventory.x && x < inventory.x + inventory.width &&
             y >= inventory.y && y < inventory.y + inventory.height
         ) {
@@ -248,9 +247,7 @@ class Planet extends ScreenState {
                 y >= spaceButton.y && y < spaceButton.y + spaceButton.height
             ) {
                 openScreen('space')
-            }
-
-            else if (
+            } else if (
                 selectedBunbon && selectedBunbon.canBlastOff && bunbonCount >= 3 &&
                 x >= blastOffButton.x && x < blastOffButton.x + blastOffButton.width &&
                 y >= blastOffButton.y && y < blastOffButton.y + blastOffButton.height

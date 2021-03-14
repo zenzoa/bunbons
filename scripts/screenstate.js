@@ -220,10 +220,7 @@ class ScreenState {
                     this.fixObjectPosition(selectedObject)
                     let distSquared = dx * dx + dy * dy
                     let dragDist = min(selectedObject.width, selectedObject.height)
-                    if (distSquared < dragDist * dragDist) {
-                        // clicked object
-                        selectedObject.onPush(/* byPlayer */ true)
-                    } else {
+                    if (distSquared >= dragDist * dragDist) {
                         // dragged and dropped object
                         selectedObject.onDrop(this.objects)
                     }
