@@ -754,6 +754,8 @@ class Bunbon extends GameObject {
                 if (!this.foodOpinions[goalName]) {
                     this.foodOpinions[goalName] = floor(random(0, 100))
                     if (LOG_STORIES) console.log(this.name, 'tried new food,', goalName, '(opinion:', this.foodOpinions[goalName] + '%)')
+                } else {
+                    if (LOG_STORIES) console.log(this.name, 'ate', goalName)
                 }
                 let opinion = this.foodOpinions[goalName]
                 let rate = opinion >= 50 ? 2 : 1
@@ -767,6 +769,8 @@ class Bunbon extends GameObject {
             if (!this.toyOpinions[goalName]) {
                 this.toyOpinions[goalName] = floor(random(0, 100))
                 if (LOG_STORIES) console.log(this.name, 'tried new toy,', goalName, '(opinion:', this.toyOpinions[goalName] + '%)')
+            } else {
+                if (LOG_STORIES) console.log(this.name, 'played with', goalName)
             }
             let opinion = this.toyOpinions[goalName]
             let rate = opinion >= 50 ? 2 : 1
