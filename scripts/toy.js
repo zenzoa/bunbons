@@ -1,13 +1,14 @@
 let toySprites = {
-    'moss-ball': 220,
-    'paper-airplane': 221,
+    'mossball': 220,
+    'glider': 221,
     'robot': 222,
-    'dancing-flower': 223,
-    'pull-turtle': 224,
-    'magic-wand': 225,
-    'snow-bun': 226,
-    'bun-doll': 227,
-    'beach-ball': 228
+    'dancingflower': 223,
+    'butterfly': 224,
+    'magicwand': 225,
+    'snowbun': 226,
+    'bundoll': 227,
+    'beachball': 228,
+    'pullturtle': 229,
 }
 
 class Toy extends GameObject {
@@ -33,12 +34,12 @@ class Toy extends GameObject {
         this.bounceHeight = 0
         this.bounceY = 0
 
-        if (this.name === 'moss-ball') {
+        if (this.name === 'mossball') {
             this.width = 18
             this.height = 24
             this.offsetX = -8
             this.offsetY = -8
-        } else if (this.name === 'paper-airplane') {
+        } else if (this.name === 'glider') {
             this.width = 24
             this.height = 18
             this.offsetX = -4
@@ -52,37 +53,37 @@ class Toy extends GameObject {
             this.offsetY = -14
             this.shadowType = 'big'
             this.shadowOffsetY = 2
-        } else if (this.name === 'dancing-flower') {
+        } else if (this.name === 'dancingflower') {
             this.width = 18
             this.height = 24
             this.offsetX = -8
             this.offsetY = -8
-        } else if (this.name === 'pull-turtle') {
+        } else if (this.name === 'pullturtle') {
             this.width = 28
             this.height = 18
             this.offsetX = -2
             this.offsetY = -14
             this.shadowType = 'big'
             this.shadowOffsetX = 2
-        } else if (this.name === 'magic-wand') {
+        } else if (this.name === 'magicwand') {
             this.width = 18
             this.height = 18
             this.offsetX = -6
             this.offsetY = -14
             this.shadowOffsetX = -4
-        } else if (this.name === 'snow-bun') {
+        } else if (this.name === 'snowbun') {
             this.width = 18
             this.height = 18
             this.offsetX = -8
             this.offsetY = -14
             this.shadowOffsetX = 1
             this.shadowOffsetY = 2
-        } else if (this.name === 'bun-doll') {
+        } else if (this.name === 'bundoll') {
             this.width = 18
             this.height = 20
             this.offsetX = -8
             this.offsetY = -12
-        } else if (this.name === 'beach-ball') {
+        } else if (this.name === 'beachball') {
             this.width = 24
             this.height = 24
             this.offsetX = -4
@@ -118,10 +119,10 @@ class Toy extends GameObject {
         } else {
             this.isActive = true
 
-            if (this.name === 'moss-ball') {
+            if (this.name === 'mossball') {
                 // do nothing
 
-            } else if (this.name === 'paper-airplane') {
+            } else if (this.name === 'glider') {
                 this.isFlipped = random([true, false])
                 this.bounceTimer = 0
                 this.bounceHeight = random(50, 100)
@@ -130,22 +131,22 @@ class Toy extends GameObject {
             } else if (this.name === 'robot') {
                 this.isFlipped = random([true, false])
 
-            } else if (this.name === 'dancing-flower') {
+            } else if (this.name === 'dancingflower') {
                 // do nothing
 
-            } else if (this.name === 'pull-turtle') {
+            } else if (this.name === 'pullturtle') {
                 this.isFlipped = random([true, false])
 
-            } else if (this.name === 'magic-wand') {
+            } else if (this.name === 'magicwand') {
                 // do nothing
 
-            } else if (this.name === 'snow-bun') {
+            } else if (this.name === 'snowbun') {
                 // do nothing
 
-            } else if (this.name === 'bun-doll') {
+            } else if (this.name === 'bundoll') {
                 // do nothing
 
-            } else if (this.name === 'beach-ball') {
+            } else if (this.name === 'beachball') {
                 this.bounceTimer = 0
                 this.bounceHeight = random(10, 100)
                 this.bounceY = 0
@@ -169,14 +170,14 @@ class Toy extends GameObject {
 
         this.animationTimer++
 
-        if (this.name === 'moss-ball') {
+        if (this.name === 'mossball') {
             this.animationFrame = 1
             if (this.animationTimer > 10) {
                 this.animationFrame = 0
                 this.isActive = false
             }
 
-        } else if (this.name === 'paper-airplane') {
+        } else if (this.name === 'glider') {
             newX = this.isFlipped ? newX + 1 : newX - 1
 
             if (!currentScreen.isPositionClear(newX, newY)) {
@@ -210,7 +211,7 @@ class Toy extends GameObject {
                 this.isActive = false
             }
 
-        } else if (this.name === 'dancing-flower') {
+        } else if (this.name === 'dancingflower') {
             if (this.animationTimer % 10 == 0) {
                 this.animationFrame = this.animationFrame === 0 ? 1 : 0
             }
@@ -218,13 +219,13 @@ class Toy extends GameObject {
                 this.isActive = false
             }
             
-        } else if (this.name === 'pull-turtle') {
+        } else if (this.name === 'pullturtle') {
             if (this.animationTimer % 5 == 0) {
                 this.animationFrame = this.animationFrame === 0 ? 1 : 0
             }
             newX = this.isFlipped ? newX + 1 : newX - 1
 
-        } else if (this.name === 'magic-wand') {
+        } else if (this.name === 'magicwand') {
             if (this.animationTimer % 3 == 0 && this.animationTimer < 18) {
                 this.animationFrame = this.animationFrame === 0 ? 1 : 0
             }
@@ -232,17 +233,17 @@ class Toy extends GameObject {
                 this.isActive = false
             }
 
-        } else if (this.name === 'snow-bun') {
+        } else if (this.name === 'snowbun') {
             //
 
-        } else if (this.name === 'bun-doll') {
+        } else if (this.name === 'bundoll') {
             this.animationFrame = 1
             if (this.animationTimer > 300) {
                 this.animationFrame = 0
                 this.isActive = false
             }
 
-        } else if (this.name === 'beach-ball') {
+        } else if (this.name === 'beachball') {
             this.bounceTimer++
             this.bounceY = this.bounceHeight * sin(this.bounceTimer * 0.15)
             this.animationFrame = (this.bounceY <= 10 && this.bounceTimer < 10) ? 1 : 0

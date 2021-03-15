@@ -1,31 +1,80 @@
 let planetTypes = {
     'park': {
         index: 0,
-        x: 320,
+        x: 100,
         y: 240,
         connectedPlanets: [1],
-        color: 'pink' // TEMP
+        color: 'deeppink' // TEMP
     },
     'mossyforest': {
         index: 1,
-        x: 420,
-        y: 200,
+        x: 150,
+        y: 240,
         connectedPlanets: [0, 2],
-        color: 'green' // TEMP
+        color: 'orangered' // TEMP
+    },
+    'flowertown': {
+        index: 2,
+        x: 200,
+        y: 240,
+        connectedPlanets: [1, 3],
+        color: 'darkorange' // TEMP
     },
     'volcano': {
-        index: 2,
-        x: 520,
-        y: 300,
-        connectedPlanets: [1,3],
-        color: 'red' // TEMP
+        index: 3,
+        x: 250,
+        y: 240,
+        connectedPlanets: [2, 4, 5],
+        color: 'gold' // TEMP
+    },
+    'bubbledome': {
+        index: 4,
+        x: 300,
+        y: 140,
+        connectedPlanets: [3, 6],
+        color: 'yellowgreen' // TEMP
+    },
+    'desert': {
+        index: 5,
+        x: 300,
+        y: 340,
+        connectedPlanets: [3, 6],
+        color: 'mediumspringgreen' // TEMP
+    },
+    'snowymountain': {
+        index: 6,
+        x: 350,
+        y: 240,
+        connectedPlanets: [4, 5, 7],
+        color: 'mediumturquoise' // TEMP
+    },
+    'cloudland': {
+        index: 7,
+        x: 400,
+        y: 240,
+        connectedPlanets: [6, 8],
+        color: 'deepskyblue' // TEMP
+    },
+    'crystalcave': {
+        index: 8,
+        x: 450,
+        y: 240,
+        connectedPlanets: [7, 9],
+        color: 'slateblue' // TEMP
+    },
+    'asteroid': {
+        index: 9,
+        x: 500,
+        y: 240,
+        connectedPlanets: [8, 10],
+        color: 'rebeccapurple' // TEMP
     },
     'credits': {
-        index: 3,
-        x: 560,
-        y: 100,
-        connectedPlanets: [2],
-        color: 'yellow' // TEMP
+        index: 10,
+        x: 550,
+        y: 240,
+        connectedPlanets: [9],
+        color: 'palevioletred' // TEMP
     }
 }
 
@@ -65,19 +114,47 @@ class Planet extends ScreenState {
 
         // place objects
         this.objects = []
-        if (this.name === 'park') {
-            this.objects.push(new Toy(this.randomPoint()))
-            this.objects.push(new Food(this.randomPoint()))
+        if (this.name === 'mossyforest') {
+            this.objects.push(new Toy(this.randomPoint(), 'mossball'))
+            this.objects.push(new Food(this.randomPoint(), 'mushrooms'))
             this.objects.push(new Egg(this.randomPoint()))
+        } else if (this.name === 'cloudland') {
+            this.objects.push(new Toy(this.randomPoint(), 'glider'))
+            this.objects.push(new Food(this.randomPoint(), 'dumplings'))
             this.objects.push(new Egg(this.randomPoint()))
+        } else if (this.name === 'asteroid') {
+            this.objects.push(new Toy(this.randomPoint(), 'robot'))
+            this.objects.push(new Food(this.randomPoint(), 'juiceorb'))
             this.objects.push(new Egg(this.randomPoint()))
-        } else if (this.name === 'mossyforest') {
-            this.objects.push(new Toy(this.randomPoint()))
-            this.objects.push(new Food(this.randomPoint()))
+        } else if (this.name === 'flowertown') {
+            this.objects.push(new Toy(this.randomPoint(), 'dancingflower'))
+            this.objects.push(new Food(this.randomPoint(), 'flowers'))
             this.objects.push(new Egg(this.randomPoint()))
         } else if (this.name === 'volcano') {
-            this.objects.push(new Toy(this.randomPoint()))
-            this.objects.push(new Food(this.randomPoint()))
+            this.objects.push(new Toy(this.randomPoint(), 'butterfly'))
+            this.objects.push(new Food(this.randomPoint(), 'dragonfruit'))
+            this.objects.push(new Egg(this.randomPoint()))
+        } else if (this.name === 'crystalcave') {
+            this.objects.push(new Toy(this.randomPoint(), 'magicwand'))
+            this.objects.push(new Food(this.randomPoint(), 'rockcandy'))
+            this.objects.push(new Egg(this.randomPoint()))
+        } else if (this.name === 'snowymountain') {
+            this.objects.push(new Toy(this.randomPoint(), 'snowbun'))
+            this.objects.push(new Food(this.randomPoint(), 'icecream'))
+            this.objects.push(new Egg(this.randomPoint()))
+        } else if (this.name === 'park') {
+            this.objects.push(new Toy(this.randomPoint(), 'bundoll'))
+            this.objects.push(new Food(this.randomPoint(), 'sandwich'))
+            this.objects.push(new Egg(this.randomPoint()))
+            this.objects.push(new Egg(this.randomPoint()))
+            this.objects.push(new Egg(this.randomPoint()))
+        } else if (this.name === 'bubbledome') {
+            this.objects.push(new Toy(this.randomPoint(), 'beachball'))
+            this.objects.push(new Food(this.randomPoint(), 'seaweed'))
+            this.objects.push(new Egg(this.randomPoint()))
+        } else if (this.name === 'desert') {
+            this.objects.push(new Toy(this.randomPoint(), 'succulent'))
+            this.objects.push(new Food(this.randomPoint(), 'pullturtle'))
             this.objects.push(new Egg(this.randomPoint()))
         }
 
@@ -290,6 +367,7 @@ class Planet extends ScreenState {
 
             if (key === 'u') {
                 this.unlockConnections()
+                openScreen('space')
             } else if (key === 'c') {
                 openScreen('credits')
             } else if (key === 'p') {

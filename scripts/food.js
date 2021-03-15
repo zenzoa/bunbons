@@ -1,13 +1,14 @@
 let foodSprites = {
     'mushrooms': 180,
-    'cloud-dumplings': 181,
-    'juice-orb': 182,
+    'dumplings': 181,
+    'juiceorb': 182,
     'flowers': 183,
-    'dragon-fruit': 184,
-    'rock-candy': 185,
-    'ice-cream': 186,
+    'dragonfruit': 184,
+    'rockcandy': 185,
+    'icecream': 186,
     'sandwich': 187,
-    'seaweed': 188
+    'seaweed': 188,
+    'succulent': 189
 }
 
 class Food extends GameObject {
@@ -70,17 +71,17 @@ class Food extends GameObject {
         if (!this.isInInventory && !this.isBeingDragged) {
             if (this.name === 'mushrooms') {
                 image(shadowImgs.big, x, y + 1)
-            } else if (this.name === 'cloud-dumplings') {
+            } else if (this.name === 'dumplings') {
                 image(shadowImgs.big, x, y + 1)
-            } else if (this.name === 'juice-orb') {
+            } else if (this.name === 'juiceorb') {
                 image(shadowImgs.small, x, y + 1)
             } else if (this.name === 'flowers') {
                 image(shadowImgs.small, x, y - 2)
-            } else if (this.name === 'dragon-fruit') {
+            } else if (this.name === 'dragonfruit') {
                 image(shadowImgs.small, x, y + 1)
-            } else if (this.name === 'rock-candy') {
+            } else if (this.name === 'rockcandy') {
                 image(shadowImgs.small, x + 1, y + 1)
-            } else if (this.name === 'ice-cream') {
+            } else if (this.name === 'icecream') {
                 image(shadowImgs.small, x, y + 1)
             } else if (this.name === 'sandwich') {
                 image(shadowImgs.big, x, y)

@@ -7,6 +7,7 @@ TODO:
 - planet images/locations
 - bg for space view
 - confetti on credits screen
+- bunbons per planet
 - fix save & load: better saving strategy
 
 */
@@ -127,8 +128,15 @@ function preload() {
 
     planetSoundtracks = {
         mossyforest: makeSoundtrack('music/the_great_tree'),
-        park: makeSoundtrack('music/streamside_hotel'),
+        cloudland: makeSoundtrack('music/hidden_grotto'),
+        asteroid: makeSoundtrack('music/village_of_the_peeping_frogs'),
+        flowertown: makeSoundtrack('music/roots'),
         volcano: makeSoundtrack('music/in_the_branches'),
+        crystalcave: makeSoundtrack('music/home_departure'),
+        snowymountain: makeSoundtrack('music/sunset_over_the_treetops'),
+        park: makeSoundtrack('music/streamside_hotel'),
+        bubbledome: makeSoundtrack('music/bug_band'),
+        desert: makeSoundtrack('music/rainy_ascent'),
         space: makeSoundtrack('music/shoots'),
         credits: makeSoundtrack('music/overgrown_labyrinth')
     }
@@ -138,16 +146,30 @@ function preload() {
 
     planetBGs = {
         mossyforest: loadImage('images/planets/mossyforest.png'),
-        park: loadImage('images/planets/park.png'),
+        cloudland: loadImage('images/planets/cloudland.png'),
+        asteroid: loadImage('images/planets/asteroid.png'),
+        flowertown: loadImage('images/planets/flowertown.png'),
         volcano: loadImage('images/planets/volcano.png'),
+        crystalcave: loadImage('images/planets/crystalcave.png'),
+        snowymountain: loadImage('images/planets/snowymountain.png'),
+        park: loadImage('images/planets/park.png'),
+        bubbledome: loadImage('images/planets/bubbledome.png'),
+        desert: loadImage('images/planets/desert.png'),
         space: null,
         credits: null
     }
 
     planetMasks = {
         mossyforest: loadImage('images/planets/mossyforest-mask.png'),
+        cloudland: loadImage('images/planets/cloudland-mask.png'),
+        asteroid: loadImage('images/planets/asteroid-mask.png'),
+        flowertown: loadImage('images/planets/flowertown-mask.png'),
+        volcano: loadImage('images/planets/volcano-mask.png'),
+        crystalcave: loadImage('images/planets/crystalcave-mask.png'),
+        snowymountain: loadImage('images/planets/snowymountain-mask.png'),
         park: loadImage('images/planets/park-mask.png'),
-        volcano: loadImage('images/planets/volcano-mask.png')
+        bubbledome: loadImage('images/planets/bubbledome-mask.png'),
+        desert: loadImage('images/planets/desert-mask.png')
     }
 
 }
