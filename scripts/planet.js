@@ -165,7 +165,7 @@ class Planet extends ScreenState {
         this.isBlastingOff = false
         unlockedPlanetCount = planets.filter(p => p.isUnlocked).length
 
-        planetSoundtracks[this.name].play()
+        if (!MUTE) planetSoundtracks[this.name].play()
 
     }
 
@@ -246,6 +246,10 @@ class Planet extends ScreenState {
         if (unlockedPlanetCount > 1) {
             image(spaceButtonImg, 3, WORLD_HEIGHT + 3)
         }
+
+        // draw mute button
+        if (MUTE) image(unmuteButtonImg, 4, 4)
+        else image(muteButtonImg, 4, 4)
 
         // draw inventory
         inventory.objects.forEach(obj => {
@@ -328,6 +332,13 @@ class Planet extends ScreenState {
                 y >= spaceButton.y && y < spaceButton.y + spaceButton.height
             ) {
                 openScreen('space')
+            } else if (
+                x >= muteButton.x && x < muteButton.x + muteButton.width &&
+                y >= muteButton.y && y < muteButton.y + muteButton.height
+            ) {
+                MUTE = !MUTE
+                if (MUTE) planetSoundtracks[this.name].pause()
+                else planetSoundtracks[this.name].play()
             } else if (
                 selectedBunbon && selectedBunbon.canBlastOff && bunbonCount >= 3 &&
                 x >= blastOffButton.x && x < blastOffButton.x + blastOffButton.width &&

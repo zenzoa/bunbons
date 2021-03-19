@@ -32,7 +32,8 @@ class Space extends ScreenState {
                 this.startBlastOff(planet.x - this.offsetX, planet.y - this.offsetY)
             }
         }
-        planetSoundtracks['space'].play()
+
+        if (!MUTE) planetSoundtracks['space'].play()
 
     }
 
@@ -141,6 +142,16 @@ class Space extends ScreenState {
     }
 
     mouseReleased(x, y, dx, dy) {
+
+        if (
+            x >= muteButton.x && x < muteButton.x + muteButton.width &&
+            y >= muteButton.y && y < muteButton.y + muteButton.height
+        ) {
+            MUTE = !MUTE
+            if (MUTE) planetSoundtracks['space'].pause()
+            else planetSoundtracks['space'].play()
+            return
+        }
 
         let distSquared = dx * dx + dy * dy
         if (distSquared < 64) {

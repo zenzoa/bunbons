@@ -1,10 +1,9 @@
 /*
 
 TODO:
-- mute button
 - create splash/loading screen
 - sound effects
-- planet images/locations
+- planet images
 - bg for space view
 - confetti on credits screen
 - bunbons per planet
@@ -14,6 +13,8 @@ TODO:
 
 let DEBUG = false
 let LOG_STORIES = true
+
+let MUTE = true
 
 let FRAME_RATE = 30
 
@@ -52,6 +53,13 @@ let spaceButton = {
     height: 32
 }
 
+let muteButton = {
+    x: 4,
+    y: 4,
+    width: 16,
+    height: 16
+}
+
 let blastOffButton = {
     x: WORLD_WIDTH - 36,
     y: WORLD_HEIGHT + 5,
@@ -73,7 +81,7 @@ let Vector = p5.Vector
 let spritesheet, spritesheetImg, baseSpritesheet
 let colorSpritesheets = {}
 
-let userinterfaceImg, spaceButtonImg, spaceButtonForCreditsImg, heartImg
+let userinterfaceImg, spaceButtonImg, muteButtonImg, unmuteButtonImg, spaceButtonForCreditsImg, heartImg
 let scoreButtonImgs = []
 let shadowImgs = {}
 let bubbleImgs = {}
@@ -218,6 +226,8 @@ function setup() {
     heartImg = spritesheetImg.get(608, 0, 12, 10)
  
     spaceButtonImg = spritesheetImg.get(0, 606, 34, 34)
+    muteButtonImg = spritesheetImg.get(0, 448, 16, 16)
+    unmuteButtonImg = spritesheetImg.get(32, 448, 16, 16)
     spaceButtonForCreditsImg = spritesheetImg.get(34, 606, 34, 34)
 
     scoreButtonImgs = [

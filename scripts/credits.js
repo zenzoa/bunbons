@@ -8,16 +8,21 @@ class Credits extends ScreenState {
     }
 
     open() {
+
         this.objects = blastedOffBunbons.slice()
         this.objects.forEach(bunbon => {
             bunbon.pos = this.randomPoint()
             bunbon.state = ''
         })
-        planetSoundtracks['credits'].play()
+
+        if (!MUTE) planetSoundtracks['credits'].play()
+
     }
 
     close() {
+
         planetSoundtracks['credits'].stop()
+
     }
 
     draw() {
@@ -63,12 +68,19 @@ class Credits extends ScreenState {
 
     mouseReleased(x, y, dx, dy) {
         let objectWasDropped = this.dropObject(x, y, dx, dy, false)
+        if (objectWasDropped) return
         if (
-            !objectWasDropped &&
             x >= spaceButton.x && x < spaceButton.x + spaceButton.width &&
             y >= spaceButton.y && y < spaceButton.y + spaceButton.height
         ) {
             openScreen('space')
+        } else if (
+            x >= muteButton.x && x < muteButton.x + muteButton.width &&
+            y >= muteButton.y && y < muteButton.y + muteButton.height
+        ) {
+            MUTE = !MUTE
+            if (MUTE) planetSoundtracks['credits'].pause()
+            else planetSoundtracks['credits'].play()
         }
     }
 
