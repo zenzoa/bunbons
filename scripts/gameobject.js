@@ -8,6 +8,7 @@ class GameObject {
         this.offsetX = 0
         this.offsetY = 0
         this.jumpY = 0
+        this.bounceY = 0
 
         this.isDraggable = true
 
@@ -24,7 +25,7 @@ class GameObject {
 
     isOnPointer(mx, my) {
         let x = this.pos.x - (this.width / 2)
-        let y = this.pos.y - this.height - this.jumpY
+        let y = this.pos.y - this.height - this.jumpY - this.bounceY
         return (mx >= x && mx < x + this.width && my >= y && my < y + this.height)
     }
 

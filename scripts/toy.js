@@ -58,13 +58,12 @@ class Toy extends GameObject {
             this.height = 24
             this.offsetX = -8
             this.offsetY = -8
-        } else if (this.name === 'pullturtle') {
-            this.width = 28
-            this.height = 18
-            this.offsetX = -2
-            this.offsetY = -14
-            this.shadowType = 'big'
-            this.shadowOffsetX = 2
+        } else if (this.name === 'butterfly') {
+            this.width = 24
+            this.height = 20
+            this.offsetX = -4
+            this.offsetY = -12
+            this.shadowOffsetX = -1
         } else if (this.name === 'magicwand') {
             this.width = 18
             this.height = 18
@@ -90,6 +89,13 @@ class Toy extends GameObject {
             this.offsetX = -4
             this.offsetY = -8
             this.shadowType = 'big'
+        } else if (this.name === 'pullturtle') {
+            this.width = 28
+            this.height = 18
+            this.offsetX = -2
+            this.offsetY = -14
+            this.shadowType = 'big'
+            this.shadowOffsetX = 2
         }
 
         this.isFlipped = false
@@ -138,8 +144,9 @@ class Toy extends GameObject {
             } else if (this.name === 'dancingflower') {
                 // do nothing
 
-            } else if (this.name === 'pullturtle') {
-                this.isFlipped = random([true, false])
+            } else if (this.name === 'butterfly') {
+                this.isFlipped = (this.pos.x >= WORLD_WIDTH / 2)
+                this.bounceY = 4
 
             } else if (this.name === 'magicwand') {
                 // do nothing
@@ -158,6 +165,10 @@ class Toy extends GameObject {
                 this.bounceTimer = 0
                 this.bounceHeight = random(10, 100)
                 this.bounceY = 0
+
+            } else if (this.name === 'pullturtle') {
+                this.isFlipped = (this.pos.x >= WORLD_WIDTH / 2)
+
             }
         }
 
@@ -170,6 +181,7 @@ class Toy extends GameObject {
         if (!this.isActive) {
             this.animationTimer = 0
             this.animationFrame = 0
+            this.bounceY = 0
             return
         }
 
@@ -227,11 +239,25 @@ class Toy extends GameObject {
                 this.isActive = false
             }
             
-        } else if (this.name === 'pullturtle') {
+        } else if (this.name === 'butterfly') {
             if (this.animationTimer % 5 == 0) {
                 this.animationFrame = this.animationFrame === 0 ? 1 : 0
+                newX = this.isFlipped ? newX - 1 : newX + 1
             }
-            newX = this.isFlipped ? newX - 1 : newX + 1
+            if (currentScreen.isPositionClear(newX, newY, this.width, this.height)) {
+                if (this.animationTimer < 300) {
+                    this.bounceY += random([1, 1, 0, -1])
+                } else if (this.animationTimer < 600) {
+                    this.bounceY += random([1, 0, -1])
+                } else {
+                    this.bounceY += random([1, 0, -1, -1])
+                }
+                if (this.bounceY < 0) this.isActive = false
+                if (this.bounceY > this.pos.y - this.height) this.bounceY = this.pos.y - this.height
+            } else {
+                newX = this.pos.x
+                this.isFlipped = !this.isFlipped
+            }
 
         } else if (this.name === 'magicwand') {
             if (this.animationTimer % 3 == 0 && this.animationTimer < 18) {
@@ -244,6 +270,7 @@ class Toy extends GameObject {
         } else if (this.name === 'sled') {
             newX = this.isFlipped ? newX - 2 : newX + 2
 
+        } else if (this.name === 'bundoll') { // TODO: update
             this.animationFrame = 1
             if (this.animationTimer > 300) {
                 this.animationFrame = 0
@@ -262,6 +289,13 @@ class Toy extends GameObject {
             if (this.bounceHeight <= 5) {
                 this.isActive = false
             }
+        
+        } else if (this.name === 'pullturtle') {
+            if (this.animationTimer % 5 == 0) {
+                this.animationFrame = this.animationFrame === 0 ? 1 : 0
+            }
+            newX = this.isFlipped ? newX - 1 : newX + 1
+
         }
 
         if (currentScreen.isPositionClear(newX, newY, this.width, this.height)) {
