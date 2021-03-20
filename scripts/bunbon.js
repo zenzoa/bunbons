@@ -202,6 +202,9 @@ class Bunbon extends GameObject {
         this.faceTimer = 0
         this.speechBubbleTimer = 0
 
+        this.tempOffsetX = 0
+        this.tempOffsetY = 0
+
         this.color = this.dna.color
         this.secondaryColor = this.dna.secondaryColor
         this.pattern = this.dna.pattern
@@ -750,7 +753,7 @@ class Bunbon extends GameObject {
 
             if (!this.goalObject.isRefilling) {
                 this.startEat()
-                this.goalObject.onPush()
+                this.goalObject.onPush(this)
                 if (!this.foodOpinions[goalName]) {
                     this.foodOpinions[goalName] = floor(random(0, 100))
                     if (LOG_STORIES) console.log(this.name, 'tried new food,', goalName, '(opinion:', this.foodOpinions[goalName] + '%)')
@@ -765,7 +768,7 @@ class Bunbon extends GameObject {
         } else if (this.goalType === 'toy') {
 
             this.startPlay()
-            this.goalObject.onPush()
+            this.goalObject.onPush(this)
             if (!this.toyOpinions[goalName]) {
                 this.toyOpinions[goalName] = floor(random(0, 100))
                 if (LOG_STORIES) console.log(this.name, 'tried new toy,', goalName, '(opinion:', this.toyOpinions[goalName] + '%)')
@@ -1156,6 +1159,11 @@ class Bunbon extends GameObject {
             this.speechBubbleTimer--
         }
 
+        if (!this.isInInventory) {
+            this.tempOffsetX = 0
+            this.tempOffsetY = 0
+        }
+
     }
 
     updateFace() {
@@ -1185,8 +1193,8 @@ class Bunbon extends GameObject {
 
         // find upper-left corner of sprite
         let jumpOffset = (this.state === 'jumping' && !this.isInInventory) ? this.jumpY : 0
-        let x = floor(this.pos.x - (this.width / 2) + this.offsetX)
-        let y = floor(this.pos.y - this.height + this.offsetY - jumpOffset)
+        let x = floor(this.pos.x - (this.width / 2) + this.offsetX + this.tempOffsetX)
+        let y = floor(this.pos.y - this.height + this.offsetY - jumpOffset + this.tempOffsetY)
 
         // draw base
         if (this.isBaby) {

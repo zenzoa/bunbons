@@ -5,7 +5,7 @@ let toySprites = {
     'dancingflower': 223,
     'butterfly': 224,
     'magicwand': 225,
-    'snowbun': 226,
+    'sled': 226,
     'bundoll': 227,
     'beachball': 228,
     'pullturtle': 229,
@@ -71,14 +71,15 @@ class Toy extends GameObject {
             this.offsetX = -6
             this.offsetY = -14
             this.shadowOffsetX = -4
-        } else if (this.name === 'snowbun') {
-            this.width = 18
-            this.height = 18
-            this.offsetX = -8
-            this.offsetY = -14
-            this.shadowOffsetX = 1
+        } else if (this.name === 'sled') {
+            this.width = 32
+            this.height = 16
+            this.offsetX = 0
+            this.offsetY = -16
+            this.shadowOffsetX = 0
             this.shadowOffsetY = 2
-        } else if (this.name === 'bundoll') {
+            this.shadowType = 'big'
+        } else if (this.name === 'bundoll') { // TODO: update
             this.width = 18
             this.height = 20
             this.offsetX = -8
@@ -93,6 +94,7 @@ class Toy extends GameObject {
 
         this.isFlipped = false
         this.isActive = false
+        this.carriedBunbon = null
 
         this.driveReduction = 30
 
@@ -108,9 +110,11 @@ class Toy extends GameObject {
 
     }
 
-    onPush() {
+    onPush(agent) {
 
         if (DEBUG) console.log('push the toy')
+
+        this.carriedBunbon = null
 
         if (this.isActive) {
             this.isActive = false
@@ -123,13 +127,13 @@ class Toy extends GameObject {
                 // do nothing
 
             } else if (this.name === 'glider') {
-                this.isFlipped = random([true, false])
+                this.isFlipped = (this.pos.x >= WORLD_WIDTH / 2)
                 this.bounceTimer = 0
                 this.bounceHeight = random(50, 100)
                 this.bounceY = 0
 
             } else if (this.name === 'robot') {
-                this.isFlipped = random([true, false])
+                this.isFlipped = (this.pos.x >= WORLD_WIDTH / 2)
 
             } else if (this.name === 'dancingflower') {
                 // do nothing
@@ -140,8 +144,12 @@ class Toy extends GameObject {
             } else if (this.name === 'magicwand') {
                 // do nothing
 
-            } else if (this.name === 'snowbun') {
-                // do nothing
+            } else if (this.name === 'sled') {
+                this.isFlipped = (this.pos.x >= WORLD_WIDTH / 2)
+                if (agent instanceof Bunbon) {
+                    this.carriedBunbon = agent
+                    this.carriedBunbon.isFlipped = this.isFlipped
+                }
 
             } else if (this.name === 'bundoll') {
                 // do nothing
@@ -178,9 +186,9 @@ class Toy extends GameObject {
             }
 
         } else if (this.name === 'glider') {
-            newX = this.isFlipped ? newX + 1 : newX - 1
+            newX = this.isFlipped ? newX - 1 : newX + 1
 
-            if (!currentScreen.isPositionClear(newX, newY)) {
+            if (!currentScreen.isPositionClear(newX, newY, this.width, this.height)) {
                 newX = this.pos.x
                 this.bounceY -= 2
                 this.animationFrame = 0
@@ -205,7 +213,7 @@ class Toy extends GameObject {
                 this.animationFrame = this.animationFrame === 0 ? 1 : 0
             }
             if (this.animationTimer % 5 == 0) {
-                newX = this.isFlipped ? newX + 2 : newX - 2
+                newX = this.isFlipped ? newX - 2 : newX + 2
             }
             if (this.animationTimer > 600) {
                 this.isActive = false
@@ -223,7 +231,7 @@ class Toy extends GameObject {
             if (this.animationTimer % 5 == 0) {
                 this.animationFrame = this.animationFrame === 0 ? 1 : 0
             }
-            newX = this.isFlipped ? newX + 1 : newX - 1
+            newX = this.isFlipped ? newX - 1 : newX + 1
 
         } else if (this.name === 'magicwand') {
             if (this.animationTimer % 3 == 0 && this.animationTimer < 18) {
@@ -233,10 +241,9 @@ class Toy extends GameObject {
                 this.isActive = false
             }
 
-        } else if (this.name === 'snowbun') {
-            //
+        } else if (this.name === 'sled') {
+            newX = this.isFlipped ? newX - 2 : newX + 2
 
-        } else if (this.name === 'bundoll') {
             this.animationFrame = 1
             if (this.animationTimer > 300) {
                 this.animationFrame = 0
@@ -257,13 +264,30 @@ class Toy extends GameObject {
             }
         }
 
-        if (currentScreen.isPositionClear(newX, newY)) {
+        if (currentScreen.isPositionClear(newX, newY, this.width, this.height)) {
+
             this.pos = new Vector(newX, newY)
+
         } else {
+
             if (this.name === 'robot') {
                 this.isFlipped = !this.isFlipped
             } else {
                 this.isActive = false
+            }
+
+        }
+
+        if (this.carriedBunbon) {
+            if (this.isActive) {
+                this.carriedBunbon.isInInventory = true
+                this.carriedBunbon.pos.x = this.pos.x
+                this.carriedBunbon.pos.y = this.pos.y + 1
+                this.carriedBunbon.tempOffsetX = this.isFlipped ? 4 : -4
+                this.carriedBunbon.tempOffsetY = -5
+            } else {
+                this.carriedBunbon.isInInventory = false
+                this.carriedBunbon = null
             }
         }
 

@@ -40,9 +40,9 @@ class Food extends GameObject {
 
     }
 
-    onPush(byPlayer) {
+    onPush(agent) {
 
-        if (!byPlayer) {
+        if (!agent) {
             this.refillTimer = 0
             this.isRefilling = true
         }

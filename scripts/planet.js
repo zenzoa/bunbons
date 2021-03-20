@@ -139,7 +139,7 @@ class Planet extends ScreenState {
             this.objects.push(new Food(this.randomPoint(), 'rockcandy'))
             this.objects.push(new Egg(this.randomPoint()))
         } else if (this.name === 'snowymountain') {
-            this.objects.push(new Toy(this.randomPoint(), 'snowbun'))
+            this.objects.push(new Toy(this.randomPoint(), 'sled'))
             this.objects.push(new Food(this.randomPoint(), 'icecream'))
             this.objects.push(new Egg(this.randomPoint()))
         } else if (this.name === 'park') {

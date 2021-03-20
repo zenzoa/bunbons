@@ -38,18 +38,18 @@ class ScreenState {
     keyPressed() {
     }
 
-    isPositionClear(x, y) {
+    isPositionClear(x, y, w = 0, h = 0) {
 
         x = floor(x)
         y = floor(y)
 
         // out of bounds
         if (this.inventoryIsVisible) {
-            if (x < 0 || x >= WORLD_WIDTH) return false
-            if (y < 0 || y >= WORLD_HEIGHT) return false
+            if (x < w / 2 || x >= WORLD_WIDTH - w / 2) return false
+            if (y < h || y >= WORLD_HEIGHT + h / 2) return false
         } else {
-            if (x < 0 || x >= SCREEN_WIDTH) return false
-            if (y < 0 || y >= SCREEN_HEIGHT) return false
+            if (x < w / 2 || x >= SCREEN_WIDTH - w / 2) return false
+            if (y < h || y >= SCREEN_HEIGHT + h / 2) return false
         }
 
         // collides with world geometry
@@ -180,7 +180,7 @@ class ScreenState {
 
                     let posX = mouseX / CANVAS_SCALE
                     let posY = mouseY / CANVAS_SCALE + selectedObject.height / 2
-                    if (this.isPositionClear(posX, posY)) {
+                    if (this.isPositionClear(posX, posY, selectedObject.width, selectedObject.height)) {
                         selectedObject.pos.x = posX
                         selectedObject.pos.y = posY
                         this.fixObjectPosition(selectedObject)
@@ -229,7 +229,7 @@ class ScreenState {
 
             } else if (!selectedObject.isInInventory) {
                 // clicked object
-                selectedObject.onPush(/* byPlayer */ true)
+                selectedObject.onPush()
             }
 
         }
