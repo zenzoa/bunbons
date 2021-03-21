@@ -1,12 +1,13 @@
 /*
 
 TODO:
+- better shadow tone
+- make genetics for each planet
 - create splash/loading screen
 - sound effects
 - planet images
 - bg for space view
 - confetti on credits screen
-- bunbons per planet
 - fix save & load: better saving strategy
 
 */
@@ -79,8 +80,6 @@ let preventClicking = false
 let Vector = p5.Vector
 
 let spritesheet, spritesheetImg, baseSpritesheet
-let colorSpritesheets = {}
-
 let userinterfaceImg, spaceButtonImg, muteButtonImg, unmuteButtonImg, spaceButtonForCreditsImg, heartImg
 let scoreButtonImgs = []
 let shadowImgs = {}
@@ -197,9 +196,6 @@ function setup() {
     textAlign(CENTER, BASELINE)
 
     baseSpritesheet = new Spritesheet(spritesheetImg, 32, 32)
-    Object.keys(bunbonColors).forEach(colorName => {
-        colorSpritesheets[colorName] = new Spritesheet(spritesheetImg, 32, 32, colorName)
-    })
 
     shadowImgs = {
         'small': baseSpritesheet.getSprite(42),

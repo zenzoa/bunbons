@@ -14,7 +14,7 @@ class Egg extends Toy {
         this.pos = createVector(pos.x, pos.y)
 
         this.offsetX = -4
-        this.offsetY = -7
+        this.offsetY = -8
 
         this.bunbonDNA = bunbonDNA || Bunbon.randomDNA()
         this.timeToHatch = Math.floor(FRAME_RATE * 60 * random(0.8, 1.2))
@@ -25,10 +25,11 @@ class Egg extends Toy {
 
         this.driveReduction = 10
 
+        this.spritesheet = new Spritesheet(spritesheetImg, 32, 32, this.color, this.color)
         this.spriteImgs = [
-            colorSpritesheets[this.color].getSprite(bunbonEggs[0]),
-            colorSpritesheets[this.color].getSprite(bunbonEggs[1]),
-            colorSpritesheets[this.color].getSprite(bunbonEggs[2])
+            this.spritesheet.getSprite(bunbonEggs[0]),
+            this.spritesheet.getSprite(bunbonEggs[1]),
+            this.spritesheet.getSprite(bunbonEggs[2])
         ]
 
     }

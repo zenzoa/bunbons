@@ -42,7 +42,7 @@ class Food extends GameObject {
 
     onPush(agent) {
 
-        if (!agent) {
+        if (agent) {
             this.refillTimer = 0
             this.isRefilling = true
         }
@@ -86,6 +86,8 @@ class Food extends GameObject {
             } else if (this.name === 'sandwich') {
                 image(shadowImgs.big, x, y)
             } else if (this.name === 'seaweed') {
+                image(shadowImgs.big, x, y + 1)
+            } else if (this.name === 'succulent') {
                 image(shadowImgs.big, x, y + 1)
             }
         }

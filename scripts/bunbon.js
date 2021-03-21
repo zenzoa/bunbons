@@ -13,54 +13,61 @@ let bunbonBabyBodies = [
 let earsStartIndex = 60
 let bunbonEars = {
     none: 0,
-    long: earsStartIndex + 0,
-    short: earsStartIndex + 1,
-    floppy: earsStartIndex + 2,
-    round: earsStartIndex + 3,
-    pointed: earsStartIndex + 4,
-    lop: earsStartIndex + 5
+    pointy: earsStartIndex + 0,
+    nubs: earsStartIndex + 1,
+    long: earsStartIndex + 2,
+    short: earsStartIndex + 3,
+    lop: earsStartIndex + 4,
+    fin: earsStartIndex + 5,
 }
 
 let tailsStartIndex = 80
 let bunbonTails = {
     none: 0,
-    short: tailsStartIndex + 0,
-    fin: tailsStartIndex + 1,
-    fluffy: tailsStartIndex + 2,
-    thin: tailsStartIndex + 3,
-    curly: tailsStartIndex + 4,
-    stubby: tailsStartIndex + 5,
+    fin: tailsStartIndex + 0,
+    curly: tailsStartIndex + 1,
+    pony: tailsStartIndex + 2,
+    deer: tailsStartIndex + 3,
+    stinger: tailsStartIndex + 4,
+    nub: tailsStartIndex + 5,
+    long: tailsStartIndex + 6,
+    slug: tailsStartIndex + 7,
+    puff: tailsStartIndex + 8,
 }
 
 let backsStartIndex = 100
 let bunbonBacks = {
     none: 0,
-    fin: backsStartIndex + 0,
-    spikes: backsStartIndex + 1,
-    spines: backsStartIndex + 2,
-    wavy: backsStartIndex + 3,
-    shell: backsStartIndex + 4,
-    leaf: backsStartIndex + 5,
+    featherwings: backsStartIndex + 0,
+    leaf: backsStartIndex + 1,
+    frills: backsStartIndex + 2,
+    bugwings: backsStartIndex + 3,
+    fin: backsStartIndex + 4,
+    spikes: backsStartIndex + 5,
+    shell: backsStartIndex + 6,
 }
 
 let headsStartIndex = 120
 let bunbonHeads = {
     none: 0,
-    horn: headsStartIndex + 0,
-    antlers: headsStartIndex + 1,
-    gem: headsStartIndex + 2,
-    spikes: headsStartIndex + 3,
+    antlers: headsStartIndex + 0,
+    dongle: headsStartIndex + 1,
+    spikes: headsStartIndex + 2,
+    gem: headsStartIndex + 3,
     horns: headsStartIndex + 4,
     antennae: headsStartIndex + 5,
-    ram: headsStartIndex + 6,
+    unicorn: headsStartIndex + 6,
 }
 
 let patternsStartIndex = 140
 let bunbonPatterns = {
     none: 0,
-    stripes: patternsStartIndex + 0,
-    spots: patternsStartIndex + 1,
-    band: patternsStartIndex + 2,
+    fluff: patternsStartIndex + 0,
+    lateralstripe: patternsStartIndex + 1,
+    stripes: patternsStartIndex + 2,
+    speckles: patternsStartIndex + 3,
+    blobs: patternsStartIndex + 4,
+    band: patternsStartIndex + 5,
 }
 
 let facesStartIndex = 20
@@ -82,15 +89,20 @@ let bunbonFaces = {
 }
 
 let bunbonBlastoffImages = {
-    rocket1: 160,
-    rocket2: 161
+    rocket1: 48,
+    rocket2: 49
 }
 
 let replacementColors = [
-    [255, 209, 171],
-    [255, 128, 170],
-    [191, 63, 179],
-    [104, 43, 130],
+    [252, 203, 163],
+    [246, 129, 129],
+    [240, 79, 120],
+    [131, 28, 93],
+
+    [228, 249, 152],
+    [145, 219, 105],
+    [30, 188, 115],
+    [22, 90, 76],
 ]
 
 let bunbonColors = {
@@ -101,7 +113,7 @@ let bunbonColors = {
         [105, 79, 98]
     ],
     'black': [
-        [155, 171, 178],
+        [141, 140, 150],
         [98, 85, 101],
         [69, 61, 76],
         [23, 17, 26]
@@ -119,7 +131,7 @@ let bunbonColors = {
         [98, 35, 47]
     ],
     'gold': [
-        [250, 247, 237],
+        [250, 240, 117],
         [250, 203, 62],
         [238, 142, 46],
         [159, 41, 78]
@@ -155,13 +167,13 @@ let bunbonColors = {
         [131, 28, 93]
     ],
     'purple': [
-        [253, 247, 237],
+        [246, 219, 204],
         [240, 179, 221],
         [194, 120, 208],
         [71, 53, 121]
     ],
     'green': [
-        [253, 247, 237],
+        [228, 249, 152],
         [145, 219, 105],
         [30, 188, 115],
         [22, 90, 76]
@@ -173,7 +185,7 @@ let bunbonColors = {
         [71, 53, 121]
     ],
     'blue': [
-        [253, 247, 237],
+        [190, 239, 250],
         [124, 184, 231],
         [114, 111, 213],
         [56, 39, 104]
@@ -184,7 +196,7 @@ class Bunbon extends GameObject {
 
     constructor(pos, bunbonDNA) {
 
-        super(24, 22)
+        super(26, 22)
 
         bunbonCount++
         
@@ -195,8 +207,8 @@ class Bunbon extends GameObject {
         this.name = NameGenerator.generate()
         this.pos = pos
 
-        this.offsetX = -4
-        this.offsetY = -8
+        this.offsetX = -3
+        this.offsetY = -10
         this.animationTimer = 0
         this.animationFrame = 0
         this.faceTimer = 0
@@ -268,22 +280,24 @@ class Bunbon extends GameObject {
         this.friendOpinions = {}
 
         // save sprites
+        this.spritesheet = new Spritesheet(spritesheetImg, 32, 32, this.color, this.secondaryColor)
+
         this.babyspriteImgs = [
-            colorSpritesheets[this.color].getSprite(bunbonBabyBodies[0]),
-            colorSpritesheets[this.color].getSprite(bunbonBabyBodies[1]),
-            colorSpritesheets[this.color].getSprite(bunbonBabyBodies[0] + 2),
-            colorSpritesheets[this.color].getSprite(bunbonBabyBodies[1] + 2)
+            this.spritesheet.getSprite(bunbonBabyBodies[0]),
+            this.spritesheet.getSprite(bunbonBabyBodies[1]),
+            this.spritesheet.getSprite(bunbonBabyBodies[0] + 2),
+            this.spritesheet.getSprite(bunbonBabyBodies[1] + 2)
         ]
         this.babyspriteImgsFlipped = [
-            colorSpritesheets[this.color].getSprite(bunbonBabyBodies[0], /* isFlipped */ true),
-            colorSpritesheets[this.color].getSprite(bunbonBabyBodies[1], /* isFlipped */ true),
-            colorSpritesheets[this.color].getSprite(bunbonBabyBodies[0] + 2, /* isFlipped */ true),
-            colorSpritesheets[this.color].getSprite(bunbonBabyBodies[1] + 2, /* isFlipped */ true)
+            this.spritesheet.getSprite(bunbonBabyBodies[0], /* isFlipped */ true),
+            this.spritesheet.getSprite(bunbonBabyBodies[1], /* isFlipped */ true),
+            this.spritesheet.getSprite(bunbonBabyBodies[0] + 2, /* isFlipped */ true),
+            this.spritesheet.getSprite(bunbonBabyBodies[1] + 2, /* isFlipped */ true)
         ]
 
         let makeSpriteImg = (animationFrame, isFlipped, isOutline, isBlastingOff, blastOffFrame) => {
             let bodySprite = (animationFrame === 0 ? bunbonBodies[0] : bunbonBodies[1]) + (isOutline ? 10 : 0)
-            let patternSprite = animationFrame === 0 ? bunbonPatterns[this.pattern] : (bunbonPatterns[this.pattern] + 10)
+            let patternSprite = bunbonPatterns[this.pattern] + (animationFrame === 0 ? 0 : 20) + (isOutline ? 10 : 0)
             let rocketSprite = (blastOffFrame === 0 ? bunbonBlastoffImages['rocket1'] : bunbonBlastoffImages['rocket2']) + (isOutline ? 10 : 0)
             let earsSprite = bunbonEars[this.ears] + (isOutline ? 10 : 0)
             let tailSprite = bunbonTails[this.tail] + (isOutline ? 10 : 0)
@@ -292,19 +306,18 @@ class Bunbon extends GameObject {
 
             let x = 8
             let y = 8
-            let headX = isFlipped ? x - 1 : x + 1
             let tailX = isFlipped ? x + 1 : x - 1
             let rocketX = isFlipped ? x + 4 : x - 4
-            let decorationY = animationFrame === 0 ? y : y + 1
+            let decorationY = animationFrame === 0 ? y : y + 2
 
             let spriteImg = createImage(48, 48)
-            colorSpritesheets[this.color].copySprite(spriteImg, bodySprite, isFlipped, x, y)
-            if (!isOutline && this.pattern !== 'none') colorSpritesheets[this.secondaryColor].copySprite(spriteImg, patternSprite, isFlipped, x, y)
-            if (this.tail !== 'none') colorSpritesheets[this.color].copySprite(spriteImg, tailSprite, isFlipped, tailX, decorationY)
-            if (this.back !== 'none') colorSpritesheets[this.secondaryColor].copySprite(spriteImg, backSprite, isFlipped, x, decorationY)
-            if (isBlastingOff) colorSpritesheets[this.color].copySprite(spriteImg, rocketSprite, isFlipped, rocketX, decorationY + 2)
-            if (this.ears !== 'none') colorSpritesheets[this.color].copySprite(spriteImg, earsSprite, isFlipped, headX, decorationY)
-            if (this.head !== 'none') colorSpritesheets[this.secondaryColor].copySprite(spriteImg, headSprite, isFlipped, headX, decorationY)
+            this.spritesheet.copySprite(spriteImg, bodySprite, isFlipped, x, y)
+            if (this.pattern !== 'none') this.spritesheet.copySprite(spriteImg, patternSprite, isFlipped, x, y)
+            if (this.tail !== 'none') this.spritesheet.copySprite(spriteImg, tailSprite, isFlipped, tailX, decorationY)
+            if (this.back !== 'none') this.spritesheet.copySprite(spriteImg, backSprite, isFlipped, x, decorationY)
+            if (isBlastingOff) this.spritesheet.copySprite(spriteImg, rocketSprite, isFlipped, rocketX, decorationY + 2)
+            if (this.ears !== 'none') this.spritesheet.copySprite(spriteImg, earsSprite, isFlipped, x, decorationY)
+            if (this.head !== 'none') this.spritesheet.copySprite(spriteImg, headSprite, isFlipped, x, decorationY)
             
             return spriteImg
         }
@@ -340,15 +353,15 @@ class Bunbon extends GameObject {
         this.faceImgs = {}
         this.faceImgsFlipped = {}
         Object.keys(bunbonFaces).forEach(faceName => {
-            this.faceImgs[faceName] = colorSpritesheets[this.color].getSprite(bunbonFaces[faceName])
-            this.faceImgsFlipped[faceName] = colorSpritesheets[this.color].getSprite(bunbonFaces[faceName], /* isFlipped */  true)
+            this.faceImgs[faceName] = this.spritesheet.getSprite(bunbonFaces[faceName])
+            this.faceImgsFlipped[faceName] = this.spritesheet.getSprite(bunbonFaces[faceName], /* isFlipped */  true)
         })
 
-        this.adultIcon = colorSpritesheets[this.color].getSprite(7)
-        this.babyIcon = colorSpritesheets[this.color].getSprite(8)
+        this.adultIcon = this.spritesheet.getSprite(7)
+        this.babyIcon = this.spritesheet.getSprite(8)
 
-        this.rocketIcon1 = colorSpritesheets[this.color].getSprite(17)
-        this.rocketIcon2 = colorSpritesheets[this.color].getSprite(18)
+        this.rocketIcon1 = this.spritesheet.getSprite(17)
+        this.rocketIcon2 = this.spritesheet.getSprite(18)
     }
 
     static randomChromosome() {
@@ -1237,7 +1250,7 @@ class Bunbon extends GameObject {
             }
 
             // draw face
-            let faceY = y + (this.animationFrame === 0 ? 0 : 1)
+            let faceY = y + (this.animationFrame === 0 ? 0 : 2)
             if (this.isFlipped) {
                 image(this.faceImgsFlipped[this.face], x, faceY)
             } else {
