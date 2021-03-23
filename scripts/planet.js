@@ -114,48 +114,58 @@ class Planet extends ScreenState {
 
         // place objects
         this.objects = []
+
         if (this.name === 'mossyforest') {
             this.objects.push(new Toy(this.randomPoint(), 'mossball'))
             this.objects.push(new Food(this.randomPoint(), 'mushrooms'))
-            this.objects.push(new Egg(this.randomPoint()))
+            this.objects.push(new Egg(this.randomPoint(), 'deer'))
+
         } else if (this.name === 'cloudland') {
             this.objects.push(new Toy(this.randomPoint(), 'glider'))
             this.objects.push(new Food(this.randomPoint(), 'dumplings'))
-            this.objects.push(new Egg(this.randomPoint()))
+            this.objects.push(new Egg(this.randomPoint(), 'alicorn'))
+
         } else if (this.name === 'asteroid') {
             this.objects.push(new Toy(this.randomPoint(), 'robot'))
             this.objects.push(new Food(this.randomPoint(), 'juiceorb'))
-            this.objects.push(new Egg(this.randomPoint()))
+            this.objects.push(new Egg(this.randomPoint(), 'alien'))
+
         } else if (this.name === 'flowertown') {
             this.objects.push(new Toy(this.randomPoint(), 'dancingflower'))
             this.objects.push(new Food(this.randomPoint(), 'flowers'))
-            this.objects.push(new Egg(this.randomPoint()))
+            this.objects.push(new Egg(this.randomPoint(), 'bee'))
+
         } else if (this.name === 'volcano') {
             this.objects.push(new Toy(this.randomPoint(), 'butterfly'))
             this.objects.push(new Food(this.randomPoint(), 'dragonfruit'))
-            this.objects.push(new Egg(this.randomPoint()))
+            this.objects.push(new Egg(this.randomPoint(), 'leafcat'))
+
         } else if (this.name === 'crystalcave') {
             this.objects.push(new Toy(this.randomPoint(), 'magicwand'))
             this.objects.push(new Food(this.randomPoint(), 'rockcandy'))
-            this.objects.push(new Egg(this.randomPoint()))
+            this.objects.push(new Egg(this.randomPoint(), 'snail'))
+
         } else if (this.name === 'snowymountain') {
             this.objects.push(new Toy(this.randomPoint(), 'sled'))
             this.objects.push(new Food(this.randomPoint(), 'icecream'))
-            this.objects.push(new Egg(this.randomPoint()))
+            this.objects.push(new Egg(this.randomPoint(), 'sheep'))
+
         } else if (this.name === 'park') {
             this.objects.push(new Toy(this.randomPoint(), 'bundoll'))
             this.objects.push(new Food(this.randomPoint(), 'sandwich'))
-            this.objects.push(new Egg(this.randomPoint()))
-            this.objects.push(new Egg(this.randomPoint()))
-            this.objects.push(new Egg(this.randomPoint()))
+            this.objects.push(new Egg(this.randomPoint(), 'intro'))
+            this.objects.push(new Egg(this.randomPoint(), 'intro'))
+            this.objects.push(new Egg(this.randomPoint(), 'intro'))
+
         } else if (this.name === 'bubbledome') {
             this.objects.push(new Toy(this.randomPoint(), 'beachball'))
             this.objects.push(new Food(this.randomPoint(), 'seaweed'))
-            this.objects.push(new Egg(this.randomPoint()))
+            this.objects.push(new Egg(this.randomPoint(), 'fish'))
+
         } else if (this.name === 'desert') {
             this.objects.push(new Toy(this.randomPoint(), 'succulent'))
             this.objects.push(new Food(this.randomPoint(), 'pullturtle'))
-            this.objects.push(new Egg(this.randomPoint()))
+            this.objects.push(new Egg(this.randomPoint(), 'lizard'))
         }
 
     }

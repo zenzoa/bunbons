@@ -16,7 +16,140 @@ class Egg extends Toy {
         this.offsetX = -4
         this.offsetY = -8
 
-        this.bunbonDNA = bunbonDNA || Bunbon.randomDNA()
+        if (bunbonDNA === 'intro') {
+            this.bunbonDNA = Bunbon.randomDNA({
+                color: introBunbonColors.pop(),
+                secondaryColor: introBunbonSecondaryColors.pop(),
+                ears: introBunbonEars.pop(),
+                tail: introBunbonTails.pop(),
+                back: 'none',
+                head: 'none',
+                pattern: introBunbonPatterns.pop(),
+            })
+
+        } else if (bunbonDNA === 'deer') {
+            this.bunbonDNA = Bunbon.randomDNA({
+                color: 'dust',
+                secondaryColor: 'dust',
+                ears: 'none',
+                tail: 'deer',
+                back: 'none',
+                head: 'antlers',
+                pattern: 'speckles',
+                earsUsePrimaryColor: true,
+                tailUsesPrimaryColor: true
+            })
+
+        } else if (bunbonDNA === 'alicorn') {
+            this.bunbonDNA = Bunbon.randomDNA({
+                color: 'purple',
+                secondaryColor: 'cream',
+                ears: 'none',
+                tail: 'pony',
+                back: 'featherwings',
+                head: 'unicorn',
+                pattern: 'none',
+                earsUsePrimaryColor: true,
+                tailUsesPrimaryColor: false
+            })
+
+        } else if (bunbonDNA === 'alien') {
+            this.bunbonDNA = Bunbon.randomDNA({
+                color: 'pink',
+                secondaryColor: 'aqua',
+                ears: 'none',
+                tail: 'none',
+                back: 'frills',
+                head: 'dongle',
+                pattern: 'blobs',
+                earsUsePrimaryColor: true,
+                tailUsesPrimaryColor: true
+            })
+
+        } else if (bunbonDNA === 'bee') {
+            this.bunbonDNA = Bunbon.randomDNA({
+                color: 'yellow',
+                secondaryColor: 'black',
+                ears: 'none',
+                tail: 'stinger',
+                back: 'bugwings',
+                head: 'antennae',
+                pattern: 'band',
+                earsUsePrimaryColor: true,
+                tailUsesPrimaryColor: false
+            })
+
+        } else if (bunbonDNA === 'leafcat') {
+            this.bunbonDNA = Bunbon.randomDNA({
+                color: 'gold',
+                secondaryColor: 'green',
+                ears: 'pointy',
+                tail: 'long',
+                back: 'leaf',
+                head: 'none',
+                pattern: 'lateralstripe',
+                earsUsePrimaryColor: true,
+                tailUsesPrimaryColor: true
+            })
+
+        } else if (bunbonDNA === 'snail') {
+            this.bunbonDNA = Bunbon.randomDNA({
+                color: 'blush',
+                secondaryColor: 'purple',
+                ears: 'nubs',
+                tail: 'slug',
+                back: 'shell',
+                head: 'none',
+                pattern: 'none',
+                earsUsePrimaryColor: true,
+                tailUsesPrimaryColor: true,
+                maxSpeed: 0.2,
+                jumpChance: 0.01
+            })
+
+        } else if (bunbonDNA === 'sheep') {
+            this.bunbonDNA = Bunbon.randomDNA({
+                color: 'cream',
+                secondaryColor: 'gold',
+                ears: 'none',
+                tail: 'nub',
+                back: 'none',
+                head: 'horns',
+                pattern: 'fluff',
+                earsUsePrimaryColor: true,
+                tailUsesPrimaryColor: false
+            })
+
+        } else if (bunbonDNA === 'fish') {
+            this.bunbonDNA = Bunbon.randomDNA({
+                color: 'aqua',
+                secondaryColor: 'blue',
+                ears: 'fin',
+                tail: 'fin',
+                back: 'fin',
+                head: 'gem',
+                pattern: 'none',
+                earsUsePrimaryColor: true,
+                tailUsesPrimaryColor: false
+            })
+
+        } else if (bunbonDNA === 'lizard') {
+            this.bunbonDNA = Bunbon.randomDNA({
+                color: 'green',
+                secondaryColor: 'pink',
+                ears: 'none',
+                tail: 'curly',
+                back: 'spikes',
+                head: 'spikes',
+                pattern: 'stripes',
+                earsUsePrimaryColor: true,
+                tailUsesPrimaryColor: false
+            })
+
+        } else {
+            this.bunbonDNA = bunbonDNA || Bunbon.randomDNA()
+        }
+
         this.timeToHatch = Math.floor(FRAME_RATE * 60 * random(0.8, 1.2))
         this.color = this.bunbonDNA.color
 

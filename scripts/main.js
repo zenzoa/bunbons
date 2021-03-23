@@ -1,8 +1,6 @@
 /*
 
 TODO:
-- better shadow tone
-- make genetics for each planet
 - create splash/loading screen
 - sound effects
 - planet images
@@ -80,6 +78,8 @@ let preventClicking = false
 let Vector = p5.Vector
 
 let spritesheet, spritesheetImg, baseSpritesheet
+let colorSpritesheets = {}
+
 let userinterfaceImg, spaceButtonImg, muteButtonImg, unmuteButtonImg, spaceButtonForCreditsImg, heartImg
 let scoreButtonImgs = []
 let shadowImgs = {}
@@ -197,6 +197,10 @@ function setup() {
 
     baseSpritesheet = new Spritesheet(spritesheetImg, 32, 32)
 
+    Object.keys(bunbonColors).forEach(colorName => {
+        colorSpritesheets[colorName] = new Spritesheet(spritesheetImg, 32, 32, colorName)
+    })
+
     shadowImgs = {
         'small': baseSpritesheet.getSprite(42),
         'big': baseSpritesheet.getSprite(43),
@@ -258,6 +262,12 @@ function setup() {
     } else {
         openScreen('space', 0)
     }
+
+    shuffle(introBunbonColors.concat(introBunbonColors))
+    shuffle(introBunbonSecondaryColors.concat(introBunbonSecondaryColors))
+    shuffle(introBunbonEars.concat(introBunbonEars))
+    shuffle(introBunbonTails.concat(introBunbonTails))
+    shuffle(introBunbonPatterns.concat(introBunbonPatterns))
 
 }
 
