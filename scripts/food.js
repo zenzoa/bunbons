@@ -64,9 +64,12 @@ class Food extends GameObject {
 
     draw() {
 
-        // find upper-left corner of sprite
-        let x = floor(this.pos.x - (this.width / 2) + this.offsetX)
-        let y = floor(this.pos.y - this.height + this.offsetY)
+        push()
+        translate(floor(this.pos.x), floor(this.pos.y))
+        if (this.isFlipped) scale(-1.0, 1.0)
+
+        let x = floor(-(this.width / 2) + this.offsetX)
+        let y = floor(-this.height + this.offsetY)
 
         if (!this.isInInventory && !this.isBeingDragged) {
             if (this.name === 'mushrooms') {
@@ -98,11 +101,13 @@ class Food extends GameObject {
             image(this.spriteImgs[0], x, y)
         }
 
+        pop()
+
         // draw debug lines
         if (DEBUG) {
             noFill()
             stroke('lightblue')
-            rect(x - this.offsetX, y - this.offsetY, this.width, this.height)
+            rect(this.pos.x + x - this.offsetX, this.pos.y + y - this.offsetY, this.width, this.height)
         }
 
     }

@@ -158,11 +158,10 @@ class Egg extends Toy {
 
         this.driveReduction = 10
 
-        this.spritesheet = new Spritesheet(spritesheetImg, 32, 32, this.color, this.color)
         this.spriteImgs = [
-            this.spritesheet.getSprite(bunbonEggs[0]),
-            this.spritesheet.getSprite(bunbonEggs[1]),
-            this.spritesheet.getSprite(bunbonEggs[2])
+            colorSpritesheets[this.color].getSprite(bunbonEggs[0]),
+            colorSpritesheets[this.color].getSprite(bunbonEggs[1]),
+            colorSpritesheets[this.color].getSprite(bunbonEggs[2])
         ]
 
     }

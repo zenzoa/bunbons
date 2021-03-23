@@ -98,7 +98,6 @@ class Toy extends GameObject {
             this.shadowOffsetX = 2
         }
 
-        this.isFlipped = false
         this.isActive = false
         this.carriedBunbon = null
 
@@ -107,11 +106,6 @@ class Toy extends GameObject {
         this.spriteImgs = [
             baseSpritesheet.getSprite(toySpriteIndex),
             baseSpritesheet.getSprite(toySpriteIndex + 20)
-        ]
-
-        this.spriteImgsFlipped = [
-            baseSpritesheet.getSprite(toySpriteIndex, /* isFlipped */ true),
-            baseSpritesheet.getSprite(toySpriteIndex + 20, /* isFlipped */ true)
         ]
 
     }
@@ -329,31 +323,32 @@ class Toy extends GameObject {
 
     draw() {
 
-        // find upper-left corner of sprite
-        let x = floor(this.pos.x - (this.width / 2) + this.offsetX)
-        let y = floor(this.pos.y - this.height + this.offsetY)
+        push()
+        translate(floor(this.pos.x), floor(this.pos.y))
+        if (this.isFlipped) scale(-1.0, 1.0)
+
+        let x = floor(-(this.width / 2) + this.offsetX)
+        let y = floor(-this.height + this.offsetY)
         let bounceOffset = this.isActive ? floor(this.bounceY) : 0
 
         // draw shadow
         if (!this.isInInventory && !this.isBeingDragged) {
-            let shadowX = this.isFlipped ? x - this.shadowOffsetX : x + this.shadowOffsetX
+            let shadowX = x + this.shadowOffsetX
             let shadowY = y + this.shadowOffsetY
             let shadowImg = this.bounceY > 0 ? shadowImgs[this.shadowType + '-jump'] : shadowImgs[this.shadowType]
             image(shadowImg, shadowX, shadowY)
         }
 
         // draw toy
-        if (this.isFlipped) {
-            image(this.spriteImgsFlipped[this.animationFrame], x, y - bounceOffset)
-        } else {
-            image(this.spriteImgs[this.animationFrame], x, y - bounceOffset)
-        }
-        
+        image(this.spriteImgs[this.animationFrame], x, y - bounceOffset)
+
+        pop()
+
         // draw debug lines
         if (DEBUG) {
             noFill()
             stroke('lightblue')
-            rect(x - this.offsetX, y - this.offsetY, this.width, this.height)
+            rect(this.pos.x + x - this.offsetX, this.pos.y + y - this.offsetY, this.width, this.height)
         }
 
     }

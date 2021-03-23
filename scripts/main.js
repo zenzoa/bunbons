@@ -210,17 +210,12 @@ function setup() {
 
     bubbleImgs = {
         'dreambubble': baseSpritesheet.getSprite(15),
-        'dreambubble-flipped': baseSpritesheet.getSprite(16, /* isFlipped */ true),
+        'dreambubble-flipped': baseSpritesheet.getSprite(16),
         'speechbubble': baseSpritesheet.getSprite(9),
-        'speechbubble-flipped': baseSpritesheet.getSprite(9, /* isFlipped */ true),
         'thoughtbubble-food': baseSpritesheet.getSprite(10),
-        'thoughtbubble-food-flipped': baseSpritesheet.getSprite(10, /* isFlipped */ true),
         'thoughtbubble-toy': baseSpritesheet.getSprite(11),
-        'thoughtbubble-toy-flipped': baseSpritesheet.getSprite(11, /* isFlipped */ true),
         'thoughtbubble-friend': baseSpritesheet.getSprite(12),
-        'thoughtbubble-friend-flipped': baseSpritesheet.getSprite(12, /* isFlipped */ true),
-        'thoughtbubble-sleep': baseSpritesheet.getSprite(13),
-        'thoughtbubble-sleep-flipped': baseSpritesheet.getSprite(14, /* isFlipped */ true)
+        'thoughtbubble-sleep': baseSpritesheet.getSprite(13)
     }
 
     heartImg = spritesheetImg.get(608, 0, 12, 10)
@@ -245,6 +240,12 @@ function setup() {
         baseSpritesheet.getSprite(271)
     ]
 
+    introBunbonColors = shuffle(introBunbonColors.concat(introBunbonColors))
+    introBunbonSecondaryColors = shuffle(introBunbonSecondaryColors.concat(introBunbonSecondaryColors))
+    introBunbonEars = shuffle(introBunbonEars.concat(introBunbonEars))
+    introBunbonTails = shuffle(introBunbonTails.concat(introBunbonTails))
+    introBunbonPatterns = shuffle(introBunbonPatterns.concat(introBunbonPatterns))
+
     spaceScreen.setup()
     let isLoadSuccessful = loadState()
     if (!isLoadSuccessful) {
@@ -262,12 +263,6 @@ function setup() {
     } else {
         openScreen('space', 0)
     }
-
-    shuffle(introBunbonColors.concat(introBunbonColors))
-    shuffle(introBunbonSecondaryColors.concat(introBunbonSecondaryColors))
-    shuffle(introBunbonEars.concat(introBunbonEars))
-    shuffle(introBunbonTails.concat(introBunbonTails))
-    shuffle(introBunbonPatterns.concat(introBunbonPatterns))
 
 }
 

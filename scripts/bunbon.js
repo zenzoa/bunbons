@@ -294,14 +294,8 @@ class Bunbon extends GameObject {
             primaryColorSpritesheet.getSprite(bunbonBabyBodies[0] + 2),
             primaryColorSpritesheet.getSprite(bunbonBabyBodies[1] + 2)
         ]
-        this.babyspriteImgsFlipped = [
-            primaryColorSpritesheet.getSprite(bunbonBabyBodies[0], /* isFlipped */ true),
-            primaryColorSpritesheet.getSprite(bunbonBabyBodies[1], /* isFlipped */ true),
-            primaryColorSpritesheet.getSprite(bunbonBabyBodies[0] + 2, /* isFlipped */ true),
-            primaryColorSpritesheet.getSprite(bunbonBabyBodies[1] + 2, /* isFlipped */ true)
-        ]
 
-        let makeSpriteImg = (animationFrame, isFlipped, isOutline, isBlastingOff, blastOffFrame) => {
+        let makeSpriteImg = (animationFrame, isOutline, isBlastingOff, blastOffFrame) => {
             let bodySprite = (animationFrame === 0 ? bunbonBodies[0] : bunbonBodies[1]) + (isOutline ? 10 : 0)
             let patternSprite = bunbonPatterns[this.pattern] + (animationFrame === 0 ? 0 : 20) + (isOutline ? 10 : 0)
             let rocketSprite = (blastOffFrame === 0 ? bunbonBlastoffImages['rocket1'] : bunbonBlastoffImages['rocket2']) + (isOutline ? 10 : 0)
@@ -316,55 +310,39 @@ class Bunbon extends GameObject {
 
             let x = 8
             let y = 8
-            let tailX = isFlipped ? x + 1 : x - 1
-            let rocketX = isFlipped ? x + 4 : x - 4
+            let tailX = x - 1
+            let rocketX = x - 4
             let decorationY = animationFrame === 0 ? y : y + 2
 
             let spriteImg = createImage(48, 48)
-            primaryColorSpritesheet.copySprite(spriteImg, bodySprite, isFlipped, x, y)
-            if (this.pattern !== 'none') patternSpritesheet.copySprite(spriteImg, patternSprite, isFlipped, x, y)
-            if (this.tail !== 'none') tailSpritesheet.copySprite(spriteImg, tailSprite, isFlipped, tailX, decorationY)
-            if (this.back !== 'none') secondaryColorSpritesheet.copySprite(spriteImg, backSprite, isFlipped, x, decorationY)
-            if (isBlastingOff) primaryColorSpritesheet.copySprite(spriteImg, rocketSprite, isFlipped, rocketX, decorationY + 2)
-            if (this.ears !== 'none') earsSpritesheet.copySprite(spriteImg, earsSprite, isFlipped, x, decorationY)
-            if (this.head !== 'none') secondaryColorSpritesheet.copySprite(spriteImg, headSprite, isFlipped, x, decorationY)
+            primaryColorSpritesheet.copySprite(spriteImg, bodySprite, x, y)
+            if (this.pattern !== 'none') patternSpritesheet.copySprite(spriteImg, patternSprite, x, y)
+            if (this.tail !== 'none') tailSpritesheet.copySprite(spriteImg, tailSprite, tailX, decorationY)
+            if (this.back !== 'none') secondaryColorSpritesheet.copySprite(spriteImg, backSprite, x, decorationY)
+            if (isBlastingOff) primaryColorSpritesheet.copySprite(spriteImg, rocketSprite, rocketX, decorationY + 2)
+            if (this.ears !== 'none') earsSpritesheet.copySprite(spriteImg, earsSprite, x, decorationY)
+            if (this.head !== 'none') secondaryColorSpritesheet.copySprite(spriteImg, headSprite, x, decorationY)
             
             return spriteImg
         }
 
         this.outlineImgs = [
-            makeSpriteImg(0, /* isFlipped */ false, /* isOutline */ true),
-            makeSpriteImg(1, /* isFlipped */ false, /* isOutline */ true),
-            makeSpriteImg(0, /* isFlipped */ false, /* isOutline */ true, /* isBlastingOff */ true, /* blastOffFrame */ 0),
-            makeSpriteImg(0, /* isFlipped */ false, /* isOutline */ true, /* isBlastingOff */ true, /* blastOffFrame */ 1)
-        ]
-
-        this.outlineImgsFlipped = [
-            makeSpriteImg(0, /* isFlipped */ true, /* isOutline */ true),
-            makeSpriteImg(1, /* isFlipped */ true, /* isOutline */ true),
-            makeSpriteImg(0, /* isFlipped */ true, /* isOutline */ true, /* isBlastingOff */ true, /* blastOffFrame */ 0),
-            makeSpriteImg(0, /* isFlipped */ true, /* isOutline */ true, /* isBlastingOff */ true, /* blastOffFrame */ 1)
+            makeSpriteImg(0, /* isOutline */ true),
+            makeSpriteImg(1, /* isOutline */ true),
+            makeSpriteImg(0, /* isOutline */ true, /* isBlastingOff */ true, /* blastOffFrame */ 0),
+            makeSpriteImg(0, /* isOutline */ true, /* isBlastingOff */ true, /* blastOffFrame */ 1)
         ]
 
         this.spriteImgs = [
-            makeSpriteImg(0, /* isFlipped */ false, /* isOutline */ false),
-            makeSpriteImg(1, /* isFlipped */ false, /* isOutline */ false),
-            makeSpriteImg(0, /* isFlipped */ false, /* isOutline */ false, /* isBlastingOff */ true, /* blastOffFrame */ 0),
-            makeSpriteImg(0, /* isFlipped */ false, /* isOutline */ false, /* isBlastingOff */ true, /* blastOffFrame */ 1)
-        ]
-
-        this.spriteImgsFlipped = [
-            makeSpriteImg(0, /* isFlipped */ true, /* isOutline */ false),
-            makeSpriteImg(1, /* isFlipped */ true, /* isOutline */ false),
-            makeSpriteImg(0, /* isFlipped */ true, /* isOutline */ false, /* isBlastingOff */ true, /* blastOffFrame */ 0),
-            makeSpriteImg(0, /* isFlipped */ true, /* isOutline */ false, /* isBlastingOff */ true, /* blastOffFrame */ 1)
+            makeSpriteImg(0, /* isOutline */ false),
+            makeSpriteImg(1, /* isOutline */ false),
+            makeSpriteImg(0, /* isOutline */ false, /* isBlastingOff */ true, /* blastOffFrame */ 0),
+            makeSpriteImg(0, /* isOutline */ false, /* isBlastingOff */ true, /* blastOffFrame */ 1)
         ]
 
         this.faceImgs = {}
-        this.faceImgsFlipped = {}
         Object.keys(bunbonFaces).forEach(faceName => {
             this.faceImgs[faceName] = primaryColorSpritesheet.getSprite(bunbonFaces[faceName])
-            this.faceImgsFlipped[faceName] = primaryColorSpritesheet.getSprite(bunbonFaces[faceName], /* isFlipped */  true)
         })
 
         this.adultIcon = primaryColorSpritesheet.getSprite(7)
@@ -1223,10 +1201,13 @@ class Bunbon extends GameObject {
 
     draw(screen) {
 
-        // find upper-left corner of sprite
+        push()
+        translate(floor(this.pos.x), floor(this.pos.y))
+        if (this.isFlipped) scale(-1.0, 1.0)
+
         let jumpOffset = (this.state === 'jumping' && !this.isInInventory) ? this.jumpY : 0
-        let x = floor(this.pos.x - (this.width / 2) + this.offsetX + this.tempOffsetX)
-        let y = floor(this.pos.y - this.height + this.offsetY - jumpOffset + this.tempOffsetY)
+        let x = floor(-(this.width / 2) + this.offsetX + (this.isFlipped ? -this.tempOffsetX : this.tempOffsetX))
+        let y = floor(-this.height + this.offsetY - jumpOffset + this.tempOffsetY)
 
         // draw base
         if (this.isBaby) {
@@ -1241,11 +1222,7 @@ class Bunbon extends GameObject {
             }
 
             // draw body
-            if (this.isFlipped) {
-                image(this.babyspriteImgsFlipped[spriteIndex], x, y)
-            } else {
-                image(this.babyspriteImgs[spriteIndex], x, y)
-            }
+            image(this.babyspriteImgs[spriteIndex], x, y)
 
         } else {
 
@@ -1260,43 +1237,36 @@ class Bunbon extends GameObject {
             }
 
             // draw body
-            if (this.isFlipped) {
-                image(this.outlineImgsFlipped[spriteIndex], x - 8, y - 8)
-                image(this.spriteImgsFlipped[spriteIndex], x - 8, y - 8)
-            } else {
-                image(this.outlineImgs[spriteIndex], x - 8, y - 8)
-                image(this.spriteImgs[spriteIndex], x - 8, y - 8)
-            }
+            image(this.outlineImgs[spriteIndex], x - 8, y - 8)
+            image(this.spriteImgs[spriteIndex], x - 8, y - 8)
 
             // draw face
             let faceY = y + (this.animationFrame === 0 ? 0 : 2)
-            if (this.isFlipped) {
-                image(this.faceImgsFlipped[this.face], x, faceY)
-            } else {
-                image(this.faceImgs[this.face], x, faceY)
-            }
+            image(this.faceImgs[this.face], x, faceY)
 
         }
+
+        let drawSelectionInfo = false
 
         if (!this.isInInventory && !this.isBeingDragged && this.state !== 'blasting-off') {
 
             if (this.state === 'sleeping') {
                 // draw dream bubble
-                let dreamBubbleX = this.isFlipped ? x - 26 : x + 26
+                let dreamBubbleX = x + 26
                 let dreamBubbleY = y + Math.sin(this.sleepTimer * .1)
                 image(bubbleImgs['dreambubble' + (this.isFlipped ? '-flipped' : '')], dreamBubbleX, dreamBubbleY)
             } else if (this.state === 'chatting') {
                 // draw speech bubble
                 if (this.speechBubbleTimer > 0) {
-                    let speechBubbleX = this.isFlipped ? x - 20 : x + 20
+                    let speechBubbleX = x + 20
                     let speechBubbleY = y + Math.sin(this.speechBubbleTimer * 0.33) - 2
-                    image(bubbleImgs['speechbubble' + (this.isFlipped ? '-flipped' : '')], speechBubbleX, speechBubbleY)
+                    image(bubbleImgs['speechbubble'], speechBubbleX, speechBubbleY)
                 }
             } else if (this.isThinking) {
                 // draw thought bubble
-                let thoughtBubbleX = this.isFlipped ? x - 20 : x + 20
+                let thoughtBubbleX = x + 20
                 let thoughtBubbleY = y - 4
-                image(bubbleImgs['thoughtbubble-' + this.thoughtType + (this.isFlipped ? '-flipped' : '')], thoughtBubbleX, thoughtBubbleY)
+                image(bubbleImgs['thoughtbubble-' + this.thoughtType], thoughtBubbleX, thoughtBubbleY)
             }
 
             if (this.heartTimer) {
@@ -1310,18 +1280,24 @@ class Bunbon extends GameObject {
                 this.eggCooldownTimer--
             }
 
-            // draw selection info
             if (currentScreen.objects[currentScreen.selectedBunbonIndex] === this) {
-                fill('#444')
-                stroke('white')
-                strokeWeight(1)
-                let selectionX = floor(this.pos.x)
-                let selectionY = floor(this.pos.y - this.height - this.jumpY - 3)
-                triangle(selectionX, selectionY + 2, selectionX - 3, selectionY - 4, selectionX + 3, selectionY - 4)
-                strokeWeight(2)
-                text(this.name, selectionX, selectionY - 5)
+                drawSelectionInfo = true
             }
 
+        }
+
+        pop()
+
+        // draw selection info
+        if (drawSelectionInfo) {
+            fill('#444')
+            stroke('white')
+            strokeWeight(1)
+            let selectionX = floor(this.pos.x)
+            let selectionY = floor(this.pos.y - this.height - this.jumpY - 3)
+            triangle(selectionX, selectionY + 2, selectionX - 3, selectionY - 4, selectionX + 3, selectionY - 4)
+            strokeWeight(2)
+            text(this.name, selectionX, selectionY - 5)
         }
         
         // draw debug lines
@@ -1329,7 +1305,7 @@ class Bunbon extends GameObject {
             noFill()
             strokeWeight(0.5)
             stroke('lightblue')
-            rect(x - this.offsetX, y - this.offsetY, this.width, this.height)
+            rect(this.pos.x + x - this.offsetX, this.pos.y + y - this.offsetY, this.width, this.height)
             stroke('lightblue')
             line(this.pos.x, this.pos.y, this.nearGoal.x, this.nearGoal.y)
             stroke('blue')
@@ -1339,6 +1315,9 @@ class Bunbon extends GameObject {
     }
 
     drawStatOrb() {
+
+        push()
+        translate(SCREEN_WIDTH - 42, 0)
 
         let barLength = (drive) => {
             let normalized = log((drive / 100) * (Math.E - 1) + 1)
@@ -1363,6 +1342,8 @@ class Bunbon extends GameObject {
             18 + boredomBar, 18,
             18, 18 + lonelinessBar
         )
+
+        pop()
 
     }
 

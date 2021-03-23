@@ -11,14 +11,11 @@ class Spritesheet {
 
         if (colorName) this.changeColor(colorName)
 
-        this.flippedImg = null
-        this.makeFlippedVersion()
-
     }
 
-    getSprite(spriteIndex, isFlipped) {
+    getSprite(spriteIndex) {
 
-        let img = isFlipped ? this.flippedImg : this.img
+        let img = this.img
 
         let x = this.spriteWidth * floor(spriteIndex % this.spriteRows)
         let y = this.spriteHeight * floor(spriteIndex / this.spriteRows)
@@ -27,8 +24,8 @@ class Spritesheet {
 
     }
 
-    copySprite(imageTarget, spriteIndex, isFlipped, x, y) {
-        let sprite = this.getSprite(spriteIndex, isFlipped)
+    copySprite(imageTarget, spriteIndex, x, y) {
+        let sprite = this.getSprite(spriteIndex)
         imageTarget.copy(sprite, 0, 0, this.spriteWidth, this.spriteHeight, x, y, this.spriteWidth, this.spriteHeight)
     }
 
@@ -56,44 +53,6 @@ class Spritesheet {
 
         this.img.updatePixels()
 
-    }
-
-    makeFlippedVersion() {
-
-        this.flippedImg = createImage(this.img.width, this.img.height)
-        this.flippedImg.copy(this.img, 0, 0, this.img.width, this.img.height, 0, 0, this.img.width, this.img.height)
-        this.flippedImg.loadPixels()
-
-        let pixels = []
-        let pixelCount = 4 * this.img.width * this.img.height
-        for (let i = 0; i < pixelCount; i += 4) {
-            pixels.push([
-                this.flippedImg.pixels[i],
-                this.flippedImg.pixels[i + 1],
-                this.flippedImg.pixels[i + 2],
-                this.flippedImg.pixels[i + 3]
-            ])
-        }
-
-        let newPixelRows = []
-        for (let i = 0; i < pixels.length; i += this.spriteWidth) {
-            let pixelRow = pixels.slice(i, i + this.spriteWidth)
-            pixelRow.reverse()
-            newPixelRows.push(pixelRow)
-        }
-
-        let newPixels = newPixelRows.flat()
-
-        newPixels.forEach((p, i) => {
-            let j = i * 4
-            this.flippedImg.pixels[j] = p[0]
-            this.flippedImg.pixels[j + 1] = p[1]
-            this.flippedImg.pixels[j + 2] = p[2]
-            this.flippedImg.pixels[j + 3] = p[3]
-        })
-
-        this.flippedImg.updatePixels()
-        
     }
 
 }
