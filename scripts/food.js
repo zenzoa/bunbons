@@ -45,7 +45,7 @@ class Food extends GameObject {
         if (agent) {
             this.refillTimer = 0
             this.isRefilling = true
-        } else {
+        } else if (this.isRefilling) {
             this.refillTimer += floor(this.refillLength / 3)
         }
 
