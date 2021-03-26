@@ -10,6 +10,13 @@ html, body {
     -ms-user-select: none;
 }
 
+body {
+    background-image: url("../images/titlescreen.gif");
+    background-repeat: no-repeat;
+    background-position: center 20px;
+    background-size: 640px 480px;
+}
+
 canvas {
     display: block;
     margin: 20px auto;
