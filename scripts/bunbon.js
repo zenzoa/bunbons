@@ -238,8 +238,7 @@ class Bunbon extends GameObject {
 
         this.score = 0
         this.maxScore = 600
-
-        this.canBlastOff = false
+        this.reachedBestScore = false
 
         this.speed = 0
         this.maxSpeed = this.dna.maxSpeed
@@ -525,6 +524,14 @@ class Bunbon extends GameObject {
 
         this.drives[drive] = constrain(this.drives[drive] - amt, 0, 100)
 
+    }
+
+    canBlastOff(planet) {
+        return (
+            this.reachedBestScore &&
+            planet.bunbonCount > 2 &&
+            !planet.bunbonHasBlastedOffHere
+        )
     }
 
     pickFarGoal(setGoal, specialObj) {
@@ -1079,12 +1086,12 @@ class Bunbon extends GameObject {
 
     updateScore() {
 
-        if (!this.isBaby && !this.canBlastOff && this.averageDriveValue < 33 && this.highestDriveValue < 50) {
+        if (!this.isBaby && !this.reachedBestScore && this.averageDriveValue < 33 && this.highestDriveValue < 50) {
             this.score += 1 / FRAME_RATE
             this.scoreIncreased = true
             if (this.score > this.maxScore) {
                 this.score = this.maxScore
-                this.canBlastOff = true
+                this.reachedBestScore = true
                 if (LOG_STORIES) console.log(this.name, 'is ready to blast off!')
             }
         } else {
@@ -1378,7 +1385,7 @@ class Bunbon extends GameObject {
             isBaby: this.isBaby,
             age: this.age,
             score: this.score,
-            canBlastOff: this.canBlastOff,
+            reachedBestScore: this.reachedBestScore,
             drives: this.drives,
             foodOpinions: this.foodOpinions,
             toyOpinions: this.toyOpinions,
@@ -1397,7 +1404,7 @@ class Bunbon extends GameObject {
         newBunbon.isBaby = data.isBaby
         newBunbon.age = data.age
         newBunbon.score = data.score
-        newBunbon.canBlastOff = data.canBlastOff
+        newBunbon.reachedBestScore = data.reachedBestScore
         newBunbon.drives = data.drives
         newBunbon.foodOpinions = data.foodOpinions
         newBunbon.toyOpinions = data.toyOpinions

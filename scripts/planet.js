@@ -97,6 +97,9 @@ class Planet extends ScreenState {
 
         this.inventoryIsVisible = true
 
+        this.bunbonCount = 0
+        this.bunbonHasBlastedOffHere = false
+
     }
 
     setup() {
@@ -192,6 +195,8 @@ class Planet extends ScreenState {
         this.goToSpace = true
         lastPlanet = this
 
+        this.bunbonHasBlastedOffHere = true
+
     }
 
     unlockConnections() {
@@ -230,9 +235,9 @@ class Planet extends ScreenState {
         fill(this.color)
         ellipse(0, 0, this.radius * 2, this.radius * 2)
 
-        let bunbonCount = this.objects.filter(o => o instanceof Bunbon).length
+        let numBunbons = this.objects.filter(o => o instanceof Bunbon).length
         let bunbonSpacing = 11
-        translate(-(bunbonSpacing / 2) * (bunbonCount - 1), -this.radius - 6)
+        translate(-(bunbonSpacing / 2) * (numBunbons - 1), -this.radius - 6)
 
         let i = 0
         this.objects.forEach(obj => {
@@ -272,9 +277,11 @@ class Planet extends ScreenState {
             let normalizedScore = selectedBunbon.score / selectedBunbon.maxScore
             let scoreImageIndex = floor(normalizedScore * 10)
             if (confirmingBlastOff) {
+                scoreImageIndex = 12
+            } else if (selectedBunbon.canBlastOff(this)) {
                 scoreImageIndex = 11
-            } else if (!selectedBunbon.canBlastOff || bunbonCount < 3) {
-                scoreImageIndex = Math.min(scoreImageIndex, 9)
+            } else if (selectedBunbon.reachedBestScore) {
+                scoreImageIndex = 10
             }
             image(scoreButtonImgs[scoreImageIndex], WORLD_WIDTH - 40, WORLD_HEIGHT + 4)
             if (DEBUG) selectedBunbon.drawStatOrb()
@@ -306,6 +313,8 @@ class Planet extends ScreenState {
             this.goToSpace = false
             openScreen('space', this.index, true)
         }
+
+        this.bunbonCount = this.objects.filter(o => o instanceof Bunbon).length
 
     }
 
@@ -350,7 +359,7 @@ class Planet extends ScreenState {
                 if (MUTE) planetSoundtracks[this.name].pause()
                 else planetSoundtracks[this.name].play()
             } else if (
-                selectedBunbon && selectedBunbon.canBlastOff && bunbonCount >= 3 &&
+                selectedBunbon && selectedBunbon.canBlastOff(this) && bunbonCount >= 3 &&
                 x >= blastOffButton.x && x < blastOffButton.x + blastOffButton.width &&
                 y >= blastOffButton.y && y < blastOffButton.y + blastOffButton.height
             ) {
@@ -428,6 +437,7 @@ class Planet extends ScreenState {
             name: this.name,
             isUnlocked: this.isUnlocked,
             connectedPlanets: this.connectedPlanets,
+            bunbonHasBlastedOffHere: this.bunbonHasBlastedOffHere,
             radius: this.radius,
             color: this.color,
             x: this.x,
@@ -441,6 +451,7 @@ class Planet extends ScreenState {
     static import(data) {
 
         let newPlanet = new Planet(data.index, data.name, data.connectedPlanets, data.isUnlocked)
+        newPlanet.bunbonHasBlastedOffHere = data.bunbonHasBlastedOffHere
         newPlanet.radius = data.radius
         newPlanet.color = data.color
         newPlanet.x = data.x
