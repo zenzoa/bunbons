@@ -1,7 +1,10 @@
 class Credits extends ScreenState {
 
     constructor() {
+        
         super()
+        this.type = 'credits'
+
     }
 
     setup() {

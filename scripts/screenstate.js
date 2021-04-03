@@ -141,6 +141,9 @@ class ScreenState {
                     this.selectedBunbonIndex = -1
                 }
                 this.selectedObjectIndex = -1
+
+                // save game
+                saveState()
             }  
 
         }
@@ -223,6 +226,9 @@ class ScreenState {
                     if (distSquared >= dragDist * dragDist) {
                         // dragged and dropped object
                         selectedObject.onDrop(this.objects)
+
+                        // save game
+                        saveState()
                     }
 
                 }

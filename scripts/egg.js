@@ -175,10 +175,15 @@ class Egg extends Toy {
     }
 
     hatch() {
+
         let bunbon = new Bunbon(this.pos, this.bunbonDNA)
         currentScreen.objects.push(bunbon)
         if (LOG_STORIES) console.log(bunbon.name, 'has hatched')
         this.removeMe = true
+        
+        // save game
+        saveState()
+
     }
 
     update() {
@@ -228,13 +233,10 @@ class Egg extends Toy {
 
         let data = {
             type: 'egg',
-            name: this.name,
             x: this.pos.x,
             y: this.pos.y,
             bunbonDNA: this.bunbonDNA,
             timeToHatch: this.timeToHatch,
-            isShaking: this.isShaking,
-            shakingTimer: this.shakingTimer,
             isInInventory: this.isInInventory
         }
         return data
@@ -243,13 +245,8 @@ class Egg extends Toy {
 
     static importEgg(data) {
 
-        let pos = createVector(data.x, data.y)
-        let newEgg = new Egg(pos, data.bunbonDNA)
-        newEgg.name = data.name
-        newEgg.pos = createVector(data.x, data.y)
+        let newEgg = new Egg({ x: data.x, y: data.y }, data.bunbonDNA)
         newEgg.timeToHatch = data.timeToHatch
-        newEgg.isShaking = data.isShaking
-        newEgg.shakingTimer = data.shakingTimer
         newEgg.isInInventory = data.isInInventory
         return newEgg
 

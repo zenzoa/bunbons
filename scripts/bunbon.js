@@ -208,7 +208,7 @@ class Bunbon extends GameObject {
         this.parents = this.dna.parents
 
         this.name = NameGenerator.generate()
-        this.pos = pos
+        this.pos = createVector(pos.x, pos.y)
 
         this.offsetX = -3
         this.offsetY = -10
@@ -488,6 +488,9 @@ class Bunbon extends GameObject {
         pos = pos || currentScreen.randomPoint()
         let egg = new Egg(pos, bunbonDNA)
         currentScreen.objects.push(egg)
+        
+        // save game
+        saveState()
 
     }
 
@@ -654,6 +657,9 @@ class Bunbon extends GameObject {
         } else if (this.goalType !== 'sleep') {
             this.startThought(this.goalType)
         }
+
+        // save game
+        saveState()
 
     }
 
@@ -1077,8 +1083,13 @@ class Bunbon extends GameObject {
             this.age++
             this.ageTimer = 0
             if (this.isBaby && this.age >= this.ageToAdulthood) {
+
                 if (LOG_STORIES) console.log(this.name, 'has grown up')
                 this.isBaby = false
+                
+                // save game
+                saveState()
+                
             }
         }
 
@@ -1215,6 +1226,8 @@ class Bunbon extends GameObject {
         let jumpOffset = (this.state === 'jumping' && !this.isInInventory) ? this.jumpY : 0
         let x = floor(-(this.width / 2) + this.offsetX + (this.isFlipped ? -this.tempOffsetX : this.tempOffsetX))
         let y = floor(-this.height + this.offsetY - jumpOffset + this.tempOffsetY)
+
+        if (this.isInInventory) this.face = 'blink'
 
         // draw base
         if (this.isBaby) {
@@ -1398,8 +1411,7 @@ class Bunbon extends GameObject {
 
     static importBunbon(data) {   
 
-        let pos = createVector(data.x, data.y)
-        let newBunbon = new Bunbon(pos, data.dna)
+        let newBunbon = new Bunbon({ x: data.x, y: data.y }, data.dna)
         newBunbon.name = data.name
         newBunbon.isBaby = data.isBaby
         newBunbon.age = data.age

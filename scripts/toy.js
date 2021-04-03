@@ -21,7 +21,7 @@ class Toy extends GameObject {
         let toySpriteIndex = toySprites[toyType]
 
         this.name = toyType
-        this.pos = pos
+        this.pos = createVector(pos.x, pos.y)
 
         this.animationTimer = 0
         this.animationFrame = 0
@@ -368,10 +368,8 @@ class Toy extends GameObject {
 
     static importToy(data) {
 
-        let pos = createVector(data.x, data.y)
-        let newToy = new Toy(pos, data.name)
+        let newToy = new Toy({ x: data.x, y: data.y }, data.name)
         newToy.isInInventory = data.isInInventory
-        // todo: look up toy image/stats based on name
         return newToy
 
     }

@@ -6,7 +6,7 @@ TODO:
 - planet images
 - bg for space view
 - confetti on credits screen
-- fix save & load: better saving strategy
+- BUG: going to space doesn't center last planet
 
 */
 
@@ -117,6 +117,9 @@ function openScreen(type, index, arg) {
         currentScreen = creditsScreen
     }
     currentScreen.open(index, arg)
+
+    // save game
+    saveState()
 
 }
 
@@ -247,21 +250,16 @@ function setup() {
     introBunbonPatterns = shuffle(introBunbonPatterns.concat(introBunbonPatterns))
 
     spaceScreen.setup()
+
+    Object.keys(planetTypes).forEach(planetType => {
+        planets.push(new Planet(planetType))
+    })
+    planets[0].isUnlocked = true
+
     let isLoadSuccessful = loadState()
     if (!isLoadSuccessful) {
-        Object.keys(planetTypes).forEach(planetType => {
-            planets.push(new Planet(planetType))
-        })
         planets.forEach(planet => planet.setup())
-        planets[0].isUnlocked = true
-    }
-
-    let unlockedPlanets = planets.filter(p => p.isUnlocked)
-    unlockedPlanetCount = unlockedPlanets.length
-    if (unlockedPlanetCount === 1) {
-        openScreen('planet', unlockedPlanets[0].index)
-    } else {
-        openScreen('space', 0)
+        openScreen('planet', 0)
     }
 
 }
@@ -379,34 +377,64 @@ function keyPressed() {
 
 function saveState() {
 
-    // let data = {
-    //     planets: planets.map(p => p.export()),
-    //     inventoryObjects: inventoryObjects.map(o => o ? o.export() : null)
-    // }
-    // try {
-    //     dataString = JSON.stringify(data)
-    //     window.localStorage.setItem('bunbons', dataString)
-    // } catch(e) {
-    //     if (DEBUG) console.error('unable to save', e)
-    // }
+    let data = {
+        planets: planets.map(p => p.export()),
+        inventoryObjects: inventory.objects.map(o => o ? o.export() : null),
+        blastedOffBunbons: blastedOffBunbons.map(b => b.export()),
+        isMuted: MUTE,
+        currentScreenType: currentScreen.type,
+        currentPlanetIndex: currentScreen.type === 'planet' ? currentScreen.index : null,
+        lastPlanetIndex: lastPlanet ? lastPlanet.index : 0,
+
+    }
+    try {
+        dataString = JSON.stringify(data)
+        window.localStorage.setItem('bunbons', dataString)
+    } catch(e) {
+        if (DEBUG) console.error('unable to save', e)
+    }
 
 }
 
 function loadState() {
 
-    // try {
-    //     let dataString = window.localStorage.getItem('bunbons')
-    //     let data = dataString ? JSON.parse(dataString) : null
-    //     if (data) {
-    //         if (data.planets) planets = data.planets.map(p => Planet.import(p))
-    //         if (data.inventoryObjects) inventoryObjects = data.inventoryObjects.map(o => GameObject.import(o))
-    //         return true
-    //     } else {
-    //         throw 'bad data'
-    //     }
-    // } catch(e) {
-    //     if (DEBUG) console.error('unable to load:', e)
-    // }
+    try {
+
+        let dataString = window.localStorage.getItem('bunbons')
+        if (!dataString) return false
+
+        let data = dataString ? JSON.parse(dataString) : null
+        if (data) {
+            
+            if (data.planets) {
+                planets = data.planets.map(p => Planet.import(p))
+                planets.forEach(p => { p.setup(p.objects) })
+            }
+
+            if (data.inventoryObjects) {
+                inventory.objects = data.inventoryObjects.map(o => o ? GameObject.import(o) : null)
+            }
+
+            if (data.blastedOffBunbons) {
+                blastedOffBunbons = data.blastedOffBunbons.map(b => GameObject.import(b))
+            }
+
+            MUTE = data.isMuted
+
+            if (data.currentScreenType !== 'planet' || planets[data.currentPlanetIndex]) {
+                console.log(data.currentScreenType, data.currentPlanetIndex)
+                openScreen(data.currentScreenType, data.currentPlanetIndex)
+            }
+
+            return true
+
+        } else {
+            throw 'bad data'
+        }
+
+    } catch(e) {
+        if (DEBUG) console.error('unable to load:', e)
+    }
 
 }
 

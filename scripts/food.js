@@ -22,13 +22,13 @@ class Food extends GameObject {
         let foodSpriteIndex = foodSprites[foodType]
 
         this.name = foodType
-        this.pos = pos
+        this.pos = createVector(pos.x, pos.y)
 
         this.offsetX = -4
         this.offsetY = -8
 
         this.isRefilling = false
-        this.refillLength = floor(random(600, 2100))
+        this.refillLength = 1200
         this.refillTimer = 0
 
         this.driveReduction = 60
@@ -122,7 +122,6 @@ class Food extends GameObject {
             x: this.pos.x,
             y: this.pos.y,
             isRefilling: this.isRefilling,
-            refillLength: this.refillLength,
             refillTimer: this.refillTimer,
             isInInventory: this.isInInventory
         }
@@ -132,13 +131,10 @@ class Food extends GameObject {
 
     static importFood(data) {
 
-        let pos = createVector(data.x, data.y)
-        let newFood = new Food(pos, data.name)
+        let newFood = new Food({ x: data.x, y: data.y }, data.name)
         newFood.isRefilling = data.isRefilling
-        newFood.refillLength = data.refillLength
         newFood.refillTimer = data.refillTimer
         newFood.isInInventory = data.isInInventory
-        // todo: look up food image/stats based on name
         return newFood
 
     }

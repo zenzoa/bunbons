@@ -3,6 +3,7 @@ class Space extends ScreenState {
     constructor() {
 
         super()
+        this.type = 'space'
 
     }
 
@@ -23,8 +24,8 @@ class Space extends ScreenState {
 
     open(planetIndex, showBlastOff) {
 
-        if (!isNaN(planetIndex)) {
-            let planet = planets[planetIndex]
+        let planet = planets[planetIndex]
+        if (planet) {
             this.offsetX = planet.x - SCREEN_WIDTH / 2
             this.offsetY = planet.y - SCREEN_HEIGHT / 2
             this.adjustOffset()
