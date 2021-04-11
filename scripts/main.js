@@ -240,7 +240,8 @@ function setup() {
         baseSpritesheet.getSprite(268),
         baseSpritesheet.getSprite(269),
         baseSpritesheet.getSprite(270),
-        baseSpritesheet.getSprite(271)
+        baseSpritesheet.getSprite(271),
+        baseSpritesheet.getSprite(272)
     ]
 
     introBunbonColors = shuffle(introBunbonColors.concat(introBunbonColors))
