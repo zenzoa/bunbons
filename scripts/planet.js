@@ -356,7 +356,7 @@ class Planet extends ScreenState {
                 x >= spaceButton.x && x < spaceButton.x + spaceButton.width &&
                 y >= spaceButton.y && y < spaceButton.y + spaceButton.height
             ) {
-                openScreen('space')
+                openScreen('space', this.index)
             } else if (
                 x >= muteButton.x && x < muteButton.x + muteButton.width &&
                 y >= muteButton.y && y < muteButton.y + muteButton.height
@@ -403,7 +403,7 @@ class Planet extends ScreenState {
 
             if (key === 'u') {
                 this.unlockConnections()
-                openScreen('space')
+                openScreen('space', this.index)
             } else if (key === 'c') {
                 openScreen('credits')
             } else if (key === 'p') {

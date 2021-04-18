@@ -6,7 +6,6 @@ TODO:
 - planet images
 - bg for space view
 - confetti on credits screen
-- BUG: going to space doesn't center last planet
 
 */
 
@@ -384,7 +383,7 @@ function saveState() {
         blastedOffBunbons: blastedOffBunbons.map(b => b.export()),
         isMuted: MUTE,
         currentScreenType: currentScreen.type,
-        currentPlanetIndex: currentScreen.type === 'planet' ? currentScreen.index : null,
+        currentPlanetIndex: currentScreen.type === 'planet' ? currentScreen.index : 0,
         lastPlanetIndex: lastPlanet ? lastPlanet.index : 0,
 
     }
@@ -423,7 +422,6 @@ function loadState() {
             MUTE = data.isMuted
 
             if (data.currentScreenType !== 'planet' || planets[data.currentPlanetIndex]) {
-                console.log(data.currentScreenType, data.currentPlanetIndex)
                 openScreen(data.currentScreenType, data.currentPlanetIndex)
             }
 
