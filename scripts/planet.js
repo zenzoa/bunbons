@@ -4,77 +4,77 @@ let planetTypes = {
         x: 100,
         y: 240,
         connectedPlanets: [1],
-        color: 'deeppink' // TEMP
+        spriteIndex: 300
     },
     'mossyforest': {
         index: 1,
         x: 150,
         y: 240,
         connectedPlanets: [0, 2],
-        color: 'orangered' // TEMP
+        spriteIndex: 301,
     },
     'flowertown': {
         index: 2,
         x: 200,
         y: 240,
         connectedPlanets: [1, 3],
-        color: 'darkorange' // TEMP
+        spriteIndex: 302
     },
     'volcano': {
         index: 3,
         x: 250,
         y: 240,
         connectedPlanets: [2, 4, 5],
-        color: 'gold' // TEMP
+        spriteIndex: 303
     },
     'bubbledome': {
         index: 4,
         x: 300,
         y: 140,
         connectedPlanets: [3, 6],
-        color: 'yellowgreen' // TEMP
+        spriteIndex: 304
     },
     'desert': {
         index: 5,
         x: 300,
         y: 340,
         connectedPlanets: [3, 6],
-        color: 'mediumspringgreen' // TEMP
+        spriteIndex: 305
     },
     'snowymountain': {
         index: 6,
         x: 350,
         y: 240,
         connectedPlanets: [4, 5, 7],
-        color: 'mediumturquoise' // TEMP
+        spriteIndex: 306
     },
     'cloudland': {
         index: 7,
         x: 400,
         y: 240,
         connectedPlanets: [6, 8],
-        color: 'deepskyblue' // TEMP
+        spriteIndex: 307
     },
     'crystalcave': {
         index: 8,
         x: 450,
         y: 240,
         connectedPlanets: [7, 9],
-        color: 'slateblue' // TEMP
+        spriteIndex: 308
     },
     'asteroid': {
         index: 9,
         x: 500,
         y: 240,
         connectedPlanets: [8, 10],
-        color: 'rebeccapurple' // TEMP
+        spriteIndex: 309
     },
     'credits': {
         index: 10,
         x: 550,
         y: 240,
         connectedPlanets: [9],
-        color: 'palevioletred' // TEMP
+        spriteIndex: 310
     }
 }
 
@@ -91,6 +91,7 @@ class Planet extends ScreenState {
         this.index = planetType.index
         this.x = planetType.x
         this.y = planetType.y
+        this.radius = 16
         this.connectedPlanets = planetType.connectedPlanets
         this.color = planetType.color // TEMP
 
@@ -106,7 +107,8 @@ class Planet extends ScreenState {
     setup(objects) {
 
         // setup icon
-        this.radius = floor(random(8, 16)) // TEMP
+        let spriteIndex = planetTypes[this.name].spriteIndex
+        this.sprite = baseSpritesheet.getSprite(spriteIndex)
 
         // skip if this planet opens credits screen
         if (this.name === 'credits') return
@@ -218,13 +220,13 @@ class Planet extends ScreenState {
 
         if (!this.isUnlocked) return
 
-        stroke('#999')
+        stroke('#625465')
         strokeWeight(1)
         this.connectedPlanets.forEach(i => {
             let connectedPlanet = planets[i]
             line(this.x, this.y, connectedPlanet.x, connectedPlanet.y)
             if (!connectedPlanet.isUnlocked) {
-                ellipse(connectedPlanet.x, connectedPlanet.y, connectedPlanet.radius * 2, connectedPlanet.radius * 2)
+                ellipse(connectedPlanet.x, connectedPlanet.y, 28, 28)
             }
         })
 
@@ -237,13 +239,11 @@ class Planet extends ScreenState {
         push()
 
         translate(this.x, this.y)
-        noStroke()
-        fill(this.color)
-        ellipse(0, 0, this.radius * 2, this.radius * 2)
+        image(this.sprite, -16, -16)
 
         let numBunbons = this.objects.filter(o => o instanceof Bunbon).length
         let bunbonSpacing = 11
-        translate(-(bunbonSpacing / 2) * (numBunbons - 1), -this.radius - 6)
+        translate(-(bunbonSpacing / 2) * (numBunbons - 1), -22)
 
         let i = 0
         this.objects.forEach(obj => {

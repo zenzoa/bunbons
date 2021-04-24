@@ -84,7 +84,7 @@ class Space extends ScreenState {
     draw() {
 
         noStroke()
-        fill('#222')
+        fill('#443c4c')
         rect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT)
 
         push()
