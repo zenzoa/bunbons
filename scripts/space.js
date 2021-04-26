@@ -83,14 +83,24 @@ class Space extends ScreenState {
 
     draw() {
 
-        noStroke()
-        fill('#443c4c')
-        rect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT)
-
         push()
         translate(-this.offsetX, -this.offsetY)
+
+        image(spaceBG, 0, 0)
+        blendMode(LIGHTEST)
+        starsBGs.forEach((_, i) => {
+            starsBGOpacity[i] += random(0, 2 + i)
+            if (starsBGOpacity[i] > 255) starsBGOpacity[i] = 0
+            tint(255, (64 * i) + Math.abs(starsBGOpacity[i] - 128))
+            image(starsBGs[i], 0, 0)
+        })
+        blendMode(BLEND)
+
+        noTint()
+
         planets.forEach(planet => planet.drawConnections())
         planets.forEach(planet => planet.drawPlanet())
+        
         pop()
 
         if (this.isBlastingOff) {

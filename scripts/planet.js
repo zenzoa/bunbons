@@ -221,7 +221,7 @@ class Planet extends ScreenState {
         if (!this.isUnlocked) return
 
         stroke('#625465')
-        strokeWeight(1)
+        strokeWeight(0.5)
         this.connectedPlanets.forEach(i => {
             let connectedPlanet = planets[i]
             line(this.x, this.y, connectedPlanet.x, connectedPlanet.y)

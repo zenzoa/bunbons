@@ -3,8 +3,6 @@
 TODO:
 - create splash/loading screen
 - sound effects
-- planet images
-- bg for space view
 - confetti on credits screen
 
 */
@@ -91,6 +89,9 @@ let spaceScreen = new Space()
 let planets = []
 let unlockedPlanetCount = 0
 
+let spaceBG = null
+let starsBGs = []
+let starsBGOpacity = [0, 64]
 let planetBGs = {}
 let planetMasks = {}
 
@@ -152,6 +153,12 @@ function preload() {
 
     spritesheetImg = loadImage('images/spritesheet.png')
     userinterfaceImg = loadImage('images/userinterface.png')
+
+    spaceBG = loadImage('images/space.png')
+    starsBGs = [
+        loadImage('images/stars1.png'),
+        loadImage('images/stars2.png')
+    ]
 
     planetBGs = {
         mossyforest: loadImage('images/planets/mossyforest.png'),
