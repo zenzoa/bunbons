@@ -220,13 +220,14 @@ class Planet extends ScreenState {
 
         if (!this.isUnlocked) return
 
+        fill('#625465')
         stroke('#625465')
         strokeWeight(0.5)
         this.connectedPlanets.forEach(i => {
             let connectedPlanet = planets[i]
             line(this.x, this.y, connectedPlanet.x, connectedPlanet.y)
             if (!connectedPlanet.isUnlocked) {
-                ellipse(connectedPlanet.x, connectedPlanet.y, 28, 28)
+                ellipse(connectedPlanet.x, connectedPlanet.y, 8, 8)
             }
         })
 
