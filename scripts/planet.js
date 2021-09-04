@@ -242,16 +242,16 @@ class Planet extends ScreenState {
         translate(this.x, this.y)
         image(this.sprite, -16, -16)
 
-        let numBunbons = this.objects.filter(o => o instanceof Bunbon).length
+        let bunbonList = this.objects.filter(o => o instanceof Bunbon)
+        let numBunbons = bunbonList.length
+        let numRows = ceil(numBunbons / 4)
         let bunbonSpacing = 11
-        translate(-(bunbonSpacing / 2) * (numBunbons - 1), -22)
+        translate(-(bunbonSpacing / 2) * 3, -22)
 
-        let i = 0
-        this.objects.forEach(obj => {
-            if (obj instanceof Bunbon) {
-                obj.drawIcon(i * bunbonSpacing, 0)
-                i++
-            }
+        bunbonList.forEach((b, i) => {
+            let row = floor(i / 4) + 1
+            let offsetX = (row === numRows ? (row * 4 - numBunbons) * 5.5 : 0)
+            b.drawIcon((i % 4) * bunbonSpacing + offsetX, (numRows - row) * -12)
         })
 
         pop()
