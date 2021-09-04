@@ -953,7 +953,7 @@ class Bunbon extends GameObject {
 
     startChat(chatPartner) {
 
-        if (this.state === 'chatting' || chatPartner.state === 'sleeping') return
+        if (this.state === 'chatting' || chatPartner === 'blasting-off' || chatPartner === 'being-dragged') return
         this.chatPartner = chatPartner
         if (LOG_STORIES) console.log(this.name, 'is chatting with', this.chatPartner.name)
         this.state = 'chatting'
