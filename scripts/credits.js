@@ -5,6 +5,11 @@ class Credits extends ScreenState {
         super()
         this.type = 'credits'
 
+        this.confettiX = []
+        this.confettiY = []
+        this.confettiColors = []
+        this.confettiTimer = 0
+
     }
 
     setup() {
@@ -58,6 +63,25 @@ class Credits extends ScreenState {
             obj.drives.hunger = 0
             obj.drives.boredom = 0
         })
+
+        if (this.confettiTimer <= 0) {
+            this.confettiTimer = FRAME_RATE
+            this.confettiColors.push(random(['rgb(246, 129, 129)', 'rgb(255, 238, 104)', 'rgb(114, 214, 206)']))
+            this.confettiX.push(random(0, SCREEN_WIDTH))
+            this.confettiY.push(-4)
+            if (this.confettiX.length > 20) {
+                this.confettiColors.shift()
+                this.confettiX.shift()
+                this.confettiY.shift()
+            }
+        }
+        for (let i = 0; i < this.confettiX.length; i++) {
+            fill(this.confettiColors[i])
+            rect(floor(this.confettiX[i] - 1.5), floor(this.confettiY[i] - 1.5), 3, 3)
+            this.confettiX[i] += random([-1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1])
+            this.confettiY[i] += 0.5
+        }
+        this.confettiTimer--
     }
 
     mousePressed(x, y) {
