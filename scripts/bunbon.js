@@ -1289,13 +1289,6 @@ class Bunbon extends GameObject {
                 image(bubbleImgs['thoughtbubble-' + this.thoughtType], thoughtBubbleX, thoughtBubbleY)
             }
 
-            if (this.heartTimer) {
-                image(heartImg, this.heartX - 6, this.heartY - 5)
-                this.heartTimer--
-                this.heartY--
-                this.heartX += random([-1, 0, 0, 0, 0, 0, 0, 0, 0, 1])
-            }
-
             if (this.eggCooldownTimer) {
                 this.eggCooldownTimer--
             }
@@ -1307,6 +1300,13 @@ class Bunbon extends GameObject {
         }
 
         pop()
+
+        if (this.heartTimer) {
+            image(heartImg, this.heartX - 6, this.heartY - 5)
+            this.heartTimer--
+            this.heartY--
+            this.heartX += random([-1, 0, 0, 0, 0, 0, 0, 0, 0, 1])
+        }
 
         // draw selection info
         if (drawSelectionInfo) {
