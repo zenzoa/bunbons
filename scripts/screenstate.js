@@ -56,7 +56,7 @@ class ScreenState {
         if (this.mask) {
             let pixelIndex = 4 * (y * WORLD_WIDTH + x)
             let pixelValue = this.mask.pixels[pixelIndex]
-            if (pixelValue >= 128) return false
+            if (pixelValue < 128) return false
         }
     
         return true
