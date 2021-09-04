@@ -427,8 +427,6 @@ class Planet extends ScreenState {
             } else if (key === 'b' && selectedBunbon) {
                 this.isBlastingOff = true
                 selectedBunbon.startBlastOff()
-            } else if (key === 'e' && selectedBunbon) {
-                selectedBunbon.layEgg()
             } else if (key === 'h') {
                 if (selectedObject instanceof Egg) selectedObject.hatch()
             }
