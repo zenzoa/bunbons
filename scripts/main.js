@@ -1,7 +1,6 @@
 /*
 
 TODO:
-- create splash/loading screen
 - sound effects
 
 */
