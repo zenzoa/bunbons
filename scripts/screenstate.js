@@ -94,6 +94,7 @@ class ScreenState {
                 this.selectedObjectIndex = objectIndex
                 if (this.objects[this.selectedObjectIndex] instanceof Bunbon) {
                     this.selectedBunbonIndex = objectIndex
+                    if (!MUTE) soundEffects['click-bunbon'].play()
                 }
             }
         })
@@ -216,6 +217,7 @@ class ScreenState {
 
                     let slotIndex = this.getInventorySlotIndex(x, y)
                     this.addObjectToInventory(slotIndex)
+                    if (!MUTE) soundEffects['drop-in-inventory'].play()
 
                 } else {
 
@@ -229,6 +231,8 @@ class ScreenState {
 
                         // save game
                         saveState()
+
+                        if (!MUTE) soundEffects['drop-in-world'].play()
                     }
 
                 }

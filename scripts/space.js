@@ -114,6 +114,7 @@ class Space extends ScreenState {
         }
 
         if (this.drawTransition) {
+            noStroke()
             fill('#000')
             ellipse(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2, this.transitionRadius, this.transitionRadius)
 
@@ -177,6 +178,7 @@ class Space extends ScreenState {
                     relY >= planet.y - planet.radius &&
                     relY < planet.y + planet.radius
                 ) {
+                    if (!MUTE) soundEffects['go-to-planet'].play()
                     if (planet.name === 'credits') {
                         openScreen('credits')
                     } else {

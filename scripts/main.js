@@ -1,20 +1,13 @@
-/*
-
-TODO:
-- sound effects
-
-*/
-
 let DEBUG = false
 let LOG_STORIES = true
 
-let MUTE = true
+let MUTE = false
 
 let FRAME_RATE = 30
 
 let MAX_ATTEMPTS = 100
 
-let MUTATION_RATE = 0.1
+let MUTATION_RATE = 0.02
 
 let CANVAS_SCALE = 2
 
@@ -59,6 +52,38 @@ let blastOffButton = {
     y: WORLD_HEIGHT + 5,
     width: 32,
     height: 32
+}
+
+let soundEffects = {}
+let soundEffectNames = {
+    'go-to-planet': 'cancel4',
+    'go-to-space': 'button4',
+    'drop-in-world': 'standup',
+    'drop-in-inventory': 'enter15',
+    'click-launch-1': 'kokextu',
+    'click-launch-2': 'cutin',
+    'bunbon-blastoff': 'hissatu',
+    'click-bunbon': 'kagu',
+    'click-toy': 'kagu',
+    'click-food': 'kagu',
+    'push-egg': 'kagu',
+    'egg-hatch': 'youchu',
+    'bunbon-jump': 'katakumu',
+    'bunbon-rest': 'sigh2',
+    'bunbon-sleep': 'sleep',
+    'bunbon-eat': 'peropero',
+    'bunbon-play': 'jump',
+    'bunbon-chat-1': 'chat1',
+    'bunbon-chat-2': 'chat2',
+    'bunbon-chat-3': 'chat3',
+    'bunbon-chat-4': 'chat4',
+    'bunbon-chat-5': 'chat5',
+    'bunbon-pet': 'purr',
+    'bunbon-breed': 'riftup2',
+    'bunbon-think-sleep': 'sigh',
+    'bunbon-think-food': 'guuuu',
+    'bunbon-think-toy': 'ubau',
+    'bunbon-think-friend': 'hatena'
 }
 
 let lastX = 0
@@ -130,7 +155,7 @@ function preload() {
     let makeSoundtrack = (fileName) => {
         let newSoundtrack = loadSound(fileName)
         newSoundtrack.setLoop(true)
-        newSoundtrack.setVolume(0.1)
+        newSoundtrack.setVolume(0.02)
         return newSoundtrack
     }
 
@@ -148,6 +173,12 @@ function preload() {
         space: makeSoundtrack('music/shoots'),
         credits: makeSoundtrack('music/overgrown_labyrinth')
     }
+
+    Object.keys(soundEffectNames).forEach(soundEffectName => {
+        let newSoundEffect = loadSound('sounds/' + soundEffectNames[soundEffectName])
+        newSoundEffect.setVolume(0.2)
+        soundEffects[soundEffectName] = newSoundEffect
+    })
 
     spritesheetImg = loadImage('images/spritesheet.png')
     userinterfaceImg = loadImage('images/userinterface.png')

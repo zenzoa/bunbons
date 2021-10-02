@@ -49,6 +49,10 @@ class Food extends GameObject {
             this.refillTimer += floor(this.refillLength / 3)
         }
 
+        if (!agent) {
+            if (!MUTE) soundEffects['click-food'].play()
+        }
+
     }
 
     update() {

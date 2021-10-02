@@ -175,8 +175,8 @@ class Planet extends ScreenState {
                 this.objects.push(new Egg(this.randomPoint(), 'fish'))
 
             } else if (this.name === 'desert') {
-                this.objects.push(new Toy(this.randomPoint(), 'succulent'))
-                this.objects.push(new Food(this.randomPoint(), 'pullturtle'))
+                this.objects.push(new Toy(this.randomPoint(), 'pullturtle'))
+                this.objects.push(new Food(this.randomPoint(), 'succulent'))
                 this.objects.push(new Egg(this.randomPoint(), 'lizard'))
             }
         }
@@ -357,6 +357,7 @@ class Planet extends ScreenState {
                 x >= spaceButton.x && x < spaceButton.x + spaceButton.width &&
                 y >= spaceButton.y && y < spaceButton.y + spaceButton.height
             ) {
+                if (!MUTE) soundEffects['go-to-space'].play()
                 openScreen('space', this.index)
             } else if (
                 x >= muteButton.x && x < muteButton.x + muteButton.width &&
@@ -371,10 +372,12 @@ class Planet extends ScreenState {
                 y >= blastOffButton.y && y < blastOffButton.y + blastOffButton.height
             ) {
                 if (confirmingBlastOff) {
+                    if (!MUTE) soundEffects['click-launch-2'].play()
                     this.isBlastingOff = true
                     confirmingBlastOff = false
                     selectedBunbon.startBlastOff()
                 } else {
+                    if (!MUTE) soundEffects['click-launch-1'].play()
                     confirmingBlastOff = true
                 }
             }
