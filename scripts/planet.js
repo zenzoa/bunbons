@@ -290,7 +290,7 @@ class Planet extends ScreenState {
             } else if (selectedBunbon.reachedBestScore) {
                 scoreImageIndex = 10
             }
-            image(scoreButtonImgs[scoreImageIndex], WORLD_WIDTH - 40, WORLD_HEIGHT + 4)
+            image(scoreButtonImgs[scoreImageIndex], WORLD_WIDTH - 36, WORLD_HEIGHT + 4)
             if (DEBUG) selectedBunbon.drawStatOrb()
         }
 
@@ -351,6 +351,9 @@ class Planet extends ScreenState {
         if (!interactedWithObject) {
 
             let selectedBunbon = this.objects[this.selectedBunbonIndex]
+            if (!(selectedBunbon instanceof Bunbon)) {
+                selectedBunbon = null
+            }
 
             if (
                 unlockedPlanetCount > 1 &&
