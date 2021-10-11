@@ -85,29 +85,41 @@ class Credits extends ScreenState {
     }
 
     mousePressed(x, y) {
-        this.selectedObjectIndex = -1
+
         this.clickInWorld(x, y)
+
     }
 
     mouseDragged(x, y, dx, dy) {
-        this.dragObject(x, y, dx, dy, false)
+
+        if (this.draggedObject) {
+            this.dragObject(x, y, dx, dy)
+        }
+
     }
 
     mouseReleased(x, y, dx, dy) {
-        let objectWasDropped = this.dropObject(x, y, dx, dy, false)
-        if (objectWasDropped) return
-        if (
-            x >= spaceButton.x && x < spaceButton.x + spaceButton.width &&
-            y >= spaceButton.y && y < spaceButton.y + spaceButton.height
-        ) {
-            openScreen('space')
-        } else if (
-            x >= muteButton.x && x < muteButton.x + muteButton.width &&
-            y >= muteButton.y && y < muteButton.y + muteButton.height
-        ) {
-            MUTE = !MUTE
-            if (MUTE) planetSoundtracks['credits'].pause()
-            else planetSoundtracks['credits'].play()
+
+        if (this.draggedObject) {
+
+            this.dropObject(x, y, dx, dy)
+
+        } else {
+
+            if (
+                x >= spaceButton.x && x < spaceButton.x + spaceButton.width &&
+                y >= spaceButton.y && y < spaceButton.y + spaceButton.height
+            ) {
+                openScreen('space')
+            } else if (
+                x >= muteButton.x && x < muteButton.x + muteButton.width &&
+                y >= muteButton.y && y < muteButton.y + muteButton.height
+            ) {
+                MUTE = !MUTE
+                if (MUTE) planetSoundtracks['credits'].pause()
+                else planetSoundtracks['credits'].play()
+            }
+            
         }
     }
 

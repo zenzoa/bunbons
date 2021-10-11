@@ -4,8 +4,11 @@ class ScreenState {
 
         this.objects = []
         this.objectsInDrawOrder = []
-        this.selectedObjectIndex = -1
         this.selectedBunbonIndex = -1
+
+        this.originalX = 0
+        this.originalY = 0
+        this.draggedObject = null
 
         this.inventoryIsVisible = false
 
@@ -46,10 +49,10 @@ class ScreenState {
         // out of bounds
         if (this.inventoryIsVisible) {
             if (x < w / 2 || x >= WORLD_WIDTH - w / 2) return false
-            if (y < h || y >= WORLD_HEIGHT + h / 2) return false
+            if (y < h || y >= WORLD_HEIGHT) return false
         } else {
             if (x < w / 2 || x >= SCREEN_WIDTH - w / 2) return false
-            if (y < h || y >= SCREEN_HEIGHT + h / 2) return false
+            if (y < h || y >= SCREEN_HEIGHT) return false
         }
 
         // collides with world geometry
@@ -87,70 +90,6 @@ class ScreenState {
 
     }
 
-    clickInWorld(x, y) {
-
-        this.objects.forEach((obj, objectIndex) => {
-            if (obj.isOnPointer(x, y)) {
-                this.selectedObjectIndex = objectIndex
-                if (this.objects[this.selectedObjectIndex] instanceof Bunbon) {
-                    this.selectedBunbonIndex = objectIndex
-                    if (!MUTE) soundEffects['click-bunbon'].play()
-                }
-            }
-        })
-
-    }
-
-    clickInInventory(x, y) {
-
-        let slotIndex = this.getInventorySlotIndex(x, y)
-        let inventoryObject = inventory.objects[slotIndex]
-        if (inventoryObject) {
-
-            this.objects.push(inventoryObject)
-            this.selectedObjectIndex = this.objects.length - 1
-            inventory.objects[slotIndex] = null
-
-            if (this.objects[this.selectedObjectIndex] instanceof Bunbon) {
-                this.selectedBunbonIndex = this.selectedObjectIndex
-            }
-
-        }
-
-    }
-
-    addObjectToInventory(slotIndex) {
-
-        if (!inventory.objects[slotIndex]) {
-
-            let selectedObject = this.objects[this.selectedObjectIndex]
-
-            if (selectedObject) {
-                // add object to inventory slot
-                inventory.objects[slotIndex] = selectedObject
-
-                // remove object from objects
-                this.objects.splice(this.selectedObjectIndex, 1)
-
-                // set properties of object to being in inventory
-                selectedObject.isInInventory = true
-                selectedObject.pos.x = inventory.slotXs[slotIndex]
-                selectedObject.pos.y = inventory.slotY + (selectedObject.height / 2)
-
-                // de-select object
-                if (this.selectedBunbonIndex === this.selectedObjectIndex) {
-                    this.selectedBunbonIndex = -1
-                }
-                this.selectedObjectIndex = -1
-
-                // save game
-                saveState()
-            }  
-
-        }
-
-    }
-
     fixObjectPosition(obj) {
 
         if (this.inventoryIsVisible) {
@@ -161,92 +100,133 @@ class ScreenState {
 
     }
 
-    dragObject(x, y, dx, dy) {
+    clickInWorld(x, y) {
 
-        let selectedObject = this.objects[this.selectedObjectIndex]
-        if (selectedObject && selectedObject.isDraggable) {
-
-            let distSquared = dx * dx + dy * dy
-            if (!(selectedObject instanceof Bunbon) || distSquared >= 1024) {
-
-                isDragging = true
-                selectedObject.isBeingDragged = true
-
-                if (this.inventoryIsVisible && y >= WORLD_HEIGHT) {
-
-                    let slotIndex = this.getInventorySlotIndex(x, y)
-                    if (!inventory.objects[slotIndex]) {
-                        selectedObject.pos.x = inventory.slotXs[slotIndex]
-                        selectedObject.pos.y = inventory.slotY + (selectedObject.height / 2)
-                    }
-
-                } else {
-
-                    let posX = mouseX / CANVAS_SCALE
-                    let posY = mouseY / CANVAS_SCALE + selectedObject.height / 2
-                    if (this.isPositionClear(posX, posY, selectedObject.width, selectedObject.height)) {
-                        selectedObject.pos.x = posX
-                        selectedObject.pos.y = posY
-                        this.fixObjectPosition(selectedObject)
-                    }
-
-                }
-
+        // check objects in world
+        this.objects.forEach(obj => {
+            if (obj.isOnPointer(x, y)) {
+                this.draggedObject = obj
             }
+        })
 
+        // check objects in inventory
+        if (!this.draggedObject && this.inventoryIsVisible && y >= WORLD_HEIGHT) {
+            let slotIndex = this.getInventorySlotIndex(x, y)
+            let inventoryObject = inventory.objects[slotIndex]
+            if (inventoryObject && inventoryObject.isOnPointer(x, y)) {
+                this.draggedObject = inventoryObject
+            }
+        }
+
+        // remember original position
+        if (this.draggedObject) {
+            this.originalX = this.draggedObject.pos.x
+            this.originalY = this.draggedObject.pos.y
+
+            if (this.draggedObject instanceof Bunbon && !MUTE) {
+                soundEffects['click-bunbon'].play()
+            }
         }
 
     }
 
-    dropObject(x, y, dx, dy) {
+    dragObject(x, y, dx, dy) {
 
-        isDragging = false
+        if (this.draggedObject) {
+            let posX = mouseX / CANVAS_SCALE
+            let posY = mouseY / CANVAS_SCALE + this.draggedObject.height / 2
+            let distSquared = dx * dx + dy * dy
 
-        let interactedWithObject = false
-        let selectedObject = this.objects[this.selectedObjectIndex]
+            // move dragged object to cursor (unless petting bunbon)
+            if (this.draggedObject.isBeingDragged || !(this.draggedObject instanceof Bunbon) || distSquared >= 1024) {
+                isDragging = true
+                this.draggedObject.isBeingDragged = true
+                this.draggedObject.pos.x = posX
+                this.draggedObject.pos.y = posY
+                if (this.draggedObject instanceof Bunbon) {
+                    if (soundEffects['click-bunbon'].isPlaying()) soundEffects['click-bunbon'].stop()
+                    if (soundEffects['bunbon-pet'].isPlaying()) soundEffects['bunbon-pet'].stop()
+                }
+            }
+        }
 
-        if (selectedObject) {
+    }
 
-            interactedWithObject = true
+    dropObject(x, y) {
+        if (this.draggedObject) {
 
-            if (selectedObject.isBeingDragged || selectedObject.isInInventory) {
+            isDragging = false
+            let dropSucceeded = false
 
-                selectedObject.isBeingDragged = false
+            if (this.inventoryIsVisible && y >= WORLD_HEIGHT) {
 
-                if (this.inventoryIsVisible && y >= WORLD_HEIGHT) {
+                // add to inventory
+                let slotIndex = this.getInventorySlotIndex(x, y)
+                if (!inventory.objects[slotIndex]) {
+                    inventory.objects[slotIndex] = this.draggedObject
+                    this.draggedObject.pos.x = inventory.slotXs[slotIndex]
+                    this.draggedObject.pos.y = inventory.slotY + (this.draggedObject.height / 2)
+                    dropSucceeded = true
 
-                    let slotIndex = this.getInventorySlotIndex(x, y)
-                    this.addObjectToInventory(slotIndex)
-                    if (!MUTE) soundEffects['drop-in-inventory'].play()
-
-                } else {
-
-                    selectedObject.isInInventory = false
-                    this.fixObjectPosition(selectedObject)
-                    let distSquared = dx * dx + dy * dy
-                    let dragDist = min(selectedObject.width, selectedObject.height)
-                    if (distSquared >= dragDist * dragDist) {
-                        // dragged and dropped object
-                        selectedObject.onDrop(this.objects)
-
-                        // save game
-                        saveState()
-
-                        if (!MUTE) soundEffects['drop-in-world'].play()
+                    // remove from inventory and world
+                    if (this.draggedObject.isInInventory) {
+                        let oldSlotIndex = this.getInventorySlotIndex(this.originalX, this.originalY)
+                        inventory.objects[oldSlotIndex] = null
+                    } else {
+                        let objectIndex = this.objects.findIndex(obj => obj.name === this.draggedObject.name)
+                        if (objectIndex >= 0) this.objects.splice(objectIndex, 1)
+                        if (this.draggedObject instanceof Bunbon && objectIndex === this.selectedBunbonIndex) {
+                            this.selectedBunbonIndex = -1
+                        }
                     }
+
+                    this.draggedObject.isInInventory = true
 
                 }
 
-            } else if (!selectedObject.isInInventory) {
-                // clicked object
-                selectedObject.onPush()
+            } else {
+                
+                // drop in world
+                if (this.draggedObject.isBeingDragged &&
+                    this.isPositionClear(this.draggedObject.pos.x, this.draggedObject.pos.y, this.draggedObject.width, this.draggedObject.height)
+                ) {
+                    this.fixObjectPosition(this.draggedObject)
+                    this.draggedObject.onDrop(this.objects)
+                    dropSucceeded = true
+
+                    // remove from inventory
+                    if (this.draggedObject.isInInventory) {
+                        let oldSlotIndex = this.getInventorySlotIndex(this.originalX, this.originalY)
+                        inventory.objects[oldSlotIndex] = null
+                        this.draggedObject.isInInventory = false
+                        let objectIndex = this.objects.findIndex(obj => obj.name === this.draggedObject.name)
+                        if (objectIndex < 0) {
+                            this.objects.push(this.draggedObject)
+                        }
+                    }
+
+                } else if (!this.draggedObject.isBeingDragged) {
+                    this.draggedObject.onPush()
+                    if (this.draggedObject instanceof Bunbon) {
+                        this.selectedBunbonIndex = this.objects.findIndex(obj => obj.name === this.draggedObject.name)
+                        if (soundEffects['bunbon-pet'].isPlaying()) soundEffects['bunbon-pet'].stop()
+                    }
+                }
+
             }
 
+            if (dropSucceeded) {
+                this.draggedObject.onDrop(this.objects)
+                if (!MUTE) soundEffects['drop-in-world'].play()
+            } else {
+                this.draggedObject.pos.x = this.originalX
+                this.draggedObject.pos.y = this.originalY
+            }
+            
+            this.draggedObject.isBeingDragged = false
+            this.draggedObject = null
+            saveState()
         }
-
-        this.selectedObjectIndex = -1
-        return interactedWithObject
-
     }
 
     sortGameObjectsByPos() {

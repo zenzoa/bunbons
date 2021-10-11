@@ -308,9 +308,7 @@ class Planet extends ScreenState {
         if (objectsToCleanUp.length > 0) {
             objectsToCleanUp.forEach(objectIndex => {
                 this.objects.splice(objectIndex, 1)
-                if (this.selectedObjectIndex === objectIndex) this.selectedObjectIndex = -1
                 if (this.selectedBunbonIndex === objectIndex) this.selectedBunbonIndex = -1
-                if (this.selectedObjectIndex > objectIndex) this.selectedObjectIndex--
                 if (this.selectedBunbonIndex > objectIndex) this.selectedBunbonIndex--
             })
         }
@@ -327,33 +325,27 @@ class Planet extends ScreenState {
 
     mousePressed(x, y) {
 
-        if (y < WORLD_HEIGHT) {
-            this.clickInWorld(x, y)
-        } else if (
-            x >= inventory.x && x < inventory.x + inventory.width &&
-            y >= inventory.y && y < inventory.y + inventory.height
-        ) {
-            this.clickInInventory(x, y)
-        }
+        this.clickInWorld(x, y)
 
     }
 
     mouseDragged(x, y, dx, dy) {
 
-        this.dragObject(x, y, dx, dy)
+        if (this.draggedObject) {
+            this.dragObject(x, y, dx, dy)
+        }
 
     }
 
     mouseReleased(x, y, dx, dy) {
 
-        let interactedWithObject = this.dropObject(x, y, dx, dy)
+        if (this.draggedObject) {
 
-        if (!interactedWithObject) {
+            this.dropObject(x, y, dx, dy)
+
+        } else {
 
             let selectedBunbon = this.objects[this.selectedBunbonIndex]
-            if (!(selectedBunbon instanceof Bunbon)) {
-                selectedBunbon = null
-            }
 
             if (
                 unlockedPlanetCount > 1 &&
@@ -362,6 +354,7 @@ class Planet extends ScreenState {
             ) {
                 if (!MUTE) soundEffects['go-to-space'].play()
                 openScreen('space', this.index)
+            
             } else if (
                 x >= muteButton.x && x < muteButton.x + muteButton.width &&
                 y >= muteButton.y && y < muteButton.y + muteButton.height
@@ -369,6 +362,7 @@ class Planet extends ScreenState {
                 MUTE = !MUTE
                 if (MUTE) planetSoundtracks[this.name].pause()
                 else planetSoundtracks[this.name].play()
+            
             } else if (
                 selectedBunbon && selectedBunbon.canBlastOff(this) && bunbonCount >= 3 &&
                 x >= blastOffButton.x && x < blastOffButton.x + blastOffButton.width &&
@@ -406,7 +400,6 @@ class Planet extends ScreenState {
         } else if (DEBUG) {
 
             let selectedBunbon = this.objects[this.selectedBunbonIndex]
-            let selectedObject = this.objects[this.selectedObjectIndex]
 
             if (key === 'u') {
                 this.unlockConnections()
@@ -433,8 +426,6 @@ class Planet extends ScreenState {
             } else if (key === 'b' && selectedBunbon) {
                 this.isBlastingOff = true
                 selectedBunbon.startBlastOff()
-            } else if (key === 'h') {
-                if (selectedObject instanceof Egg) selectedObject.hatch()
             }
 
         }

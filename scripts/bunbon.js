@@ -1152,7 +1152,7 @@ class Bunbon extends GameObject {
         let updateFace = false
 
         // handle state of being dragged or pet
-        if (currentScreen.objects[currentScreen.selectedObjectIndex] === this && isClicking) {
+        if (currentScreen.draggedObject === this && isClicking) {
             if (isDragging) {
                 this.state = 'being-dragged'
             } else {

@@ -413,6 +413,8 @@ function keyPressed() {
 
 function saveState() {
 
+    if (currentScreen.draggedObject) return
+
     let data = {
         planets: planets.map(p => p.export()),
         inventoryObjects: inventory.objects.map(o => o ? o.export() : null),
@@ -472,39 +474,3 @@ function loadState() {
     }
 
 }
-
-// TODO: move this into Planet code
-// function exportBunbon() {
-//     if (!(currentScreen instanceof Planet)) return
-
-//     if (selectedObject && selectedObject instanceof Bunbon) {
-//         console.log('~ exporting ' + selectedObject.name + ' ~')
-//         let data = selectedObject.export()
-//         try {
-//             let dataString = JSON.stringify(data)
-//             console.log(dataString)
-//         } catch(e) {
-//             console.error('unable to export:', e)
-//         }
-//     }
-// }
-
-// function importBunbon(dataString) {
-//     if (!(currentScreen instanceof Planet)) return
-
-//     try {
-//         let data = dataString ? JSON.parse(dataString) : null
-//         if (data) {
-//             if (data.type === 'bunbon') {
-//                 console.log('~ importing ' + data.name + ' ~')
-//                 let newBunbon = Bunbon.import(data)
-//                 currentScreen.objects.push(newBunbon)
-//                 // todo: load the bunbon in a random valid location
-//             }
-//         } else {
-//             throw 'bad data'
-//         }
-//     } catch(e) {
-//         console.error('unable to import:', e)
-//     }
-// }
