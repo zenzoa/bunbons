@@ -424,7 +424,7 @@ class Bunbon extends GameObject {
         }
 
         // don't breed if on credits screen
-        if (currentScreen instanceof Credits) {
+        if (currentScreen.name === 'credits') {
             return false
         }
 
@@ -967,7 +967,7 @@ class Bunbon extends GameObject {
 
     startChat(chatPartner) {
 
-        if (this.state === 'chatting' || chatPartner === 'blasting-off' || chatPartner === 'being-dragged') return
+        if (this.state === 'chatting' || chatPartner.state === 'blasting-off' || chatPartner.state === 'being-dragged') return
         this.chatPartner = chatPartner
         if (LOG_STORIES) console.log(this.name, 'is chatting with', this.chatPartner.name)
         this.state = 'chatting'
@@ -1069,7 +1069,7 @@ class Bunbon extends GameObject {
 
         if ((this.pos.x < -32 || this.pos.x > SCREEN_WIDTH) || (this.pos.y < -32 || this.pos.y > SCREEN_HEIGHT)) {
             currentScreen.blastOff()
-            blastedOffBunbons.push(this)
+            blastedOffBunbon = this
             this.removeMe = true
             bunbonCount--
         }
@@ -1135,14 +1135,15 @@ class Bunbon extends GameObject {
 
     }
 
-    update(forCredits) {
+    update() {
 
-        if (!forCredits) {
+        if (currentScreen.name !== 'credits') {
             this.updateAge()
-            this.updateDrives()
             this.updateScore()
         }
 
+        this.updateDrives()
+        
         // update facial expression timer
         this.faceTimer--
         if (this.faceTimer < 0) {

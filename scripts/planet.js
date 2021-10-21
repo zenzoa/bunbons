@@ -93,7 +93,6 @@ class Planet extends ScreenState {
         this.y = planetType.y
         this.radius = 16
         this.connectedPlanets = planetType.connectedPlanets
-        this.color = planetType.color // TEMP
 
         this.isUnlocked = startUnlocked
 
@@ -101,6 +100,11 @@ class Planet extends ScreenState {
 
         this.bunbonCount = 0
         this.bunbonHasBlastedOffHere = false
+
+        this.confettiX = []
+        this.confettiY = []
+        this.confettiColors = []
+        this.confettiTimer = 0
 
     }
 
@@ -110,13 +114,12 @@ class Planet extends ScreenState {
         let spriteIndex = planetTypes[this.name].spriteIndex
         this.sprite = baseSpritesheet.getSprite(spriteIndex)
 
-        // skip if this planet opens credits screen
-        if (this.name === 'credits') return
-
         // setup bg + collision mask
-        this.mask = planetMasks[this.name]
-        this.mask.loadPixels()
-        this.background = planetBGs[this.name]
+        if (this.name !== 'credits') {
+            this.mask = planetMasks[this.name]
+            this.mask.loadPixels()
+            this.background = planetBGs[this.name]
+        }
 
         // place objects
         if (objects) {
@@ -258,11 +261,7 @@ class Planet extends ScreenState {
 
     }
 
-    draw() {
-
-        // draw background
-        image(this.background, 0, 0)
-
+    drawUserInterface() {
         // draw user interface
         image(userinterfaceImg, 0, 0)
         if (unlockedPlanetCount > 1) {
@@ -293,7 +292,9 @@ class Planet extends ScreenState {
             image(scoreButtonImgs[scoreImageIndex], WORLD_WIDTH - 36, WORLD_HEIGHT + 4)
             if (DEBUG) selectedBunbon.drawStatOrb()
         }
+    }
 
+    drawGameObjects() {
         // update and draw game objects
         let objectsToCleanUp = []
         this.sortGameObjectsByPos()
@@ -320,6 +321,69 @@ class Planet extends ScreenState {
         }
 
         this.bunbonCount = this.objects.filter(o => o instanceof Bunbon).length
+    }
+
+    drawCreditsBackground() {
+        noStroke()
+        fill('#222')
+        rect(0, 0, WORLD_WIDTH, WORLD_HEIGHT)
+
+        fill('#ddd')
+        text('~ bunbons ~', WORLD_WIDTH / 2, WORLD_HEIGHT / 2 - 60)
+
+        fill('#bbb')
+        text('created by sg', WORLD_WIDTH / 2, WORLD_HEIGHT / 2 - 40)
+        text('background art by tati', WORLD_WIDTH / 2, WORLD_HEIGHT / 2 - 10)
+        text('sound effects by pocketsound', WORLD_WIDTH / 2, WORLD_HEIGHT / 2 + 20)
+        text('music by visager', WORLD_WIDTH / 2, WORLD_HEIGHT / 2 + 50)
+
+        fill('#999')
+        text('zenzoa.itch.io', WORLD_WIDTH / 2, WORLD_HEIGHT / 2 - 30)
+        text('tatianasoutar.com', WORLD_WIDTH / 2, WORLD_HEIGHT / 2)
+        text('pocket-se.info', WORLD_WIDTH / 2, WORLD_HEIGHT / 2 + 30)
+        text('freemusicarchive.org/music/visager', WORLD_WIDTH / 2, WORLD_HEIGHT / 2 + 60)
+    }
+
+    drawConfetti() {
+        if (this.confettiTimer <= 0) {
+            this.confettiTimer = FRAME_RATE
+            this.confettiColors.push(random(['rgb(246, 129, 129)', 'rgb(255, 238, 104)', 'rgb(114, 214, 206)']))
+            this.confettiX.push(random(0, SCREEN_WIDTH))
+            this.confettiY.push(-4)
+            if (this.confettiX.length > 20) {
+                this.confettiColors.shift()
+                this.confettiX.shift()
+                this.confettiY.shift()
+            }
+        }
+        for (let i = 0; i < this.confettiX.length; i++) {
+            fill(this.confettiColors[i])
+            rect(floor(this.confettiX[i] - 1.5), floor(this.confettiY[i] - 1.5), 3, 3)
+            this.confettiX[i] += random([-1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1])
+            this.confettiY[i] += 0.5
+        }
+        this.confettiTimer--
+    }
+
+    draw() {
+
+        // draw background
+        if (this.name === 'credits') {
+            this.drawCreditsBackground()
+        } else {
+            image(this.background, 0, 0)
+        }
+
+        // draw ui
+        this.drawUserInterface()
+
+        // draw bunbons, toys, and food
+        this.drawGameObjects()
+
+        // draw credits screen confetti
+        if (this.name === 'credits') {
+            this.drawConfetti()
+        }
 
     }
 
@@ -404,8 +468,6 @@ class Planet extends ScreenState {
             if (key === 'u') {
                 this.unlockConnections()
                 openScreen('space', this.index)
-            } else if (key === 'c') {
-                openScreen('credits')
             } else if (key === 'p') {
                 this.isPaused = !this.isPaused
                 if (this.isPaused) noLoop()

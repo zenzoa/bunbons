@@ -169,7 +169,10 @@ class Egg extends Toy {
     onPush() {
 
         if (DEBUG) console.log('shake the egg')
-        this.timeToHatch -= 10
+
+        if (currentScreen.name !== 'credits') {
+            this.timeToHatch -= 10
+        }
         this.isShaking = true
 
         if (!MUTE) soundEffects['push-egg'].play()
@@ -195,9 +198,11 @@ class Egg extends Toy {
         if (this.isBeingDragged) return
 
         // update hatching progress
-        this.timeToHatch--
-        if (this.timeToHatch <= 0) {
-            this.hatch()
+        if (currentScreen.name !== 'credits') {
+            this.timeToHatch--
+            if (this.timeToHatch <= 0) {
+                this.hatch()
+            }
         }
 
     }

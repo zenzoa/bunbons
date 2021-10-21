@@ -47,13 +47,8 @@ class ScreenState {
         y = floor(y)
 
         // out of bounds
-        if (this.inventoryIsVisible) {
-            if (x < w / 2 || x >= WORLD_WIDTH - w / 2) return false
-            if (y < h || y >= WORLD_HEIGHT) return false
-        } else {
-            if (x < w / 2 || x >= SCREEN_WIDTH - w / 2) return false
-            if (y < h || y >= SCREEN_HEIGHT) return false
-        }
+        if (x < w / 2 || x >= WORLD_WIDTH - w / 2) return false
+        if (y < h || y >= WORLD_HEIGHT) return false
 
         // collides with world geometry
         if (this.mask) {
@@ -71,10 +66,8 @@ class ScreenState {
         let pos = null
         let attempts = 0
         while (!pos && attempts < MAX_ATTEMPTS) {
-            let maxX = this.inventoryIsVisible ? WORLD_WIDTH : SCREEN_WIDTH
-            let maxY = this.inventoryIsVisible ? WORLD_HEIGHT : SCREEN_HEIGHT
-            let x = floor(random(0, maxX))
-            let y = floor(random(0, maxY))
+            let x = floor(random(0, WORLD_WIDTH))
+            let y = floor(random(0, WORLD_HEIGHT))
             if (this.isPositionClear(x, y)) {
                 pos = createVector(x, y)
             }

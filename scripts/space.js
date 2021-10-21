@@ -68,6 +68,11 @@ class Space extends ScreenState {
             this.transitionRadius = 1
             this.transitionReversed = false
             preventClicking = false
+
+            // add bunbon to credits screen
+            blastedOffBunbon.pos = createVector(floor(random(0, WORLD_WIDTH)), floor(random(0, WORLD_HEIGHT)))
+            planets[10].objects.push(blastedOffBunbon)
+            blastedOffBunbon = null
         }
 
     }
@@ -108,8 +113,7 @@ class Space extends ScreenState {
             push()
             translate(this.blastOffX, this.blastOffY)
             rotate(this.blastOffAngle + TAU / 4)
-            let bunbon = blastedOffBunbons[blastedOffBunbons.length - 1]
-            if (bunbon) bunbon.drawBlastOff(this.blastOffFrame)
+            if (blastedOffBunbon) blastedOffBunbon.drawBlastOff(this.blastOffFrame)
             pop()
         }
 
@@ -179,11 +183,7 @@ class Space extends ScreenState {
                     relY < planet.y + planet.radius
                 ) {
                     if (!MUTE) soundEffects['go-to-planet'].play()
-                    if (planet.name === 'credits') {
-                        openScreen('credits')
-                    } else {
-                        openScreen('planet', i)
-                    }
+                    openScreen('planet', i)
                 }
             })
 

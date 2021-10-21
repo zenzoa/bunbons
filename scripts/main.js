@@ -105,7 +105,8 @@ let scoreButtonImgs = []
 let shadowImgs = {}
 let bubbleImgs = {}
 
-let blastedOffBunbons = []
+let blastedOffBunbons = [] // TEMP
+let blastedOffBunbon = null
 let confirmingBlastOff = false
 
 let spaceScreen = new Space()
@@ -120,8 +121,6 @@ let planetMasks = {}
 
 let planetSoundtracks = {}
 
-let creditsScreen = new Credits()
-
 let currentScreen = spaceScreen
 let lastPlanet = null
 
@@ -134,10 +133,8 @@ function openScreen(type, index, arg) {
     currentScreen.close()
     if (type === 'space') {
         currentScreen = spaceScreen
-    } else if (type === 'planet') {
+    } else {
         currentScreen = planets[index]
-    } else if (type === 'credits') {
-        currentScreen = creditsScreen
     }
     currentScreen.open(index, arg)
 
@@ -304,7 +301,6 @@ function printDebugCommands() {
     console.log('DEBUG COMMANDS')
     console.log('p - pause')
     console.log('u - unlock planet\'s connections')
-    console.log('c - open credits screen')
     console.log('h - hatch carried egg')
     console.log('a - make bunbon an adult')
     console.log('s - increase bunbon\'s score')
@@ -418,13 +414,14 @@ function saveState() {
     let data = {
         planets: planets.map(p => p.export()),
         inventoryObjects: inventory.objects.map(o => o ? o.export() : null),
-        blastedOffBunbons: blastedOffBunbons.map(b => b.export()),
+        blastedOffBunbons: blastedOffBunbons.map(b => b.export()), // TEMP
         isMuted: MUTE,
         currentScreenType: currentScreen.type,
         currentPlanetIndex: currentScreen.type === 'planet' ? currentScreen.index : 0,
         lastPlanetIndex: lastPlanet ? lastPlanet.index : 0,
 
     }
+
     try {
         dataString = JSON.stringify(data)
         window.localStorage.setItem('bunbons', dataString)
@@ -453,9 +450,14 @@ function loadState() {
                 inventory.objects = data.inventoryObjects.map(o => o ? GameObject.import(o) : null)
             }
 
+            // TEMP
             if (data.blastedOffBunbons) {
                 blastedOffBunbons = data.blastedOffBunbons.map(b => GameObject.import(b))
+                blastedOffBunbons.forEach(b => {
+                    planets[10].objects.push(b)
+                })
             }
+            // END TEMP
 
             MUTE = data.isMuted
 
