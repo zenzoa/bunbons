@@ -345,6 +345,7 @@ class Planet extends ScreenState {
     }
 
     drawConfetti() {
+        noStroke()
         if (this.confettiTimer <= 0) {
             this.confettiTimer = FRAME_RATE
             this.confettiColors.push(random(['rgb(246, 129, 129)', 'rgb(255, 238, 104)', 'rgb(114, 214, 206)']))

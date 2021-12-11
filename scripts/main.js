@@ -456,6 +456,7 @@ function loadState() {
                 blastedOffBunbons.forEach(b => {
                     planets[10].objects.push(b)
                 })
+                blastedOffBunbons = []
             }
             // END TEMP
 
