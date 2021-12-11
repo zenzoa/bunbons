@@ -180,7 +180,8 @@ class Space extends ScreenState {
                     relX >= planet.x - planet.radius &&
                     relX < planet.x + planet.radius &&
                     relY >= planet.y - planet.radius &&
-                    relY < planet.y + planet.radius
+                    relY < planet.y + planet.radius &&
+                    planet.isUnlocked
                 ) {
                     if (!MUTE) soundEffects['go-to-planet'].play()
                     openScreen('planet', i)
