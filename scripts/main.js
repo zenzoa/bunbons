@@ -105,7 +105,6 @@ let scoreButtonImgs = []
 let shadowImgs = {}
 let bubbleImgs = {}
 
-let blastedOffBunbons = [] // TEMP
 let blastedOffBunbon = null
 let confirmingBlastOff = false
 
@@ -310,6 +309,7 @@ function printDebugCommands() {
     console.log('2 - make bunbon look for toy')
     console.log('3 - make bunbon look for friend')
     console.log('4 - make bunbon go to sleep')
+    console.log('r - reset game')
 }
 
 function draw() {
@@ -414,7 +414,6 @@ function saveState() {
     let data = {
         planets: planets.map(p => p.export()),
         inventoryObjects: inventory.objects.map(o => o ? o.export() : null),
-        blastedOffBunbons: blastedOffBunbons.map(b => b.export()), // TEMP
         isMuted: MUTE,
         currentScreenType: currentScreen.type,
         currentPlanetIndex: currentScreen.type === 'planet' ? currentScreen.index : 0,
@@ -449,16 +448,6 @@ function loadState() {
             if (data.inventoryObjects) {
                 inventory.objects = data.inventoryObjects.map(o => o ? GameObject.import(o) : null)
             }
-
-            // TEMP
-            if (data.blastedOffBunbons) {
-                blastedOffBunbons = data.blastedOffBunbons.map(b => GameObject.import(b))
-                blastedOffBunbons.forEach(b => {
-                    planets[10].objects.push(b)
-                })
-                blastedOffBunbons = []
-            }
-            // END TEMP
 
             MUTE = data.isMuted
 

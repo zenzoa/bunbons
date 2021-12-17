@@ -1245,16 +1245,6 @@ class Bunbon extends GameObject {
 
     draw() {
 
-        // TEMP to remove cloned bunbons in credits
-        if (currentScreen.name === 'credits') {
-            currentScreen.objects.forEach(o => {
-                if (o !== this && o.name === this.name && o instanceof Bunbon && !o.removeMe) {
-                    if (DEBUG) console.log('remove duplicate bunbon')
-                    this.removeMe = true
-                }
-            })
-        }
-
         push()
         translate(floor(this.pos.x), floor(this.pos.y))
         if (this.isFlipped) scale(-1.0, 1.0)
