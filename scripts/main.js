@@ -466,3 +466,9 @@ function loadState() {
     }
 
 }
+
+function resetState() {
+    planets.forEach(planet => planet.setup())
+    inventory.objects = Array(6)
+    openScreen('planet', 0)
+}
