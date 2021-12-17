@@ -166,7 +166,7 @@ class ScreenState {
                         let oldSlotIndex = this.getInventorySlotIndex(this.originalX, this.originalY)
                         inventory.objects[oldSlotIndex] = null
                     } else {
-                        let objectIndex = this.objects.findIndex(obj => obj.name === this.draggedObject.name)
+                        let objectIndex = this.objects.findIndex(obj => obj === this.draggedObject)
                         if (objectIndex >= 0) this.objects.splice(objectIndex, 1)
                         if (this.draggedObject instanceof Bunbon && objectIndex === this.selectedBunbonIndex) {
                             this.selectedBunbonIndex = -1
@@ -192,7 +192,7 @@ class ScreenState {
                         let oldSlotIndex = this.getInventorySlotIndex(this.originalX, this.originalY)
                         inventory.objects[oldSlotIndex] = null
                         this.draggedObject.isInInventory = false
-                        let objectIndex = this.objects.findIndex(obj => obj.name === this.draggedObject.name)
+                        let objectIndex = this.objects.findIndex(obj => obj === this.draggedObject)
                         if (objectIndex < 0) {
                             this.objects.push(this.draggedObject)
                         }
