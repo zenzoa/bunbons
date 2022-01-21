@@ -70,6 +70,8 @@ class Space extends ScreenState {
             preventClicking = false
 
             // add bunbon to credits screen
+            blastedOffBunbon.removeMe = false
+            blastedOffBunbon.state = null
             blastedOffBunbon.pos = createVector(floor(random(0, WORLD_WIDTH)), floor(random(0, WORLD_HEIGHT)))
             planets[10].objects.push(blastedOffBunbon)
             blastedOffBunbon = null
