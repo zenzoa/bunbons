@@ -114,7 +114,10 @@ class Toy extends GameObject {
 
         if (DEBUG) console.log('push the toy')
 
-        this.carriedBunbon = null
+        if (this.carriedBunbon) {
+            this.carriedBunbon.isInInventory = false
+            this.carriedBunbon = null
+        }
 
         if (this.isActive) {
             this.isActive = false
