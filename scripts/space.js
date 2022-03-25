@@ -18,11 +18,12 @@ class Space extends ScreenState {
 
         this.drawTransition = false
         this.transitionRadius = 0
-        this.transitionReversed = false
 
     }
 
     open(planetIndex, showBlastOff) {
+
+        this.drawTransition = false
 
         let planet = planets[planetIndex]
         if (planet) {
@@ -66,15 +67,7 @@ class Space extends ScreenState {
             this.isBlastingOff = false
             this.drawTransition = true
             this.transitionRadius = 1
-            this.transitionReversed = false
             preventClicking = false
-
-            // add bunbon to credits screen
-            blastedOffBunbon.removeMe = false
-            blastedOffBunbon.state = null
-            blastedOffBunbon.pos = createVector(floor(random(0, WORLD_WIDTH)), floor(random(0, WORLD_HEIGHT)))
-            planets[10].objects.push(blastedOffBunbon)
-            blastedOffBunbon = null
         }
 
     }
@@ -124,18 +117,32 @@ class Space extends ScreenState {
             fill('#000')
             ellipse(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2, this.transitionRadius, this.transitionRadius)
 
-            this.transitionRadius += this.transitionReversed ? -30 : 30
+            this.transitionRadius += 30
 
             if (this.transitionRadius > SCREEN_WIDTH * 1.42) {
-                this.transitionReversed = true
-                if (lastPlanet) {
+                if (lastPlanet && blastedOffBunbon) {
+                    // get next planet
+                    let nextPlanetIndex = min(lastPlanet.index + 1, 10)
+                    if (lastPlanet.index === 3) nextPlanetIndex = random([4, 5])
+                    let nextPlanet = planets[nextPlanetIndex]
+
+                    // add bunbon to next planet
+                    blastedOffBunbon.removeMe = false
+                    blastedOffBunbon.state = null
+                    blastedOffBunbon.pos = nextPlanet.randomPoint()
+                    blastedOffBunbon.hasBlastedOffBefore = true
+                    nextPlanet.objects.push(blastedOffBunbon)
+                    blastedOffBunbon = null
+
+                    // open next planet
+                    nextPlanet.drawTransition = true
+                    nextPlanet.transitionRadius = this.transitionRadius
+                    openScreen('planet', nextPlanetIndex)
+                    
+                    // unlock connections from last planet
                     lastPlanet.unlockConnections()
                     lastPlanet = null
                 }
-            }
-
-            if (this.transitionRadius < 1) {
-                this.drawTransition = false
             }
         }
 

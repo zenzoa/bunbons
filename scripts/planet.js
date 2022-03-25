@@ -106,6 +106,9 @@ class Planet extends ScreenState {
         this.confettiColors = []
         this.confettiTimer = 0
 
+        this.drawTransition = false
+        this.transitionRadius = 0
+
     }
 
     setup(objects) {
@@ -207,6 +210,11 @@ class Planet extends ScreenState {
         lastPlanet = this
 
         this.bunbonHasBlastedOffHere = true
+        if (this.name === 'desert') {
+            planets[planetTypes.bubbledome.index].bunbonHasBlastedOffHere = true
+        } else if (this.name === 'bubbledome') {
+            planets[planetTypes.desert.index].bunbonHasBlastedOffHere = true
+        }
 
     }
 
@@ -384,6 +392,18 @@ class Planet extends ScreenState {
         // draw credits screen confetti
         if (this.name === 'credits') {
             this.drawConfetti()
+        }
+
+        if (this.drawTransition) {
+            noStroke()
+            fill('#000')
+            ellipse(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2, this.transitionRadius, this.transitionRadius)
+
+            this.transitionRadius -= 30
+
+            if (this.transitionRadius < 1) {
+                this.drawTransition = false
+            }
         }
 
     }

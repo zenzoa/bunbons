@@ -210,6 +210,8 @@ class Bunbon extends GameObject {
         this.name = NameGenerator.generate()
         this.pos = createVector(pos.x, pos.y)
 
+        this.hasBlastedOffBefore = false
+
         this.offsetX = -3
         this.offsetY = -10
         this.animationTimer = 0
@@ -523,7 +525,7 @@ class Bunbon extends GameObject {
     canBlastOff(planet) {
         return (
             this.reachedBestScore &&
-            planet.bunbonCount > 2 &&
+            !this.hasBlastedOffBefore &&
             !planet.bunbonHasBlastedOffHere
         )
     }
@@ -1418,7 +1420,8 @@ class Bunbon extends GameObject {
             foodOpinions: this.foodOpinions,
             toyOpinions: this.toyOpinions,
             friendOpinions: this.friendOpinions,
-            isInInventory: this.isInInventory
+            isInInventory: this.isInInventory,
+            hasBlastedOffBefore: this.hasBlastedOffBefore
         }
         return data
 
@@ -1437,6 +1440,7 @@ class Bunbon extends GameObject {
         newBunbon.toyOpinions = data.toyOpinions
         newBunbon.friendOpinions = data.friendOpinions
         newBunbon.isInInventory = data.isInInventory
+        newBunbon.hasBlastedOffBefore = data.hasBlastedOffBefore
         return newBunbon
 
     }
