@@ -423,17 +423,6 @@ class Bunbon extends GameObject {
             return false
         }
 
-        // don't breed if on credits screen
-        if (currentScreen.name === 'credits') {
-            return false
-        }
-
-        // don't breed if there are too many bunbons on the current planet
-        let bunbonCount = currentScreen.objects.filter(o => o instanceof Bunbon).length
-        if (bunbonCount >= 6) {
-            return false
-        }
-
         return true
 
     }
