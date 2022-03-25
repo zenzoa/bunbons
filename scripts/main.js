@@ -301,7 +301,6 @@ function printDebugCommands() {
     console.log('m - mute')
     console.log('p - pause')
     console.log('u - unlock planet\'s connections')
-    console.log('h - hatch carried egg')
     console.log('a - make bunbon an adult')
     console.log('s - increase bunbon\'s score')
     console.log('b - make bunbon blast off')
@@ -310,7 +309,6 @@ function printDebugCommands() {
     console.log('2 - make bunbon look for toy')
     console.log('3 - make bunbon look for friend')
     console.log('4 - make bunbon go to sleep')
-    console.log('r - reset game')
 }
 
 function draw() {
@@ -469,6 +467,7 @@ function loadState() {
 }
 
 function resetState() {
+    unlockedPlanetCount = 0
     planets.forEach(planet => planet.setup())
     inventory.objects = Array(6)
     openScreen('planet', 0)
