@@ -195,6 +195,9 @@ class Space extends ScreenState {
     }
 
     keyPressed() {
+        if (key === 'm') {
+            muteSounds()
+        }
     }
     
 }

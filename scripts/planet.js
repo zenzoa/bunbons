@@ -390,13 +390,15 @@ class Planet extends ScreenState {
 
     mousePressed(x, y) {
 
-        this.clickInWorld(x, y)
+        if (!this.isPaused) {
+            this.clickInWorld(x, y)
+        }
 
     }
 
     mouseDragged(x, y, dx, dy) {
 
-        if (this.draggedObject) {
+        if (!this.isPaused && this.draggedObject) {
             this.dragObject(x, y, dx, dy)
         }
 
@@ -404,11 +406,11 @@ class Planet extends ScreenState {
 
     mouseReleased(x, y, dx, dy) {
 
-        if (this.draggedObject) {
+        if (!this.isPaused && this.draggedObject) {
 
             this.dropObject(x, y, dx, dy)
 
-        } else {
+        } else if (!this.isPaused) {
 
             let selectedBunbon = this.objects[this.selectedBunbonIndex]
 
@@ -424,9 +426,7 @@ class Planet extends ScreenState {
                 x >= muteButton.x && x < muteButton.x + muteButton.width &&
                 y >= muteButton.y && y < muteButton.y + muteButton.height
             ) {
-                MUTE = !MUTE
-                if (MUTE) planetSoundtracks[this.name].pause()
-                else planetSoundtracks[this.name].play()
+                toggleMute()
             
             } else if (
                 selectedBunbon && selectedBunbon.canBlastOff(this) && bunbonCount >= 3 &&
@@ -453,7 +453,21 @@ class Planet extends ScreenState {
 
     keyPressed() {
 
-        if (key === '~') {
+        if (key === 'p') {
+            this.isPaused = !this.isPaused
+            if (this.isPaused) {
+                this.wasMutedBeforePause = MUTE
+                if (!MUTE) toggleMute()
+                noLoop()
+            } else {
+                if (!this.wasMutedBeforePause) toggleMute()
+                loop()
+            }
+
+        } else if (key === 'm') {
+            toggleMute()
+        
+        } else if (key === '~') {
             DEBUG = !DEBUG
             if (DEBUG) {
                 console.log('~ DEBUG MODE ON ~')
@@ -462,17 +476,13 @@ class Planet extends ScreenState {
                 console.log('~ DEBUG MODE OFF ~')
             }
 
-        } else if (DEBUG) {
+        } else if (DEBUG && !this.isPaused) {
 
             let selectedBunbon = this.objects[this.selectedBunbonIndex]
 
             if (key === 'u') {
                 this.unlockConnections()
                 openScreen('space', this.index)
-            } else if (key === 'p') {
-                this.isPaused = !this.isPaused
-                if (this.isPaused) noLoop()
-                else loop()
             } else if (key === '1' && selectedBunbon) {
                 selectedBunbon.pickFarGoal('food')
             } else if (key === '2' && selectedBunbon) {

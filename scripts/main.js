@@ -298,6 +298,7 @@ function setup() {
 
 function printDebugCommands() {
     console.log('DEBUG COMMANDS')
+    console.log('m - mute')
     console.log('p - pause')
     console.log('u - unlock planet\'s connections')
     console.log('h - hatch carried egg')
@@ -471,4 +472,12 @@ function resetState() {
     planets.forEach(planet => planet.setup())
     inventory.objects = Array(6)
     openScreen('planet', 0)
+}
+
+function toggleMute() {
+    MUTE = !MUTE
+    if (planetSoundtracks[currentScreen.name]) {
+        if (MUTE) planetSoundtracks[currentScreen.name].pause()
+        else planetSoundtracks[currentScreen.name].play()
+    }
 }
