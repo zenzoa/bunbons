@@ -467,7 +467,11 @@ function loadState() {
 }
 
 function resetState() {
-    planets.forEach(planet => planet.setup())
+    planets.forEach(planet => {
+        planet.setup()
+        planet.isUnlocked = false
+        planet.bunbonHasBlastedOffHere = false
+    })
     inventory.objects = Array(6)
     openScreen('planet', 0)
 }

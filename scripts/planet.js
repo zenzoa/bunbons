@@ -113,9 +113,6 @@ class Planet extends ScreenState {
 
     setup(objects) {
 
-        this.isUnlocked = false
-        this.bunbonHasBlastedOffHere = false
-
         // setup icon
         let spriteIndex = planetTypes[this.name].spriteIndex
         this.sprite = baseSpritesheet.getSprite(spriteIndex)
