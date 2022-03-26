@@ -53,6 +53,9 @@ class Space extends ScreenState {
         this.blastOffY = y
         this.blastOffAngle = 0
 
+        // unlock connections from last planet
+        if (lastPlanet) lastPlanet.unlockConnections()
+
     }
 
     blastOff() {
@@ -131,7 +134,7 @@ class Space extends ScreenState {
                     blastedOffBunbon.state = null
                     blastedOffBunbon.pos = nextPlanet.randomPoint()
                     blastedOffBunbon.hasBlastedOffBefore = true
-                    nextPlanet.objects.push(blastedOffBunbon)
+                    planets[10].objects.push(blastedOffBunbon)
                     blastedOffBunbon = null
 
                     // open next planet
@@ -139,8 +142,6 @@ class Space extends ScreenState {
                     nextPlanet.transitionRadius = this.transitionRadius
                     openScreen('planet', nextPlanetIndex)
                     
-                    // unlock connections from last planet
-                    lastPlanet.unlockConnections()
                     lastPlanet = null
                 }
             }
