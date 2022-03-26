@@ -219,6 +219,11 @@ class Bunbon extends GameObject {
         this.faceTimer = 0
         this.speechBubbleTimer = 0
 
+        this.isReacting = false
+        this.reactionType = ''
+        this.reactionTimer = 0
+        this.reactionFrame = 0
+
         this.tempOffsetX = 0
         this.tempOffsetY = 0
 
@@ -835,6 +840,10 @@ class Bunbon extends GameObject {
         this.state = 'eating'
         this.eatTimer = 0
         this.eatLength = floor(random(30, 60))
+
+        this.isReacting = true
+        this.reactionType = 'eat'
+        this.reactionTimer = this.eatLength
         
         if (!MUTE) soundEffects['bunbon-eat'].play()
 
@@ -864,6 +873,10 @@ class Bunbon extends GameObject {
         this.playTimer = 0
         this.playLength = floor(random(30, 60))
         this.playFace = random(['smile', 'grin', 'laugh'].filter(x => x !== this.face))
+
+        this.isReacting = true
+        this.reactionType = 'play'
+        this.reactionTimer = this.playLength
 
         if (!MUTE) soundEffects['bunbon-play'].play()
     
@@ -1071,8 +1084,15 @@ class Bunbon extends GameObject {
 
         this.animationTimer += min(8, round(mouseVelocity) * 2)
 
-        if (mouseVelocity < 0.1) this.face = 'blank'
-        else this.face = 'blink'
+        if (mouseVelocity < 0.1) {
+            this.face = 'blank'
+            this.isReacting = false
+        } else {
+            this.face = 'blink'
+            this.isReacting = true
+            this.reactionType = 'pet'
+            if (this.reactionTimer <= 0) this.reactionTimer = 10
+        }
 
         this.reduceDrive('loneliness', 0.1)
 
@@ -1204,6 +1224,15 @@ class Bunbon extends GameObject {
             this.speechBubbleTimer--
         }
 
+        // update reaction
+        if (this.reactionTimer > 0) {
+            this.reactionTimer--
+            if (this.reactionTimer % 10 === 0) this.reactionFrame++
+            if (this.reactionFrame > 2) this.reactionFrame = 0
+        } else {
+            this.isReacting = false
+        }
+
         if (!this.isInInventory) {
             this.tempOffsetX = 0
             this.tempOffsetY = 0
@@ -1299,6 +1328,11 @@ class Bunbon extends GameObject {
                     let speechBubbleY = y + Math.sin(this.speechBubbleTimer * 0.33) - 2
                     image(bubbleImgs['speechbubble'], speechBubbleX, speechBubbleY)
                 }
+            } else if (this.isReacting) {
+                // draw reaction icon
+                let reactionIconX = x + 20
+                let reactionIconY = y - 4
+                image(bubbleImgs['reactionicon-' + this.reactionType + this.reactionFrame + (this.isFlipped ? '-flipped' : '')], reactionIconX, reactionIconY)
             } else if (this.isThinking) {
                 // draw thought bubble
                 let thoughtBubbleX = x + 20

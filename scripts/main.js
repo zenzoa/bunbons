@@ -249,7 +249,25 @@ function setup() {
         'thoughtbubble-food': baseSpritesheet.getSprite(10),
         'thoughtbubble-toy': baseSpritesheet.getSprite(11),
         'thoughtbubble-friend': baseSpritesheet.getSprite(12),
-        'thoughtbubble-sleep': baseSpritesheet.getSprite(13)
+        'thoughtbubble-sleep': baseSpritesheet.getSprite(13),
+        'reactionicon-pet0': baseSpritesheet.getSprite(320),
+        'reactionicon-pet1': baseSpritesheet.getSprite(321),
+        'reactionicon-pet2': baseSpritesheet.getSprite(322),
+        'reactionicon-eat0': baseSpritesheet.getSprite(323),
+        'reactionicon-eat1': baseSpritesheet.getSprite(324),
+        'reactionicon-eat2': baseSpritesheet.getSprite(325),
+        'reactionicon-play0': baseSpritesheet.getSprite(326),
+        'reactionicon-play1': baseSpritesheet.getSprite(327),
+        'reactionicon-play2': baseSpritesheet.getSprite(328),
+        'reactionicon-pet0-flipped': baseSpritesheet.getSprite(340),
+        'reactionicon-pet1-flipped': baseSpritesheet.getSprite(341),
+        'reactionicon-pet2-flipped': baseSpritesheet.getSprite(342),
+        'reactionicon-eat0-flipped': baseSpritesheet.getSprite(343),
+        'reactionicon-eat1-flipped': baseSpritesheet.getSprite(344),
+        'reactionicon-eat2-flipped': baseSpritesheet.getSprite(345),
+        'reactionicon-play0-flipped': baseSpritesheet.getSprite(346),
+        'reactionicon-play1-flipped': baseSpritesheet.getSprite(347),
+        'reactionicon-play2-flipped': baseSpritesheet.getSprite(348)
     }
 
     heartImg = spritesheetImg.get(608, 0, 12, 10)
