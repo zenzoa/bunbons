@@ -501,3 +501,9 @@ function toggleMute() {
         else planetSoundtracks[currentScreen.name].play()
     }
 }
+
+function getCurrentBunbon() {
+    if (currentScreen.objects) {
+        return currentScreen.objects[currentScreen.selectedBunbonIndex]
+    }
+}

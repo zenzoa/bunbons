@@ -8,8 +8,10 @@ let toySprites = {
     'sled': 226,
     'bundoll': 227,
     'beachball': 228,
-    'pullturtle': 229,
+    'pullturtle': 229
 }
+
+let toyList = ['mossball', 'glider', 'robot', 'dancingflower', 'butterfly', 'magicwand', 'sled', 'bundoll', 'beachball', 'pullturtle', 'egg']
 
 class Toy extends GameObject {
 
@@ -319,7 +321,7 @@ class Toy extends GameObject {
                 this.carriedBunbon.pos.x = this.pos.x
                 this.carriedBunbon.pos.y = this.pos.y + 1
                 this.carriedBunbon.tempOffsetX = this.isFlipped ? 4 : -4
-                this.carriedBunbon.tempOffsetY = -5
+                this.carriedBunbon.tempOffsetY = -4
             } else {
                 this.carriedBunbon.isInInventory = false
                 this.carriedBunbon = null

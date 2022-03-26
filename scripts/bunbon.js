@@ -372,10 +372,10 @@ class Bunbon extends GameObject {
             earsUsePrimaryColor: random([true, false]),
             tailUsesPrimaryColor: random([true, false]),
 
-            ageToAdulthood: random(120, 480), // 2 - 8 minutes
-            maxSpeed: random(0.2, 0.8),
-            restChance: random(0.001, 0.02),
-            jumpChance: random(0.01, 0.1),
+            ageToAdulthood: floor(random(120, 480)), // 2 - 8 minutes
+            maxSpeed: floor(random(0.2, 0.8) * 10000) / 10000,
+            restChance: floor(random(0.001, 0.02) * 100000) / 100000,
+            jumpChance: floor(random(0.01, 0.1) * 10000) / 10000,
             hungerRate: floor(random() * 100),
             boredomRate: floor(random() * 100),
             lonelinessRate: floor(random() * 100),
@@ -1478,4 +1478,5 @@ class Bunbon extends GameObject {
         return newBunbon
 
     }
+
 }

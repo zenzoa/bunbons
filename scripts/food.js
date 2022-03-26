@@ -11,6 +11,8 @@ let foodSprites = {
     'succulent': 189
 }
 
+let foodList = ['mushrooms', 'dumplings', 'juiceorb', 'flowers', 'dragonfruit', 'rockcandy', 'icecream', 'sandwich', 'seaweed', 'succulent']
+
 class Food extends GameObject {
 
     constructor(pos, name) {
