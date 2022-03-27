@@ -218,6 +218,7 @@ class Bunbon extends GameObject {
         this.animationFrame = 0
         this.faceTimer = 0
         this.speechBubbleTimer = 0
+        this.dragTimer = 0
 
         this.isReacting = false
         this.reactionType = ''
@@ -1082,19 +1083,21 @@ class Bunbon extends GameObject {
 
     pet() {
 
-        this.animationTimer += min(8, round(mouseVelocity) * 2)
+        if (this.dragTimer > 20) {
+            this.animationTimer += min(8, round(mouseVelocity) * 2)
 
-        if (mouseVelocity < 0.1) {
-            this.face = 'blank'
-            this.isReacting = false
-        } else {
-            this.face = 'blink'
-            this.isReacting = true
-            this.reactionType = 'pet'
-            if (this.reactionTimer <= 0) this.reactionTimer = 10
+            if (mouseVelocity < 0.1) {
+                this.face = 'blank'
+                this.isReacting = false
+            } else {
+                this.face = 'blink'
+                this.isReacting = true
+                this.reactionType = 'pet'
+                if (this.reactionTimer <= 0) this.reactionTimer = 10
+            }
+
+            this.reduceDrive('loneliness', 0.1)
         }
-
-        this.reduceDrive('loneliness', 0.1)
 
     }
 
@@ -1165,16 +1168,18 @@ class Bunbon extends GameObject {
 
         // handle state of being dragged or pet
         if (currentScreen.draggedObject === this && isClicking) {
+            this.dragTimer++
             if (isDragging) {
                 this.state = 'being-dragged'
             } else {
                 this.state = 'being-pet'
-                if (!MUTE && !soundEffects['bunbon-pet'].isPlaying()) soundEffects['bunbon-pet'].play()
+                if (!MUTE && this.dragTimer > 20 && !soundEffects['bunbon-pet'].isPlaying()) soundEffects['bunbon-pet'].play()
             }
         } else {
             if (this.state === 'being-dragged' || this.state === 'being-pet') {
                 this.state = null
             }
+            this.dragTimer = 0
         }
 
         // check state
@@ -1475,6 +1480,9 @@ class Bunbon extends GameObject {
         newBunbon.friendOpinions = data.friendOpinions
         newBunbon.isInInventory = data.isInInventory
         newBunbon.hasBlastedOffBefore = data.hasBlastedOffBefore
+
+        generatedNames.push(newBunbon.name)
+
         return newBunbon
 
     }
