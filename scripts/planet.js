@@ -282,7 +282,10 @@ class Planet extends ScreenState {
 
         // draw inventory
         inventory.objects.forEach(obj => {
-            if (obj) obj.draw()
+            if (obj) {
+                obj.isInInventory = true
+                obj.draw()
+            }
         })
 
         // draw bunbon stats
@@ -308,6 +311,7 @@ class Planet extends ScreenState {
         this.sortGameObjectsByPos()
         this.objectsInDrawOrder.forEach(objectIndex => {
             let obj = this.objects[objectIndex]
+            obj.isInInventory = inventory.objects.includes(obj)
             if (!obj.isInInventory) obj.update()
             obj.draw()
             if (obj.removeMe) objectsToCleanUp.push(objectIndex)
