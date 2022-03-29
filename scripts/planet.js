@@ -311,7 +311,7 @@ class Planet extends ScreenState {
         this.sortGameObjectsByPos()
         this.objectsInDrawOrder.forEach(objectIndex => {
             let obj = this.objects[objectIndex]
-            obj.isInInventory = inventory.objects.includes(obj)
+            obj.isInInventory = inventory.objects.includes(obj) || this.objects.find(o => o.carriedBunbon === obj)
             if (!obj.isInInventory) obj.update()
             obj.draw()
             if (obj.removeMe) objectsToCleanUp.push(objectIndex)
