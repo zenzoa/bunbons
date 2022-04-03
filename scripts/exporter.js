@@ -261,7 +261,7 @@ function downloadBunbon(bunbon) {
         comment: bunbonToString(bunbon),
         callback: blob => onDownload(bunbon, blob)
     })
-    
+
 }
 
 function onDownload(bunbon, blob) {
@@ -271,8 +271,8 @@ function onDownload(bunbon, blob) {
         <img id='export-preview' width=64 height=64>
         <br>
         ${bunbon.name}
-        <br>
-        This will remove the bunbon from the world and prompt you to download them as a GIF file.
+        <br><br>
+        <small>This will remove the bunbon from your world and<br>prompt you to download them as a GIF file.</small>
         <br><br><br><br>
         <button id='confirm-export'>export</button>
         <br><br>
