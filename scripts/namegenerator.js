@@ -54,4 +54,20 @@ class NameGenerator {
         
     }
 
+    static deduplicate(name) {
+
+        while (generatedNames.includes(name)) {
+            let numbersAtEnd = name.match(/\d+$/)
+            if (numbersAtEnd) {
+                let coreName = name.substring(0, name.length - numbersAtEnd[0].length)
+                let newNumber = int(numbersAtEnd[0]) + 1
+                name = coreName + newNumber
+            } else {
+                name += "2"
+            }
+        }
+        return name
+        
+    }
+
 }

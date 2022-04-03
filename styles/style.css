@@ -1,3 +1,8 @@
+@font-face {
+    font-family: 'UbuntuMono-Bold';
+    src: url('fonts/UbuntuMono-Bold.woff');
+}
+
 html, body {
     overflow: hidden;
     height: 100%;
@@ -22,6 +27,86 @@ canvas {
     margin: 20px auto;
     border-radius: 2px;
     background: white;
-    image-rendering: pixelated;
     image-rendering: crisp-edges;
+    image-rendering: pixelated;
+}
+
+img {
+    image-rendering: crisp-edges;
+    image-rendering: pixelated;
+}
+
+.modal {
+    z-index: 100;
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: rgba(0, 0, 0, 0.5);
+    display: none;
+}
+
+.modal.open {
+    display: block;
+}
+
+.modal-contents {
+    width: 600px;
+    height: 440px;
+    margin: 40px auto;
+    padding: 20px 40px;
+    border-radius: 12px;
+    color: #443c4c;
+    background: white;
+    box-sizing: border-box;
+    text-align: center;
+    font-family: 'UbuntuMono-Bold', 'Gill Sans', 'Gill Sans MT', 'Calibri', 'Trebuchet MS', sans-serif;
+    font-size: 16px;
+    display: flex;
+    flex-direction: column;
+    align-content: center;
+    justify-content: center;
+}
+
+.modal-header {
+    margin-bottom: 40px;
+    font-size: 20px;
+}
+
+button {
+    background-color: white;
+    border-radius: 6px;
+    border-style: none;
+    box-shadow: 0 0 0 3px #625465;
+    box-sizing: border-box;
+    color: #443c4c;
+    cursor: pointer;
+    display: inline-block;
+    width: 200px;
+    height: 40px;
+    line-height: 20px;
+    list-style: none;
+    margin: 0;
+    outline: none;
+    padding: 10px 16px;
+    position: relative;
+    text-align: center;
+    text-decoration: none;
+    vertical-align: baseline;
+    user-select: none;
+    -webkit-user-select: none;
+    touch-action: manipulation;
+    font-family: inherit;
+    font-size: inherit;
+    transition: box-shadow 100ms;
+}
+
+button:focus {
+    background-color: #625465;
+    color: white;
+}
+
+button:hover {
+    box-shadow: 0 0 0 5px #625465;
 }

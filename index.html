@@ -10,6 +10,7 @@
 
         <script src="library/p5.min.js"></script>
         <script src="library/p5.sound.min.js"></script>
+        <script src="library/gif.js"></script>
         <script src="scripts/screenstate.js"></script>
         <script src="scripts/space.js"></script>
         <script src="scripts/planet.js"></script>
@@ -25,6 +26,29 @@
     </head>
  
     <body>
+
+        <input id="fileInput" type="file" style="display:none;" />
+
+        <div class="modal" id="import-modal">
+            <div class="modal-contents">
+                <div class="modal-header">
+                    import bunbon?
+                </div>
+                <div class="modal-body" id="import-modal-contents">
+                </div>
+            </div>
+        </div>
+
+        <div class="modal" id="export-modal">
+            <div class="modal-contents">
+                <div class="modal-header">
+                    export bunbon?
+                </div>
+                <div class="modal-body" id="export-modal-contents">
+                </div>
+            </div>
+        </div>
+
     </body>
  
 </html>

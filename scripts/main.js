@@ -3,6 +3,8 @@ let LOG_STORIES = true
 
 let MUTE = false
 
+let MODAL_OPEN = false
+
 let FRAME_RATE = 30
 
 let MAX_ATTEMPTS = 100
@@ -42,6 +44,27 @@ let spaceButton = {
 
 let muteButton = {
     x: 4,
+    y: 4,
+    width: 16,
+    height: 16
+}
+
+let pauseButton = {
+    x: 24,
+    y: 4,
+    width: 16,
+    height: 16
+}
+
+let uploadButton = {
+    x: 320 - 40,
+    y: 4,
+    width: 16,
+    height: 16
+}
+
+let downloadButton = {
+    x: 320 - 20,
     y: 4,
     width: 16,
     height: 16
@@ -100,7 +123,8 @@ let Vector = p5.Vector
 let spritesheet, spritesheetImg, baseSpritesheet
 let colorSpritesheets = {}
 
-let userinterfaceImg, spaceButtonImg, muteButtonImg, unmuteButtonImg, spaceButtonForCreditsImg, heartImg
+let userinterfaceImg, spaceButtonImg, spaceButtonForCreditsImg, heartImg
+let muteButtonImg, unmuteButtonImg, pauseButtonImg, unpauseButtonImg, uploadButtonImg, downloadButtonImg, disableddownloadButtonImg
 let scoreButtonImgs = []
 let shadowImgs = {}
 let bubbleImgs = {}
@@ -273,9 +297,14 @@ function setup() {
     heartImg = spritesheetImg.get(608, 0, 12, 10)
  
     spaceButtonImg = spritesheetImg.get(0, 606, 34, 34)
+    spaceButtonForCreditsImg = spritesheetImg.get(34, 606, 34, 34)
     muteButtonImg = spritesheetImg.get(0, 448, 16, 16)
     unmuteButtonImg = spritesheetImg.get(32, 448, 16, 16)
-    spaceButtonForCreditsImg = spritesheetImg.get(34, 606, 34, 34)
+    pauseButtonImg = spritesheetImg.get(64, 448, 16, 16)
+    unpauseButtonImg = spritesheetImg.get(96, 448, 16, 16)
+    uploadButtonImg = spritesheetImg.get(128, 448, 16, 16)
+    downloadButtonImg = spritesheetImg.get(160, 448, 16, 16)
+    disableddownloadButtonImg = spritesheetImg.get(192, 448, 16, 16)
 
     scoreButtonImgs = [
         baseSpritesheet.getSprite(260),
@@ -311,6 +340,8 @@ function setup() {
         planets.forEach(planet => planet.setup())
         openScreen('planet', 0)
     }
+
+    document.getElementById('fileInput').onchange = onUpload
 
 }
 
@@ -499,6 +530,38 @@ function toggleMute() {
     if (planetSoundtracks[currentScreen.name]) {
         if (MUTE) planetSoundtracks[currentScreen.name].pause()
         else planetSoundtracks[currentScreen.name].play()
+    }
+}
+
+function togglePause() {
+    currentScreen.isPaused = !currentScreen.isPaused
+    if (currentScreen.isPaused) {
+        currentScreen.wasMutedBeforePause = MUTE
+        if (!MUTE) toggleMute()
+        noLoop()
+    } else {
+        if (!currentScreen.wasMutedBeforePause) toggleMute()
+        loop()
+    }
+}
+
+function openModal(id) {
+    MODAL_OPEN = true
+    document.getElementById(id).className = 'modal open'
+    currentScreen.wasPausedBeforeModal = currentScreen.isPaused
+    if (!currentScreen.isPaused) {
+        togglePause()
+    }
+}
+
+function closeModal() {
+    MODAL_OPEN = false
+    document.getElementById('import-modal').className = 'modal'
+    document.getElementById('import-modal-contents').innerHTML = ''
+    document.getElementById('export-modal').className = 'modal'
+    document.getElementById('export-modal-contents').innerHTML = ''
+    if (!currentScreen.wasPausedBeforeModal && currentScreen.isPaused) {
+        togglePause()
     }
 }
 

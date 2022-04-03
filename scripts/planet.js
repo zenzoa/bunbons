@@ -270,6 +270,9 @@ class Planet extends ScreenState {
     }
 
     drawUserInterface() {
+
+        let selectedBunbon = getCurrentBunbon()
+
         // draw user interface
         image(userinterfaceImg, 0, 0)
         if (unlockedPlanetCount > 1) {
@@ -277,8 +280,17 @@ class Planet extends ScreenState {
         }
 
         // draw mute button
-        if (MUTE) image(unmuteButtonImg, 4, 4)
-        else image(muteButtonImg, 4, 4)
+        if (MUTE) image(unmuteButtonImg, muteButton.x, muteButton.y)
+        else image(muteButtonImg, muteButton.x, muteButton.y)
+
+        // draw pause button
+        if (this.isPaused) image(unpauseButtonImg, pauseButton.x, pauseButton.y)
+        else image(pauseButtonImg, pauseButton.x, pauseButton.y)
+
+        // draw import and buttons
+        image(uploadButtonImg, uploadButton.x, uploadButton.y)
+        if (selectedBunbon) image(downloadButtonImg, downloadButton.x, downloadButton.y)
+        else image(disableddownloadButtonImg, downloadButton.x, downloadButton.y)
 
         // draw inventory
         inventory.objects.forEach(obj => {
@@ -289,7 +301,6 @@ class Planet extends ScreenState {
         })
 
         // draw bunbon stats
-        let selectedBunbon = this.objects[this.selectedBunbonIndex]
         if (selectedBunbon && selectedBunbon instanceof Bunbon) {
             let normalizedScore = selectedBunbon.score / selectedBunbon.maxScore
             let scoreImageIndex = floor(normalizedScore * 10)
@@ -303,6 +314,7 @@ class Planet extends ScreenState {
             image(scoreButtonImgs[scoreImageIndex], WORLD_WIDTH - 36, WORLD_HEIGHT + 4)
             if (DEBUG) selectedBunbon.drawStatOrb()
         }
+
     }
 
     drawGameObjects() {
@@ -413,6 +425,7 @@ class Planet extends ScreenState {
     }
 
     mousePressed(x, y) {
+        if (MODAL_OPEN) return
 
         if (!this.isPaused) {
             this.clickInWorld(x, y)
@@ -421,6 +434,7 @@ class Planet extends ScreenState {
     }
 
     mouseDragged(x, y, dx, dy) {
+        if (MODAL_OPEN) return
 
         if (!this.isPaused && this.draggedObject) {
             this.dragObject(x, y, dx, dy)
@@ -429,30 +443,52 @@ class Planet extends ScreenState {
     }
 
     mouseReleased(x, y, dx, dy) {
+        if (MODAL_OPEN) return
+
+        let selectedBunbon = getCurrentBunbon()
 
         if (!this.isPaused && this.draggedObject) {
 
             this.dropObject(x, y, dx, dy)
 
+        } else if (
+            x >= pauseButton.x && x < pauseButton.x + pauseButton.width &&
+            y >= pauseButton.y && y < pauseButton.y + pauseButton.height
+        ) {
+            togglePause()
+            
+        } else if (
+            x >= muteButton.x && x < muteButton.x + muteButton.width &&
+            y >= muteButton.y && y < muteButton.y + muteButton.height &&
+            !this.isPaused
+        ) {
+            toggleMute()
+            
+        } else if (
+            x >= uploadButton.x && x < uploadButton.x + uploadButton.width &&
+            y >= uploadButton.y && y < uploadButton.y + uploadButton.height
+        ) {
+            uploadBunbon()
+        
+        } else if (
+            x >= downloadButton.x && x < downloadButton.x + downloadButton.width &&
+            y >= downloadButton.y && y < downloadButton.y + downloadButton.height &&
+            selectedBunbon
+        ) {
+            downloadBunbon(selectedBunbon)
+
+        } else if (
+            unlockedPlanetCount > 1 &&
+            x >= spaceButton.x && x < spaceButton.x + spaceButton.width &&
+            y >= spaceButton.y && y < spaceButton.y + spaceButton.height
+        ) {
+            if (this.isPaused) togglePause()
+            if (!MUTE) soundEffects['go-to-space'].play()
+            openScreen('space', this.index)
+
         } else if (!this.isPaused) {
 
-            let selectedBunbon = this.objects[this.selectedBunbonIndex]
-
             if (
-                unlockedPlanetCount > 1 &&
-                x >= spaceButton.x && x < spaceButton.x + spaceButton.width &&
-                y >= spaceButton.y && y < spaceButton.y + spaceButton.height
-            ) {
-                if (!MUTE) soundEffects['go-to-space'].play()
-                openScreen('space', this.index)
-            
-            } else if (
-                x >= muteButton.x && x < muteButton.x + muteButton.width &&
-                y >= muteButton.y && y < muteButton.y + muteButton.height
-            ) {
-                toggleMute()
-            
-            } else if (
                 selectedBunbon && selectedBunbon.canBlastOff(this) && bunbonCount >= 3 &&
                 x >= blastOffButton.x && x < blastOffButton.x + blastOffButton.width &&
                 y >= blastOffButton.y && y < blastOffButton.y + blastOffButton.height
@@ -477,16 +513,11 @@ class Planet extends ScreenState {
 
     keyPressed() {
 
-        if (key === 'p') {
-            this.isPaused = !this.isPaused
-            if (this.isPaused) {
-                this.wasMutedBeforePause = MUTE
-                if (!MUTE) toggleMute()
-                noLoop()
-            } else {
-                if (!this.wasMutedBeforePause) toggleMute()
-                loop()
-            }
+        if (keyCode === 27) {
+            closeModal()
+
+        } else if (key === 'p') {
+            togglePause()
 
         } else if (key === 'm') {
             toggleMute()
