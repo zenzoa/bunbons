@@ -151,29 +151,42 @@ class ScreenState {
             isDragging = false
             let dropSucceeded = false
 
-            if (this.inventoryIsVisible && y >= WORLD_HEIGHT) {
+            let removeFromEverywhere = () => {
+                if (this.draggedObject.isInInventory) {
+                    let oldSlotIndex = this.getInventorySlotIndex(this.originalX, this.originalY)
+                    inventory.objects[oldSlotIndex] = null
+                } else {
+                    let objectIndex = this.objects.findIndex(obj => obj === this.draggedObject)
+                    if (objectIndex >= 0) this.objects.splice(objectIndex, 1)
+                    if (this.draggedObject instanceof Bunbon && objectIndex === this.selectedBunbonIndex) {
+                        this.selectedBunbonIndex = -1
+                    }
+                }
+            }
+
+            if (
+                x >= storageButton.x && x < storageButton.x + storageButton.width &&
+                y >= storageButton.y && y < storageButton.y + storageButton.height &&
+                !storageScreen.isFull()
+            ) {
+
+                // add to storage
+                removeFromEverywhere()
+                storageScreen.addObject(this.draggedObject)
+                dropSucceeded = true
+                openScreen('storage', currentScreen.index)
+
+            } else if (this.inventoryIsVisible && y >= WORLD_HEIGHT) {
 
                 // add to inventory
                 let slotIndex = this.getInventorySlotIndex(x, y)
                 if (!inventory.objects[slotIndex]) {
+                    removeFromEverywhere()
                     inventory.objects[slotIndex] = this.draggedObject
                     this.draggedObject.pos.x = inventory.slotXs[slotIndex]
                     this.draggedObject.pos.y = inventory.slotY + (this.draggedObject.height / 2)
-                    dropSucceeded = true
-
-                    // remove from inventory and world
-                    if (this.draggedObject.isInInventory) {
-                        let oldSlotIndex = this.getInventorySlotIndex(this.originalX, this.originalY)
-                        inventory.objects[oldSlotIndex] = null
-                    } else {
-                        let objectIndex = this.objects.findIndex(obj => obj === this.draggedObject)
-                        if (objectIndex >= 0) this.objects.splice(objectIndex, 1)
-                        if (this.draggedObject instanceof Bunbon && objectIndex === this.selectedBunbonIndex) {
-                            this.selectedBunbonIndex = -1
-                        }
-                    }
-
                     this.draggedObject.isInInventory = true
+                    dropSucceeded = true
 
                 }
 

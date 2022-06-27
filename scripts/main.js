@@ -26,14 +26,21 @@ let SCREEN_HEIGHT = 240
 let inventory = {
     x: 40,
     y: WORLD_HEIGHT + 5,
-    slotCount: 6,
+    slotCount: 5,
     slotWidth: 40,
-    width: 40 * 6,
+    width: 40 * 5,
     height: 32,
-    objects: Array(6),
-    slotXs: [ 60, 100, 140, 180, 220, 260 ],
+    objects: Array(5),
+    slotXs: [ 60, 100, 140, 180, 220 ],
     slotY: WORLD_HEIGHT + 21
-} 
+}
+
+let storageButton = {
+	x: 240,
+	y: WORLD_HEIGHT + 5,
+	width: 40,
+	height: 32
+}
 
 let spaceButton = {
     x: 4,
@@ -57,15 +64,22 @@ let pauseButton = {
 }
 
 let uploadButton = {
-    x: 320 - 40,
-    y: 4,
+    x: 192 - 60,
+    y: 214,
     width: 16,
     height: 16
 }
 
 let downloadButton = {
-    x: 320 - 20,
-    y: 4,
+    x: 192 - 40,
+    y: 214,
+    width: 16,
+    height: 16
+}
+
+let deleteButton = {
+    x: 192 - 20,
+    y: 214,
     width: 16,
     height: 16
 }
@@ -123,8 +137,13 @@ let Vector = p5.Vector
 let spritesheet, spritesheetImg, baseSpritesheet
 let colorSpritesheets = {}
 
-let userinterfaceImg, spaceButtonImg, spaceButtonForCreditsImg, heartImg
-let muteButtonImg, unmuteButtonImg, pauseButtonImg, unpauseButtonImg, uploadButtonImg, downloadButtonImg, disableddownloadButtonImg
+let userinterfaceImg, spaceButtonImg, spaceButtonForStorageImg, heartImg
+let storageImg, storageOnHoverImg, selectedStorageSlotImg
+let muteButtonImg, unmuteButtonImg
+let pauseButtonImg, unpauseButtonImg
+let deleteButtonImg, disabledDeleteButtonImg
+let uploadButtonImg, disabledUploadButtonImg
+let downloadButtonImg, disabledDownloadButtonImg
 let scoreButtonImgs = []
 let shadowImgs = {}
 let bubbleImgs = {}
@@ -136,6 +155,7 @@ let spaceScreen = new Space()
 let planets = []
 let unlockedPlanetCount = 0
 
+let storageBG = null
 let spaceBG = null
 let starsBGs = []
 let starsBGOpacity = [0, 64]
@@ -143,6 +163,8 @@ let planetBGs = {}
 let planetMasks = {}
 
 let planetSoundtracks = {}
+
+let storageScreen = new Storage()
 
 let currentScreen = spaceScreen
 let lastPlanet = null
@@ -156,6 +178,8 @@ function openScreen(type, index, arg) {
     currentScreen.close()
     if (type === 'space') {
         currentScreen = spaceScreen
+    } else if (type === 'storage') {
+        currentScreen = storageScreen
     } else {
         currentScreen = planets[index]
     }
@@ -203,6 +227,8 @@ function preload() {
     spritesheetImg = loadImage('images/spritesheet.png')
     userinterfaceImg = loadImage('images/userinterface.png')
 
+    storageBG = loadImage('images/storage.png')
+    
     spaceBG = loadImage('images/space.png')
     starsBGs = [
         loadImage('images/stars1.png'),
@@ -295,16 +321,29 @@ function setup() {
     }
 
     heartImg = spritesheetImg.get(608, 0, 12, 10)
- 
+
     spaceButtonImg = spritesheetImg.get(0, 606, 34, 34)
-    spaceButtonForCreditsImg = spritesheetImg.get(34, 606, 34, 34)
+    spaceButtonForStorageImg = spritesheetImg.get(34, 606, 34, 34)
+    
+    storageImg = spritesheetImg.get(128, 608, 38, 34)
+    storageOnHoverImg = spritesheetImg.get(176, 608, 38, 32)
+
+    selectedStorageSlotImg = spritesheetImg.get(80, 600, 40, 40)
+
     muteButtonImg = spritesheetImg.get(0, 448, 16, 16)
     unmuteButtonImg = spritesheetImg.get(32, 448, 16, 16)
+
     pauseButtonImg = spritesheetImg.get(64, 448, 16, 16)
     unpauseButtonImg = spritesheetImg.get(96, 448, 16, 16)
+
     uploadButtonImg = spritesheetImg.get(128, 448, 16, 16)
-    downloadButtonImg = spritesheetImg.get(160, 448, 16, 16)
-    disableddownloadButtonImg = spritesheetImg.get(192, 448, 16, 16)
+    disabledUploadButtonImg = spritesheetImg.get(160, 448, 16, 16)
+
+    downloadButtonImg = spritesheetImg.get(192, 448, 16, 16)
+    disabledDownloadButtonImg = spritesheetImg.get(224, 448, 16, 16)
+
+    deleteButtonImg = spritesheetImg.get(256, 448, 16, 16)
+    disabledDeleteButtonImg = spritesheetImg.get(288, 448, 16, 16)
 
     scoreButtonImgs = [
         baseSpritesheet.getSprite(260),
@@ -329,6 +368,7 @@ function setup() {
     introBunbonPatterns = shuffle(introBunbonPatterns.concat(introBunbonPatterns))
 
     spaceScreen.setup()
+		storageScreen.setup()
 
     Object.keys(planetTypes).forEach(planetType => {
         planets.push(new Planet(planetType))
@@ -462,9 +502,10 @@ function saveState() {
     let data = {
         planets: planets.map(p => p.export()),
         inventoryObjects: inventory.objects.map(o => o ? o.export() : null),
+        storageObjects: storageScreen.objects.map(o => o ? o.export() : null),
         isMuted: MUTE,
         currentScreenType: currentScreen.type,
-        currentPlanetIndex: currentScreen.type === 'planet' ? currentScreen.index : 0,
+        currentPlanetIndex: currentScreen.index,
         lastPlanetIndex: lastPlanet ? lastPlanet.index : 0,
 
     }
@@ -493,8 +534,16 @@ function loadState() {
                 planets.forEach(p => { p.setup(p.objects) })
             }
 
+            if (data.storageObjects) {
+                storageScreen.objects = data.storageObjects.map(o => o ? GameObject.import(o) : null)
+            }
+
             if (data.inventoryObjects) {
                 inventory.objects = data.inventoryObjects.map(o => o ? GameObject.import(o) : null)
+                if (inventory.objects[5] != null) {
+                    storageScreen.addObject(inventory.objects[5])
+                    inventory.objects[5] = null
+                }
             }
 
             MUTE = data.isMuted
@@ -521,7 +570,8 @@ function resetState() {
         planet.isUnlocked = false
         planet.bunbonHasBlastedOffHere = false
     })
-    inventory.objects = Array(6)
+    inventory.objects = Array(inventory.slotCount)
+    storageScreen.objects = Array(storageScreen.slotCount)
     openScreen('planet', 0)
 }
 
@@ -534,14 +584,16 @@ function toggleMute() {
 }
 
 function togglePause() {
-    currentScreen.isPaused = !currentScreen.isPaused
-    if (currentScreen.isPaused) {
-        currentScreen.wasMutedBeforePause = MUTE
-        if (!MUTE) toggleMute()
-        noLoop()
-    } else {
-        if (!currentScreen.wasMutedBeforePause) toggleMute()
-        loop()
+    if (currentScreen.type === 'planet') {
+        currentScreen.isPaused = !currentScreen.isPaused
+        if (currentScreen.isPaused) {
+            currentScreen.wasMutedBeforePause = MUTE
+            if (!MUTE) toggleMute()
+            noLoop()
+        } else {
+            if (!currentScreen.wasMutedBeforePause) toggleMute()
+            loop()
+        }
     }
 }
 
@@ -556,10 +608,21 @@ function openModal(id) {
 
 function closeModal() {
     MODAL_OPEN = false
+
     document.getElementById('import-modal').className = 'modal'
     document.getElementById('import-modal-contents').innerHTML = ''
+
+    document.getElementById('import-item-modal').className = 'modal'
+
+    document.getElementById('import-bunbon-modal').className = 'modal'
+    document.getElementById('import-bunbon-modal-contents').innerHTML = ''
+
     document.getElementById('export-modal').className = 'modal'
     document.getElementById('export-modal-contents').innerHTML = ''
+
+    document.getElementById('delete-modal').className = 'modal'
+    document.getElementById('delete-modal-contents').innerHTML = ''
+
     if (!currentScreen.wasPausedBeforeModal && currentScreen.isPaused) {
         togglePause()
     }

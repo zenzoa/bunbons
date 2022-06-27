@@ -110,3 +110,23 @@ button:focus {
 button:hover {
     box-shadow: 0 0 0 5px #625465;
 }
+
+.image-button {
+	width: 68px;
+	height: 68px;
+	padding: 2px;
+	margin: 2px;
+	box-shadow: none;
+	background: #62546522;
+	transition: background 100ms;
+}
+
+.image-button:hover {
+	box-shadow: none;
+	background: #62546544;
+}
+
+.image-button:focus {
+	box-shadow: none;
+	background: #625465;
+}

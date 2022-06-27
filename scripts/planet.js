@@ -279,19 +279,15 @@ class Planet extends ScreenState {
             image(spaceButtonImg, 3, WORLD_HEIGHT + 3)
         }
 
+        
         // draw mute button
         if (MUTE) image(unmuteButtonImg, muteButton.x, muteButton.y)
         else image(muteButtonImg, muteButton.x, muteButton.y)
-
+        
         // draw pause button
         if (this.isPaused) image(unpauseButtonImg, pauseButton.x, pauseButton.y)
         else image(pauseButtonImg, pauseButton.x, pauseButton.y)
-
-        // draw import and buttons
-        image(uploadButtonImg, uploadButton.x, uploadButton.y)
-        if (selectedBunbon) image(downloadButtonImg, downloadButton.x, downloadButton.y)
-        else image(disableddownloadButtonImg, downloadButton.x, downloadButton.y)
-
+        
         // draw inventory
         inventory.objects.forEach(obj => {
             if (obj) {
@@ -299,6 +295,15 @@ class Planet extends ScreenState {
                 obj.draw()
             }
         })
+
+        // draw storage button
+        let posX = mouseX / CANVAS_SCALE
+        let posY = mouseY / CANVAS_SCALE
+        if (posX >= 240 && posX < 280 && posY >= inventory.y && posY < inventory.y + inventory.height) {
+            image(storageOnHoverImg, 237, 203)
+        } else {
+            image(storageImg, 237, 203)
+        }
 
         // draw bunbon stats
         if (selectedBunbon && selectedBunbon instanceof Bunbon) {
@@ -425,6 +430,7 @@ class Planet extends ScreenState {
     }
 
     mousePressed(x, y) {
+
         if (MODAL_OPEN) return
 
         if (!this.isPaused) {
@@ -434,6 +440,7 @@ class Planet extends ScreenState {
     }
 
     mouseDragged(x, y, dx, dy) {
+
         if (MODAL_OPEN) return
 
         if (!this.isPaused && this.draggedObject) {
@@ -443,6 +450,7 @@ class Planet extends ScreenState {
     }
 
     mouseReleased(x, y, dx, dy) {
+
         if (MODAL_OPEN) return
 
         let selectedBunbon = getCurrentBunbon()
@@ -450,6 +458,12 @@ class Planet extends ScreenState {
         if (!this.isPaused && this.draggedObject) {
 
             this.dropObject(x, y, dx, dy)
+
+        } else if (
+            x >= storageButton.x && x < storageButton.x + storageButton.width &&
+            y >= storageButton.y && y < storageButton.y + storageButton.height
+        ) {
+            openScreen('storage', this.index)
 
         } else if (
             x >= pauseButton.x && x < pauseButton.x + pauseButton.width &&
@@ -464,19 +478,6 @@ class Planet extends ScreenState {
         ) {
             toggleMute()
             
-        } else if (
-            x >= uploadButton.x && x < uploadButton.x + uploadButton.width &&
-            y >= uploadButton.y && y < uploadButton.y + uploadButton.height
-        ) {
-            uploadBunbon()
-        
-        } else if (
-            x >= downloadButton.x && x < downloadButton.x + downloadButton.width &&
-            y >= downloadButton.y && y < downloadButton.y + downloadButton.height &&
-            selectedBunbon
-        ) {
-            downloadBunbon(selectedBunbon)
-
         } else if (
             unlockedPlanetCount > 1 &&
             x >= spaceButton.x && x < spaceButton.x + spaceButton.width &&

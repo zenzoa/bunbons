@@ -4,6 +4,7 @@ class Space extends ScreenState {
 
         super()
         this.type = 'space'
+        this.index = 0
 
     }
 

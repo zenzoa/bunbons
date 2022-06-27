@@ -265,6 +265,7 @@ function downloadBunbon(bunbon) {
 }
 
 function onDownload(bunbon, blob) {
+
     openModal('export-modal')
     let modal = document.getElementById('export-modal-contents')
     modal.innerHTML = `
@@ -306,18 +307,17 @@ function onDownload(bunbon, blob) {
 
     }
     document.getElementById('confirm-export').focus()
+
 }
 
 function uploadBunbon() {
-    let freeInventorySlotIndex = -1
-    inventory.objects.forEach((obj, index) => {
-        if (!obj && freeInventorySlotIndex === -1) freeInventorySlotIndex = index
-    })
-    if (freeInventorySlotIndex >= 0) {
+
+    if (!storageScreen.isFull()) {
         document.getElementById('fileInput').click()
     } else {
         alert('Not enough storage space to import bunbon.')
     }
+
 }
 
 function onUpload(event) {
@@ -354,8 +354,8 @@ function onUpload(event) {
             bunbonData.name = NameGenerator.deduplicate(bunbonData.name)
             let newBunbon = Bunbon.importBunbon(bunbonData)
 
-            openModal('import-modal')
-            let modal = document.getElementById('import-modal-contents')
+            openModal('import-bunbon-modal')
+            let modal = document.getElementById('import-bunbon-modal-contents')
             modal.innerHTML = `
                 <img id='import-preview' width=64 height=64>
                 <br>
