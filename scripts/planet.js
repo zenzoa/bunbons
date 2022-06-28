@@ -287,14 +287,6 @@ class Planet extends ScreenState {
         // draw pause button
         if (this.isPaused) image(unpauseButtonImg, pauseButton.x, pauseButton.y)
         else image(pauseButtonImg, pauseButton.x, pauseButton.y)
-        
-        // draw inventory
-        inventory.objects.forEach(obj => {
-            if (obj) {
-                obj.isInInventory = true
-                obj.draw()
-            }
-        })
 
         // draw storage button
         let posX = mouseX / CANVAS_SCALE
@@ -304,6 +296,14 @@ class Planet extends ScreenState {
         } else {
             image(storageImg, 237, 203)
         }
+        
+        // draw inventory
+        inventory.objects.forEach(obj => {
+            if (obj) {
+                obj.isInInventory = true
+                obj.draw()
+            }
+        })
 
         // draw bunbon stats
         if (selectedBunbon && selectedBunbon instanceof Bunbon) {

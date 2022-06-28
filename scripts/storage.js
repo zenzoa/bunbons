@@ -7,7 +7,7 @@ class Storage extends ScreenState {
 		this.index = 0
 
 		this.slotCount = 24
-		this.objects = Array(24)
+		this.objects = (new Array(this.slotCount)).fill(null)
 		this.selectedObjectIndex = -1
 
 		this.x = 40
