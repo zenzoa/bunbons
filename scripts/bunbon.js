@@ -19,6 +19,8 @@ let bunbonEars = {
     short: earsStartIndex + 3,
     lop: earsStartIndex + 4,
     fin: earsStartIndex + 5,
+    mouse: earsStartIndex + 6,
+    dragon: earsStartIndex + 7,
 }
 
 let tailsStartIndex = 80
@@ -59,6 +61,7 @@ let bunbonHeads = {
     horns: headsStartIndex + 4,
     antennae: headsStartIndex + 5,
     unicorn: headsStartIndex + 6,
+    mohawk: headsStartIndex + 7,
 }
 
 let patternsStartIndex = 140
