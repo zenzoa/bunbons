@@ -299,7 +299,7 @@ function onDownload(bunbon, blob) {
 		// remove bunbon from game
 		bunbon.removeMe = true
 		generatedNames = generatedNames.filter(name => name !== bunbon.name)
-				storageScreen.objects[storageScreen.selectedObjectIndex] = null
+		storageScreen.objects[storageScreen.selectedObjectIndex] = null
 		if (DEBUG) console.log('EXPORT ' + bunbon.name.toUpperCase() + ':', bunbonString)
 
 		saveState()
