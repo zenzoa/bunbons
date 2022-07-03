@@ -370,19 +370,8 @@ function onUpload(event) {
 			document.getElementById('import-preview').src = URL.createObjectURL(file)
 
 			document.getElementById('confirm-import').onclick = () => {
-
-				// place imported bunbon in inventory
-				let slotIndex = -1
-				inventory.objects.forEach((obj, index) => {
-					if (!obj && slotIndex === -1) slotIndex = index
-				})
-				inventory.objects[slotIndex] = newBunbon
-				newBunbon.isInInventory = true
-				newBunbon.pos.x = inventory.slotXs[slotIndex]
-				newBunbon.pos.y = inventory.slotY + (newBunbon.height / 2)
-
+				storageScreen.addObject(newBunbon)
 				saveState()
-
 				closeModal()
 
 			}
