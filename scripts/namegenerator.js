@@ -39,7 +39,7 @@ class NameGenerator {
         }
     
         // filter out names that include bad words
-        let badWords = ['anus', 'clit', 'cock', 'coon', 'cunt', 'dick', 'fag', 'fuck', 'gook', 'jap', 'kike', 'nigg', 'penis', 'shit', 'slut', 'tard']
+        let badWords = ['anal', 'anus', 'arse', 'ass', 'bastard', 'bitch', 'bollock', 'bomb', 'boner', 'brothel', 'bugger', 'bung', 'chink', 'choad', 'chode', 'clit', 'cock', 'coitus', 'condom', 'coolie', 'cooly', 'coon', 'crotch', 'cum', 'cunt', 'damn', 'dick', 'dildo', 'dong', 'dyke', 'ejaculat', 'fag', 'felatio ', 'felch', 'foreskin', 'forni', 'fuck', 'gip', 'gook', 'goy', 'gyp', 'harem', 'hell', 'herpes', 'hitler', 'jap', 'jism', 'jiz', 'kaf', 'kanake', 'kigger', 'kike', 'koon', 'kunt', 'kyke', 'lynch', 'molest', 'moron', 'mulatto', 'munt', 'nazi', 'negro', 'nig', 'nuke', 'orgasm', 'orgy', 'paki', 'penis', 'perv', 'pimp', 'pistol', 'pohm', 'polack', 'poon', 'porn', 'prick', 'prostitute', 'pube', 'pubic', 'queef', 'quim', 'rape', 'rectum', 'sadist', 'satan', 'scag', 'schlong', 'scrotum', 'semen', 'sex', 'shag', 'shat', 'shit', 'shoot', 'skank', 'slave', 'sleez', 'slut', 'smut', 'sodom', 'sperm', 'spic', 'spig', 'spik', 'spoog', 'squaw', 'suicide', 'swastika', 'tarbaby', 'tard', 'teste', 'testicle', 'titt', 'torture', 'towelhead', 'trannie', 'tranny', 'twat', 'vagina', 'vulva', 'wank', 'wetback', 'whore']
         badWords.forEach(badWord => {
             if (name.includes(badWord)) {
                 name = NameGenerator.generate()
