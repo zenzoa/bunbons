@@ -1,7 +1,7 @@
 let DEBUG = false
 let LOG_STORIES = true
 
-let MUTE = false
+let MUTE = true
 
 let MODAL_OPEN = false
 
@@ -194,33 +194,31 @@ function preload() {
 
     myFont = loadFont('fonts/UbuntuMono-Bold.woff')
 
-    soundFormats('mp3')
-
     let makeSoundtrack = (fileName) => {
-        let newSoundtrack = loadSound(fileName)
-        newSoundtrack.setLoop(true)
-        newSoundtrack.setVolume(0.02)
+        let newSoundtrack = new Audio('music/' + fileName + '.mp3')
+        newSoundtrack.volume = 0.02
+        newSoundtrack.loop = true
         return newSoundtrack
     }
 
     planetSoundtracks = {
-        mossyforest: makeSoundtrack('music/the_great_tree'),
-        cloudland: makeSoundtrack('music/hidden_grotto'),
-        asteroid: makeSoundtrack('music/village_of_the_peeping_frogs'),
-        flowertown: makeSoundtrack('music/roots'),
-        volcano: makeSoundtrack('music/in_the_branches'),
-        crystalcave: makeSoundtrack('music/home_departure'),
-        snowymountain: makeSoundtrack('music/sunset_over_the_treetops'),
-        park: makeSoundtrack('music/streamside_hotel'),
-        bubbledome: makeSoundtrack('music/bug_band'),
-        desert: makeSoundtrack('music/rainy_ascent'),
-        space: makeSoundtrack('music/shoots'),
-        credits: makeSoundtrack('music/overgrown_labyrinth')
+        mossyforest: makeSoundtrack('the_great_tree'),
+        cloudland: makeSoundtrack('hidden_grotto'),
+        asteroid: makeSoundtrack('village_of_the_peeping_frogs'),
+        flowertown: makeSoundtrack('roots'),
+        volcano: makeSoundtrack('in_the_branches'),
+        crystalcave: makeSoundtrack('home_departure'),
+        snowymountain: makeSoundtrack('sunset_over_the_treetops'),
+        park: makeSoundtrack('streamside_hotel'),
+        bubbledome: makeSoundtrack('bug_band'),
+        desert: makeSoundtrack('rainy_ascent'),
+        space: makeSoundtrack('shoots'),
+        credits: makeSoundtrack('overgrown_labyrinth')
     }
 
     Object.keys(soundEffectNames).forEach(soundEffectName => {
-        let newSoundEffect = loadSound('sounds/' + soundEffectNames[soundEffectName])
-        newSoundEffect.setVolume(0.2)
+        let newSoundEffect = new Audio('sounds/' + soundEffectNames[soundEffectName] + '.mp3')
+        newSoundEffect.volume = 0.2
         soundEffects[soundEffectName] = newSoundEffect
     })
 
@@ -368,7 +366,7 @@ function setup() {
     introBunbonPatterns = shuffle(introBunbonPatterns.concat(introBunbonPatterns))
 
     spaceScreen.setup()
-		storageScreen.setup()
+    storageScreen.setup()
 
     Object.keys(planetTypes).forEach(planetType => {
         planets.push(new Planet(planetType))
@@ -546,7 +544,7 @@ function loadState() {
                 }
             }
 
-            MUTE = data.isMuted
+            // MUTE = data.isMuted
 
             if (data.currentScreenType !== 'planet' || planets[data.currentPlanetIndex]) {
                 openScreen(data.currentScreenType, data.currentPlanetIndex)
@@ -575,11 +573,43 @@ function resetState() {
     openScreen('planet', 0)
 }
 
+function playSound(soundName, ignoreIfAlreadyPlaying) {
+    if (!MUTE && (!ignoreIfAlreadyPlaying || !soundEffects[soundName].currentTime > 0)) {
+        try {
+            soundEffects[soundName].currentTime = 0
+            soundEffects[soundName].play()
+        } catch(e) {}
+    }
+}
+
+function stopSound(soundName) {
+    soundEffects[soundName].pause()
+}
+
+function playMusic(musicName) {
+    if (!MUTE) {
+        try {
+            planetSoundtracks[musicName].currentTime = 0
+            planetSoundtracks[musicName].play()
+        } catch(e) {}
+    }
+}
+
+function stopMusic(musicName) {
+    planetSoundtracks[musicName].pause()
+}
+
 function toggleMute() {
     MUTE = !MUTE
     if (planetSoundtracks[currentScreen.name]) {
-        if (MUTE) planetSoundtracks[currentScreen.name].pause()
-        else planetSoundtracks[currentScreen.name].play()
+        if (MUTE) {
+            planetSoundtracks[currentScreen.name].pause()
+            Object.keys(soundEffects).forEach(sound => {
+                sound.pause()
+            })
+        } else {
+            planetSoundtracks[currentScreen.name].play()
+        }
     }
 }
 

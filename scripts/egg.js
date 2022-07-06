@@ -175,7 +175,7 @@ class Egg extends Toy {
         }
         this.isShaking = true
 
-        if (!MUTE) soundEffects['push-egg'].play()
+        playSound('push-egg')
 
     }
 
@@ -186,7 +186,7 @@ class Egg extends Toy {
         if (LOG_STORIES) console.log(bunbon.name, 'has hatched')
         this.removeMe = true
 
-        if (!MUTE) soundEffects['egg-hatch'].play()
+        playSound('egg-hatch')
         
         // save game
         saveState()
