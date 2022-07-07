@@ -1005,9 +1005,11 @@ class Bunbon extends GameObject {
 
             if (this.chatPartner.speechBubbleTimer < 10) {
                 this.speechBubbleTimer = floor(random(20, 30))
-                let availableChatSounds = [1, 2, 3, 4, 5].filter(v => v !== this.currentChatSound)
-                this.currentChatSound = random(availableChatSounds)
-                playSound('bunbon-chat-' + this.currentChatSound, true)
+                if (!MUTE) {
+			let availableChatSounds = [1, 2, 3, 4, 5].filter(v => v !== this.currentChatSound)
+                	this.currentChatSound = random(availableChatSounds)
+                	playSound('bunbon-chat-' + this.currentChatSound, true)
+		}
             }
         }
 
@@ -1175,7 +1177,7 @@ class Bunbon extends GameObject {
                 this.state = 'being-dragged'
             } else {
                 this.state = 'being-pet'
-                if (this.dragTimer > 20) playSound('bunbon-pet', true)
+                if (!MUTE && this.dragTimer > 20) playSound('bunbon-pet', true)
             }
         } else {
             if (this.state === 'being-dragged' || this.state === 'being-pet') {
