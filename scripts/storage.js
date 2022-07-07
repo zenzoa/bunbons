@@ -298,7 +298,7 @@ class Storage extends ScreenState {
 
 		openModal('import-item-modal')
 		let modal = document.getElementById('import-item-modal-contents')
-		if (modal.innerText) return
+		modal.innerHTML = ''
 
 		let addItem = itemName => {
 			let imageEl = document.createElement('img')
