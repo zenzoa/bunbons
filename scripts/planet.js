@@ -200,6 +200,9 @@ class Planet extends ScreenState {
     close() {
 
 		stopMusic(this.name)
+        Object.keys(soundEffects).forEach(soundName => {
+            soundEffects[soundName].pause()
+        })
 
     }
 

@@ -16,10 +16,30 @@ html, body {
 }
 
 body {
+    background-image: url("../images/loading.gif");
+    background-repeat: no-repeat;
+    background-position: center 20px;
+    background-size: 640px 480px;
+}
+
+#titlescreen {
+    z-index: 1;
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background-color: black;
     background-image: url("../images/titlescreen.gif");
     background-repeat: no-repeat;
     background-position: center 20px;
     background-size: 640px 480px;
+    cursor: pointer;
+}
+
+#titlescreen.hidden {
+    display: none;
+    z-index: -1;
 }
 
 canvas {

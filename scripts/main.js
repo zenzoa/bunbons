@@ -1,8 +1,9 @@
 let DEBUG = false
 let LOG_STORIES = true
 
-let MUTE = true
+let MUTE = false
 
+let TITLESCREEN_OPEN = true
 let MODAL_OPEN = false
 
 let FRAME_RATE = 30
@@ -192,6 +193,8 @@ function openScreen(type, index, arg) {
 
 function preload() {
 
+    noLoop()
+
     myFont = loadFont('fonts/UbuntuMono-Bold.woff')
 
     let makeSoundtrack = (fileName) => {
@@ -380,6 +383,15 @@ function setup() {
     }
 
     document.getElementById('fileInput').onchange = onUpload
+    
+    let titlescreen = document.getElementById('titlescreen')
+    titlescreen.className = ''
+    titlescreen.onclick = () => {
+        titlescreen.className = 'hidden'
+        TITLESCREEN_OPEN = false
+        if (!MUTE) planetSoundtracks[currentScreen.name].play()
+        loop()
+    }
 
 }
 
@@ -399,6 +411,8 @@ function printDebugCommands() {
 }
 
 function draw() {
+
+    if (TITLESCREEN_OPEN) return
 
     let dx = abs(mouseX - lastX)
     let dy = abs(mouseY - lastY)
@@ -544,7 +558,7 @@ function loadState() {
                 }
             }
 
-            // MUTE = data.isMuted
+            MUTE = data.isMuted
 
             if (data.currentScreenType !== 'planet' || planets[data.currentPlanetIndex]) {
                 openScreen(data.currentScreenType, data.currentPlanetIndex)
@@ -574,11 +588,9 @@ function resetState() {
 }
 
 function playSound(soundName, ignoreIfAlreadyPlaying) {
-    if (!MUTE && (!ignoreIfAlreadyPlaying || !soundEffects[soundName].currentTime > 0)) {
-        try {
-            soundEffects[soundName].currentTime = 0
-            soundEffects[soundName].play()
-        } catch(e) {}
+    if (!MUTE && !TITLESCREEN_OPEN && (!ignoreIfAlreadyPlaying || !soundEffects[soundName].currentTime > 0)) {
+        soundEffects[soundName].currentTime = 0
+        soundEffects[soundName].play()
     }
 }
 
@@ -587,11 +599,9 @@ function stopSound(soundName) {
 }
 
 function playMusic(musicName) {
-    if (!MUTE) {
-        try {
-            planetSoundtracks[musicName].currentTime = 0
-            planetSoundtracks[musicName].play()
-        } catch(e) {}
+    if (!MUTE && !TITLESCREEN_OPEN) {
+        planetSoundtracks[musicName].currentTime = 0
+        planetSoundtracks[musicName].play()
     }
 }
 
@@ -604,8 +614,8 @@ function toggleMute() {
     if (planetSoundtracks[currentScreen.name]) {
         if (MUTE) {
             planetSoundtracks[currentScreen.name].pause()
-            Object.keys(soundEffects).forEach(sound => {
-                sound.pause()
+            Object.keys(soundEffects).forEach(soundName => {
+                soundEffects[soundName].pause()
             })
         } else {
             planetSoundtracks[currentScreen.name].play()
