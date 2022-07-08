@@ -387,11 +387,15 @@ function setup() {
     }
 
     document.getElementById('fileInput').onchange = onUpload
-    
+
+    let loadingscreen = document.getElementById('loadingscreen')
+    loadingscreen.className = 'hidden'
+
     let titlescreen = document.getElementById('titlescreen')
     titlescreen.className = ''
     titlescreen.onclick = () => {
-        titlescreen.className = 'hidden'
+        loadingscreen.remove()
+        titlescreen.remove()
         TITLESCREEN_OPEN = false
         if (!MUTE) planetSoundtracks[currentScreen.name].play()
         loop()
