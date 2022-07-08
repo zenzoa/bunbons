@@ -197,38 +197,6 @@ function preload() {
 
     myFont = loadFont('fonts/UbuntuMono-Bold.woff')
 
-    let makeSoundtrack = (fileName) => {
-        let newSoundtrack = new Howl({
-            src: ['music/' + fileName + '.mp3'],
-            volume: 0.02,
-            loop: true
-        })
-        return newSoundtrack
-    }
-
-    planetSoundtracks = {
-        mossyforest: makeSoundtrack('the_great_tree'),
-        cloudland: makeSoundtrack('hidden_grotto'),
-        asteroid: makeSoundtrack('village_of_the_peeping_frogs'),
-        flowertown: makeSoundtrack('roots'),
-        volcano: makeSoundtrack('in_the_branches'),
-        crystalcave: makeSoundtrack('home_departure'),
-        snowymountain: makeSoundtrack('sunset_over_the_treetops'),
-        park: makeSoundtrack('streamside_hotel'),
-        bubbledome: makeSoundtrack('bug_band'),
-        desert: makeSoundtrack('rainy_ascent'),
-        space: makeSoundtrack('shoots'),
-        credits: makeSoundtrack('overgrown_labyrinth')
-    }
-
-    Object.keys(soundEffectNames).forEach(soundEffectName => {
-        let newSoundEffect = new Howl({
-            src: ['sounds/' + soundEffectNames[soundEffectName] + '.mp3'],
-            volume: 0.2
-        })
-        soundEffects[soundEffectName] = newSoundEffect
-    })
-
     spritesheetImg = loadImage('images/spritesheet.png')
     userinterfaceImg = loadImage('images/userinterface.png')
 
@@ -397,10 +365,47 @@ function setup() {
         loadingscreen.remove()
         titlescreen.remove()
         TITLESCREEN_OPEN = false
-        if (!MUTE) planetSoundtracks[currentScreen.name].play()
+        loadSounds()
+        playMusic(currentScreen.name)
         loop()
     }
 
+}
+
+function loadSounds() {
+    Object.keys(soundEffectNames).forEach(soundEffectName => {
+        let newSoundEffect = new Howl({
+            src: ['sounds/' + soundEffectNames[soundEffectName] + '.mp3'],
+            html5: true,
+            volume: 0.2
+        })
+        soundEffects[soundEffectName] = newSoundEffect
+    })
+
+    let makeSoundtrack = (fileName) => {
+        let newSoundtrack = new Howl({
+            src: ['music/' + fileName + '.mp3'],
+            html5: true,
+            volume: 0.05,
+            loop: true
+        })
+        return newSoundtrack
+    }
+
+    planetSoundtracks = {
+        mossyforest: makeSoundtrack('the_great_tree'),
+        cloudland: makeSoundtrack('hidden_grotto'),
+        asteroid: makeSoundtrack('village_of_the_peeping_frogs'),
+        flowertown: makeSoundtrack('roots'),
+        volcano: makeSoundtrack('in_the_branches'),
+        crystalcave: makeSoundtrack('home_departure'),
+        snowymountain: makeSoundtrack('sunset_over_the_treetops'),
+        park: makeSoundtrack('streamside_hotel'),
+        bubbledome: makeSoundtrack('bug_band'),
+        desert: makeSoundtrack('rainy_ascent'),
+        space: makeSoundtrack('shoots'),
+        credits: makeSoundtrack('overgrown_labyrinth')
+    }
 }
 
 function printDebugCommands() {
@@ -596,23 +601,29 @@ function resetState() {
 }
 
 function playSound(soundName, ignoreIfAlreadyPlaying) {
-    if (!MUTE && !TITLESCREEN_OPEN && (!ignoreIfAlreadyPlaying || !soundEffects[soundName].playing())) {
+    if (!MUTE && !TITLESCREEN_OPEN && soundEffects[soundName] &&
+        (!ignoreIfAlreadyPlaying || !soundEffects[soundName].playing())
+    ) {
         soundEffects[soundName].play()
     }
 }
 
 function stopSound(soundName) {
-    soundEffects[soundName].stop()
+    if (soundEffects[soundName]) {
+        soundEffects[soundName].stop()
+    }
 }
 
 function playMusic(musicName) {
-    if (!MUTE && !TITLESCREEN_OPEN) {
+    if (!MUTE && !TITLESCREEN_OPEN && planetSoundtracks[musicName]) {
         planetSoundtracks[musicName].play()
     }
 }
 
 function stopMusic(musicName) {
-    planetSoundtracks[musicName].pause()
+    if (planetSoundtracks[musicName]) {
+        planetSoundtracks[musicName].pause()
+    }
 }
 
 function toggleMute() {

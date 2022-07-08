@@ -175,8 +175,8 @@ class Space extends ScreenState {
             y >= muteButton.y && y < muteButton.y + muteButton.height
         ) {
             MUTE = !MUTE
-            if (MUTE) planetSoundtracks['space'].pause()
-            else planetSoundtracks['space'].play()
+            if (MUTE) stopMusic('space')
+            else playMusic('space')
             return
         }
 
