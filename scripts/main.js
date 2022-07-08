@@ -198,9 +198,11 @@ function preload() {
     myFont = loadFont('fonts/UbuntuMono-Bold.woff')
 
     let makeSoundtrack = (fileName) => {
-        let newSoundtrack = new Audio('music/' + fileName + '.mp3')
-        newSoundtrack.volume = 0.02
-        newSoundtrack.loop = true
+        let newSoundtrack = new Howl({
+            src: ['music/' + fileName + '.mp3'],
+            volume: 0.02,
+            loop: true
+        })
         return newSoundtrack
     }
 
@@ -220,8 +222,10 @@ function preload() {
     }
 
     Object.keys(soundEffectNames).forEach(soundEffectName => {
-        let newSoundEffect = new Audio('sounds/' + soundEffectNames[soundEffectName] + '.mp3')
-        newSoundEffect.volume = 0.2
+        let newSoundEffect = new Howl({
+            src: ['sounds/' + soundEffectNames[soundEffectName] + '.mp3'],
+            volume: 0.2
+        })
         soundEffects[soundEffectName] = newSoundEffect
     })
 
@@ -588,19 +592,17 @@ function resetState() {
 }
 
 function playSound(soundName, ignoreIfAlreadyPlaying) {
-    if (!MUTE && !TITLESCREEN_OPEN && (!ignoreIfAlreadyPlaying || !soundEffects[soundName].currentTime > 0)) {
-        soundEffects[soundName].currentTime = 0
+    if (!MUTE && !TITLESCREEN_OPEN && (!ignoreIfAlreadyPlaying || !soundEffects[soundName].playing())) {
         soundEffects[soundName].play()
     }
 }
 
 function stopSound(soundName) {
-    soundEffects[soundName].pause()
+    soundEffects[soundName].stop()
 }
 
 function playMusic(musicName) {
     if (!MUTE && !TITLESCREEN_OPEN) {
-        planetSoundtracks[musicName].currentTime = 0
         planetSoundtracks[musicName].play()
     }
 }
@@ -615,7 +617,7 @@ function toggleMute() {
         if (MUTE) {
             planetSoundtracks[currentScreen.name].pause()
             Object.keys(soundEffects).forEach(soundName => {
-                soundEffects[soundName].pause()
+                soundEffects[soundName].stop()
             })
         } else {
             planetSoundtracks[currentScreen.name].play()
