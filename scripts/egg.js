@@ -146,6 +146,46 @@ class Egg extends Toy {
                 tailUsesPrimaryColor: false
             })
 
+        } else if (bunbonDNA === 'mousepunk') {
+            this.bunbonDNA = Bunbon.randomDNA({
+                color: 'grey',
+                secondaryColor: 'pink',
+                ears: 'mouse',
+                tail: 'rat',
+                back: 'none',
+                head: 'mohawk',
+                pattern: 'none',
+                earsUsePrimaryColor: true,
+                tailUsesPrimaryColor: true,
+                maxSpeed: 0.7,
+                jumpChance: 0.05,
+                ageToAdulthood: 120,
+                hungerRate: 70,
+                boredomRate: 80,
+                lonelinessRate: 70,
+                sleepinessRate: 30
+            })
+
+        } else if (bunbonDNA === 'dragon') {
+            this.bunbonDNA = Bunbon.randomDNA({
+                color: 'green',
+                secondaryColor: 'purple',
+                ears: 'dragon',
+                tail: 'slug',
+                back: 'batwings',
+                head: 'spikes',
+                pattern: 'none',
+                earsUsePrimaryColor: true,
+                tailUsesPrimaryColor: true,
+                maxSpeed: 0.3,
+                jumpChance: 0.08,
+                ageToAdulthood: 480,
+                hungerRate: 50,
+                boredomRate: 80,
+                lonelinessRate: 20,
+                sleepinessRate: 80
+            })
+
         } else {
             this.bunbonDNA = bunbonDNA || Bunbon.randomDNA()
         }
@@ -175,7 +215,7 @@ class Egg extends Toy {
         }
         this.isShaking = true
 
-        if (!MUTE) soundEffects['push-egg'].play()
+        playSound('push-egg')
 
     }
 
@@ -186,7 +226,7 @@ class Egg extends Toy {
         if (LOG_STORIES) console.log(bunbon.name, 'has hatched')
         this.removeMe = true
 
-        if (!MUTE) soundEffects['egg-hatch'].play()
+        playSound('egg-hatch')
         
         // save game
         saveState()

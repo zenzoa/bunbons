@@ -484,7 +484,7 @@ class Bunbon extends GameObject {
         parent1.heartX = x
         parent1.heartY = Math.min(parent1.pos.y, parent2.pos.y) - parent1.height
 
-        if (!MUTE) soundEffects['bunbon-breed'].play()
+        playSound('bunbon-breed')
 
     }
 
@@ -829,7 +829,7 @@ class Bunbon extends GameObject {
         this.thoughtLength = floor(random(60, 120))
         if (LOG_STORIES) console.log(this.name, 'is thinking about', this.thoughtType)
 
-        if (!MUTE) soundEffects['bunbon-think-' + thoughtType].play()
+        playSound('bunbon-think-' + thoughtType)
     
     }
 
@@ -852,7 +852,7 @@ class Bunbon extends GameObject {
         this.reactionType = 'eat'
         this.reactionTimer = this.eatLength
         
-        if (!MUTE) soundEffects['bunbon-eat'].play()
+        playSound('bunbon-eat')
 
     }
 
@@ -885,7 +885,7 @@ class Bunbon extends GameObject {
         this.reactionType = 'play'
         this.reactionTimer = this.playLength
 
-        if (!MUTE) soundEffects['bunbon-play'].play()
+        playSound('bunbon-play')
     
     }
 
@@ -906,7 +906,7 @@ class Bunbon extends GameObject {
         this.originalPos = this.pos
         this.restLength = floor(random(this.maxRestLength / 2, this.maxRestLength))
     
-        if (!MUTE) soundEffects['bunbon-rest'].play()
+        playSound('bunbon-rest')
 
     }
 
@@ -950,7 +950,7 @@ class Bunbon extends GameObject {
             this.pos = this.originalPos
         }
 
-        if (!MUTE && !soundEffects['bunbon-sleep'].isPlaying()) soundEffects['bunbon-sleep'].play()
+        playSound('bunbon-sleep', true)
         
     }
 
@@ -961,7 +961,7 @@ class Bunbon extends GameObject {
         this.jumpHeight = floor(random(this.maxJumpHeight / 2, this.maxJumpHeight))
         this.jumpY = 0
 
-        if (!MUTE) soundEffects['bunbon-jump'].play()
+        playSound('bunbon-jump')
 
     }
 
@@ -1005,13 +1005,9 @@ class Bunbon extends GameObject {
 
             if (this.chatPartner.speechBubbleTimer < 10) {
                 this.speechBubbleTimer = floor(random(20, 30))
-                if (!MUTE) {
-                    let availableChatSounds = [1, 2, 3, 4, 5].filter(v => v !== this.currentChatSound)
-                    this.currentChatSound = random(availableChatSounds)
-                    if (!soundEffects['bunbon-chat-' + this.currentChatSound].isPlaying()) {
-                        soundEffects['bunbon-chat-' + this.currentChatSound].play()
-                    }
-                }
+                let availableChatSounds = [1, 2, 3, 4, 5].filter(v => v !== this.currentChatSound)
+                this.currentChatSound = random(availableChatSounds)
+                playSound('bunbon-chat-' + this.currentChatSound, true)
             }
         }
 
@@ -1062,7 +1058,7 @@ class Bunbon extends GameObject {
         this.blastOffTimer = 0
         preventClicking = true
 
-        if (!MUTE) soundEffects['bunbon-blastoff'].play()
+        playSound('bunbon-blastoff')
 
     }
 
@@ -1179,7 +1175,7 @@ class Bunbon extends GameObject {
                 this.state = 'being-dragged'
             } else {
                 this.state = 'being-pet'
-                if (!MUTE && this.dragTimer > 20 && !soundEffects['bunbon-pet'].isPlaying()) soundEffects['bunbon-pet'].play()
+                if (this.dragTimer > 20) playSound('bunbon-pet', true)
             }
         } else {
             if (this.state === 'being-dragged' || this.state === 'being-pet') {

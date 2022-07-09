@@ -3,6 +3,7 @@ let LOG_STORIES = true
 
 let MUTE = false
 
+let TITLESCREEN_OPEN = true
 let MODAL_OPEN = false
 
 let FRAME_RATE = 30
@@ -192,37 +193,9 @@ function openScreen(type, index, arg) {
 
 function preload() {
 
+    noLoop()
+
     myFont = loadFont('fonts/UbuntuMono-Bold.woff')
-
-    soundFormats('mp3')
-
-    let makeSoundtrack = (fileName) => {
-        let newSoundtrack = loadSound(fileName)
-        newSoundtrack.setLoop(true)
-        newSoundtrack.setVolume(0.02)
-        return newSoundtrack
-    }
-
-    planetSoundtracks = {
-        mossyforest: makeSoundtrack('music/the_great_tree'),
-        cloudland: makeSoundtrack('music/hidden_grotto'),
-        asteroid: makeSoundtrack('music/village_of_the_peeping_frogs'),
-        flowertown: makeSoundtrack('music/roots'),
-        volcano: makeSoundtrack('music/in_the_branches'),
-        crystalcave: makeSoundtrack('music/home_departure'),
-        snowymountain: makeSoundtrack('music/sunset_over_the_treetops'),
-        park: makeSoundtrack('music/streamside_hotel'),
-        bubbledome: makeSoundtrack('music/bug_band'),
-        desert: makeSoundtrack('music/rainy_ascent'),
-        space: makeSoundtrack('music/shoots'),
-        credits: makeSoundtrack('music/overgrown_labyrinth')
-    }
-
-    Object.keys(soundEffectNames).forEach(soundEffectName => {
-        let newSoundEffect = loadSound('sounds/' + soundEffectNames[soundEffectName])
-        newSoundEffect.setVolume(0.2)
-        soundEffects[soundEffectName] = newSoundEffect
-    })
 
     spritesheetImg = loadImage('images/spritesheet.png')
     userinterfaceImg = loadImage('images/userinterface.png')
@@ -368,7 +341,7 @@ function setup() {
     introBunbonPatterns = shuffle(introBunbonPatterns.concat(introBunbonPatterns))
 
     spaceScreen.setup()
-		storageScreen.setup()
+    storageScreen.setup()
 
     Object.keys(planetTypes).forEach(planetType => {
         planets.push(new Planet(planetType))
@@ -383,6 +356,56 @@ function setup() {
 
     document.getElementById('fileInput').onchange = onUpload
 
+    let loadingscreen = document.getElementById('loadingscreen')
+    loadingscreen.className = 'hidden'
+
+    let titlescreen = document.getElementById('titlescreen')
+    titlescreen.className = ''
+    titlescreen.onclick = () => {
+        loadingscreen.remove()
+        titlescreen.remove()
+        TITLESCREEN_OPEN = false
+        loadSounds()
+        playMusic(currentScreen.name)
+        loop()
+    }
+
+}
+
+function loadSounds() {
+    Object.keys(soundEffectNames).forEach(soundEffectName => {
+        let newSoundEffect = new Howl({
+            src: ['sounds/' + soundEffectNames[soundEffectName] + '.mp3'],
+            html5: true,
+            volume: 0.2
+        })
+        soundEffects[soundEffectName] = newSoundEffect
+    })
+
+    let makeSoundtrack = (fileName) => {
+        let newSoundtrack = new Howl({
+            src: ['music/' + fileName + '.mp3'],
+            html5: true,
+            volume: 0.05,
+            loop: true
+        })
+        return newSoundtrack
+    }
+
+    planetSoundtracks = {
+        mossyforest: makeSoundtrack('the_great_tree'),
+        cloudland: makeSoundtrack('hidden_grotto'),
+        asteroid: makeSoundtrack('village_of_the_peeping_frogs'),
+        flowertown: makeSoundtrack('roots'),
+        volcano: makeSoundtrack('in_the_branches'),
+        crystalcave: makeSoundtrack('home_departure'),
+        snowymountain: makeSoundtrack('sunset_over_the_treetops'),
+        park: makeSoundtrack('streamside_hotel'),
+        bubbledome: makeSoundtrack('bug_band'),
+        desert: makeSoundtrack('rainy_ascent'),
+        space: makeSoundtrack('shoots'),
+        credits: makeSoundtrack('overgrown_labyrinth')
+    }
 }
 
 function printDebugCommands() {
@@ -401,6 +424,8 @@ function printDebugCommands() {
 }
 
 function draw() {
+
+    if (TITLESCREEN_OPEN) return
 
     let dx = abs(mouseX - lastX)
     let dy = abs(mouseY - lastY)
@@ -575,11 +600,43 @@ function resetState() {
     openScreen('planet', 0)
 }
 
+function playSound(soundName, ignoreIfAlreadyPlaying) {
+    if (!MUTE && !TITLESCREEN_OPEN && soundEffects[soundName] &&
+        (!ignoreIfAlreadyPlaying || !soundEffects[soundName].playing())
+    ) {
+        soundEffects[soundName].play()
+    }
+}
+
+function stopSound(soundName) {
+    if (soundEffects[soundName]) {
+        soundEffects[soundName].stop()
+    }
+}
+
+function playMusic(musicName) {
+    if (!MUTE && !TITLESCREEN_OPEN && planetSoundtracks[musicName]) {
+        planetSoundtracks[musicName].play()
+    }
+}
+
+function stopMusic(musicName) {
+    if (planetSoundtracks[musicName]) {
+        planetSoundtracks[musicName].pause()
+    }
+}
+
 function toggleMute() {
     MUTE = !MUTE
     if (planetSoundtracks[currentScreen.name]) {
-        if (MUTE) planetSoundtracks[currentScreen.name].pause()
-        else planetSoundtracks[currentScreen.name].play()
+        if (MUTE) {
+            planetSoundtracks[currentScreen.name].pause()
+            Object.keys(soundEffects).forEach(soundName => {
+                soundEffects[soundName].stop()
+            })
+        } else {
+            planetSoundtracks[currentScreen.name].play()
+        }
     }
 }
 

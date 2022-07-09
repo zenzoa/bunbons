@@ -16,15 +16,65 @@ html, body {
 }
 
 body {
-    background-image: url("../images/titlescreen.gif");
+    position: relative;
+}
+
+#loadingscreen,
+#titlescreen {
+    z-index: 1;
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    max-width: 640px;
+    max-height: 480px;
+    margin: auto;
+    background-color: black;
+    background-position: center;
     background-repeat: no-repeat;
-    background-position: center 20px;
-    background-size: 640px 480px;
+    background-size: contain;
+    cursor: pointer;
+}
+
+#loadingscreen {
+    background-image: url("../images/loading.gif");
+}
+
+#titlescreen {
+    background-image: url("../images/titlescreen.gif");
+}
+
+#loadingscreen.hidden,
+#titlescreen.hidden {
+    z-index: -1;
+}
+
+main {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    width: 100%;
+    max-width: 640px;
+    height: 100%;
+    max-height: 480px;
+    margin: auto;
 }
 
 canvas {
     display: block;
-    margin: 20px auto;
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    width: auto !important;
+    max-width: 100%;
+    height: auto !important;
+    max-height: 100%;
+    margin: auto;
     border-radius: 2px;
     background: white;
     image-rendering: crisp-edges;

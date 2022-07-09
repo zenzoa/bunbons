@@ -193,14 +193,16 @@ class Planet extends ScreenState {
 
         this.isBlastingOff = false
         unlockedPlanetCount = planets.filter(p => p.isUnlocked).length
-
-        if (!MUTE) planetSoundtracks[this.name].play()
+		playMusic(this.name)
 
     }
 
     close() {
 
-        planetSoundtracks[this.name].stop()
+		stopMusic(this.name)
+        Object.keys(soundEffects).forEach(soundName => {
+            soundEffects[soundName].pause()
+        })
 
     }
 
@@ -484,7 +486,7 @@ class Planet extends ScreenState {
             y >= spaceButton.y && y < spaceButton.y + spaceButton.height
         ) {
             if (this.isPaused) togglePause()
-            if (!MUTE) soundEffects['go-to-space'].play()
+            playSound('go-to-space')
             openScreen('space', this.index)
 
         } else if (!this.isPaused) {
@@ -495,12 +497,12 @@ class Planet extends ScreenState {
                 y >= blastOffButton.y && y < blastOffButton.y + blastOffButton.height
             ) {
                 if (confirmingBlastOff) {
-                    if (!MUTE) soundEffects['click-launch-2'].play()
+                    playSound('click-launch-2')
                     this.isBlastingOff = true
                     confirmingBlastOff = false
                     selectedBunbon.startBlastOff()
                 } else {
-                    if (!MUTE) soundEffects['click-launch-1'].play()
+                    playSound('click-launch-1')
                     confirmingBlastOff = true
                 }
             }
