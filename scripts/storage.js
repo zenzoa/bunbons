@@ -103,7 +103,7 @@ class Storage extends ScreenState {
 		}
 
 		// draw delete button
-		if (selectedObject && !(selectedObject instanceof Bunbon)) {
+		if (selectedObject && !(selectedObject instanceof Bunbon) && !(selectedObject instanceof Egg)) {
 			image(deleteButtonImg, deleteButton.x, deleteButton.y)
 		} else {
 			image(disabledDeleteButtonImg, deleteButton.x, deleteButton.y)
@@ -128,7 +128,7 @@ class Storage extends ScreenState {
 				}
 			}
 		})
-		
+
 	}
 
 	mouseDragged(x, y, dx, dy) {
@@ -177,7 +177,7 @@ class Storage extends ScreenState {
 				})
 
 			}
-				
+
 		} else if (
 			x >= uploadButton.x && x < uploadButton.x + uploadButton.width &&
 			y >= uploadButton.y && y < uploadButton.y + uploadButton.height
@@ -212,7 +212,15 @@ class Storage extends ScreenState {
 	keyPressed() {
 
 		if (key === 'm') {
-			muteSounds()
+			toggleMute()
+		} else if (key === '~') {
+				DEBUG = !DEBUG
+				if (DEBUG) {
+						console.log('~ DEBUG MODE ON ~')
+						printDebugCommands()
+				} else {
+						console.log('~ DEBUG MODE OFF ~')
+				}
 		}
 
 	}
@@ -256,7 +264,7 @@ class Storage extends ScreenState {
 	deleteObject() {
 
 		let obj = this.objects[this.selectedObjectIndex]
-		if (obj && !(obj instanceof Bunbon)) {
+		if (obj && !(obj instanceof Bunbon) && !(obj instanceof Egg)) {
 			openModal('delete-modal')
 			let modal = document.getElementById('delete-modal-contents')
 			modal.innerHTML = `
@@ -277,7 +285,7 @@ class Storage extends ScreenState {
 		}
 
 	}
-	
+
 	importMenu() {
 
 		openModal('import-modal')
@@ -306,13 +314,12 @@ class Storage extends ScreenState {
 
 		openModal('import-item-modal')
 		let modal = document.getElementById('import-item-modal-contents')
-		modal.innerHTML = ''
 
 		let addItem = itemName => {
 			let imageEl = document.createElement('img')
 			imageEl.width = 64
 			imageEl.height = 64
-			imageEl.alt = itemName
+			imageEl.title = itemName
 			let spriteIndex = foodList.includes(itemName) ? foodSprites[itemName] : toySprites[itemName]
 			let itemSprite = baseSpritesheet.getSprite(spriteIndex)
 			imageEl.src = itemSprite.canvas.toDataURL()
@@ -327,7 +334,7 @@ class Storage extends ScreenState {
 			buttonEl.appendChild(imageEl)
 			modal.appendChild(buttonEl)
 		}
-		
+
 		if (planets[0].isUnlocked) { // park
 			addItem('bundoll')
 			addItem('sandwich')
@@ -379,7 +386,7 @@ class Storage extends ScreenState {
 		cancelButtonEl.onclick = () => {
 			document.getElementById('import-item-modal').className = 'modal'
 		}
-		modal.appendChild(cancelButtonEl)	
+		modal.appendChild(cancelButtonEl)
 
 	}
 
@@ -407,5 +414,5 @@ class Storage extends ScreenState {
 		return { slotX, slotY }
 
 	}
-	
+
 }

@@ -1,164 +1,164 @@
 @font-face {
-    font-family: '04B';
-    src: url('fonts/04B_03.woff');
+	font-family: '04B';
+	src: url('fonts/04B_03.woff');
 }
 
 html, body {
-    overflow: hidden;
-    height: 100%;
-    margin: 0;
-    padding: 0;
-    background: black;
-    user-select: none;
-    -webkit-user-select: none;
-    -moz-user-select: none;
-    -ms-user-select: none;
+	overflow: hidden;
+	height: 100%;
+	margin: 0;
+	padding: 0;
+	background: black;
+	user-select: none;
+	-webkit-user-select: none;
+	-moz-user-select: none;
+	-ms-user-select: none;
 }
 
 body {
-    position: relative;
+	position: relative;
 }
 
 #loadingscreen,
 #titlescreen {
-    z-index: 1;
-    position: absolute;
-    top: 0;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    max-width: 640px;
-    max-height: 480px;
-    margin: auto;
-    background-color: black;
-    background-position: center;
-    background-repeat: no-repeat;
-    background-size: contain;
-    cursor: pointer;
+	z-index: 1;
+	position: absolute;
+	top: 0;
+	bottom: 0;
+	left: 0;
+	right: 0;
+	max-width: 640px;
+	max-height: 480px;
+	margin: auto;
+	background-color: black;
+	background-position: center;
+	background-repeat: no-repeat;
+	background-size: contain;
+	cursor: pointer;
 }
 
 #loadingscreen {
-    background-image: url("../images/loading.gif");
+	background-image: url("../images/loading.gif");
 }
 
 #titlescreen {
-    background-image: url("../images/titlescreen.gif");
+	background-image: url("../images/titlescreen.gif");
 }
 
 #loadingscreen.hidden,
 #titlescreen.hidden {
-    z-index: -1;
+	z-index: -1;
 }
 
 main {
-    position: absolute;
-    top: 0;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    width: 100%;
-    max-width: 640px;
-    height: 100%;
-    max-height: 480px;
-    margin: auto;
+	position: absolute;
+	top: 0;
+	bottom: 0;
+	left: 0;
+	right: 0;
+	width: 100%;
+	max-width: 640px;
+	height: 100%;
+	max-height: 480px;
+	margin: auto;
 }
 
 canvas {
-    display: block;
-    position: absolute;
-    top: 0;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    width: auto !important;
-    max-width: 100%;
-    height: auto !important;
-    max-height: 100%;
-    margin: auto;
-    border-radius: 2px;
-    background: white;
-    image-rendering: crisp-edges;
-    image-rendering: pixelated;
+	display: block;
+	position: absolute;
+	top: 0;
+	bottom: 0;
+	left: 0;
+	right: 0;
+	width: auto !important;
+	max-width: 100%;
+	height: auto !important;
+	max-height: 100%;
+	margin: auto;
+	border-radius: 2px;
+	background: white;
+	image-rendering: crisp-edges;
+	image-rendering: pixelated;
 }
 
 img {
-    image-rendering: crisp-edges;
-    image-rendering: pixelated;
+	image-rendering: crisp-edges;
+	image-rendering: pixelated;
 }
 
 .modal {
-    z-index: 100;
-    position: absolute;
-    top: 0;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    background: rgba(0, 0, 0, 0.5);
-    display: none;
+	z-index: 100;
+	position: absolute;
+	top: 0;
+	bottom: 0;
+	left: 0;
+	right: 0;
+	background: rgba(0, 0, 0, 0.5);
+	display: none;
 }
 
 .modal.open {
-    display: block;
+	display: block;
 }
 
 .modal-contents {
-    width: 600px;
-    height: 440px;
-    margin: 40px auto;
-    padding: 20px 40px;
-    border-radius: 12px;
-    color: #443c4c;
-    background: white;
-    box-sizing: border-box;
-    text-align: center;
-    font-family: 'UbuntuMono-Bold', 'Gill Sans', 'Gill Sans MT', 'Calibri', 'Trebuchet MS', sans-serif;
-    font-size: 16px;
-    display: flex;
-    flex-direction: column;
-    align-content: center;
-    justify-content: center;
+	width: 600px;
+	height: 440px;
+	margin: 40px auto;
+	padding: 20px 40px;
+	border-radius: 12px;
+	color: #443c4c;
+	background: white;
+	box-sizing: border-box;
+	text-align: center;
+	font-family: 'UbuntuMono-Bold', 'Gill Sans', 'Gill Sans MT', 'Calibri', 'Trebuchet MS', sans-serif;
+	font-size: 16px;
+	display: flex;
+	flex-direction: column;
+	align-content: center;
+	justify-content: center;
 }
 
 .modal-header {
-    margin-bottom: 40px;
-    font-size: 20px;
+	margin-bottom: 40px;
+	font-size: 20px;
 }
 
 button {
-    background-color: white;
-    border-radius: 6px;
-    border-style: none;
-    box-shadow: 0 0 0 3px #625465;
-    box-sizing: border-box;
-    color: #443c4c;
-    cursor: pointer;
-    display: inline-block;
-    width: 200px;
-    height: 40px;
-    line-height: 20px;
-    list-style: none;
-    margin: 0;
-    outline: none;
-    padding: 10px 16px;
-    position: relative;
-    text-align: center;
-    text-decoration: none;
-    vertical-align: baseline;
-    user-select: none;
-    -webkit-user-select: none;
-    touch-action: manipulation;
-    font-family: inherit;
-    font-size: inherit;
-    transition: box-shadow 100ms;
+	background-color: white;
+	border-radius: 6px;
+	border-style: none;
+	box-shadow: 0 0 0 3px #625465;
+	box-sizing: border-box;
+	color: #443c4c;
+	cursor: pointer;
+	display: inline-block;
+	width: 200px;
+	height: 40px;
+	line-height: 20px;
+	list-style: none;
+	margin: 0;
+	outline: none;
+	padding: 10px 16px;
+	position: relative;
+	text-align: center;
+	text-decoration: none;
+	vertical-align: baseline;
+	user-select: none;
+	-webkit-user-select: none;
+	touch-action: manipulation;
+	font-family: inherit;
+	font-size: inherit;
+	transition: box-shadow 100ms;
 }
 
 button:focus {
-    background-color: #625465;
-    color: white;
+	background-color: #625465;
+	color: white;
 }
 
 button:hover {
-    box-shadow: 0 0 0 5px #625465;
+	box-shadow: 0 0 0 5px #625465;
 }
 
 .image-button {
