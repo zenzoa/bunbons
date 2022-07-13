@@ -95,7 +95,7 @@ class Storage extends ScreenState {
 		}
 
 		// draw delete button
-		if (selectedObject && !(selectedObject instanceof Bunbon)) {
+		if (selectedObject && !(selectedObject instanceof Bunbon) && !(selectedObject instanceof Egg)) {
 			image(deleteButtonImg, deleteButton.x, deleteButton.y)
 		} else {
 			image(disabledDeleteButtonImg, deleteButton.x, deleteButton.y)
@@ -256,7 +256,7 @@ class Storage extends ScreenState {
 	deleteObject() {
 
 		let obj = this.objects[this.selectedObjectIndex]
-		if (obj && !(obj instanceof Bunbon)) {
+		if (obj && !(obj instanceof Bunbon) && !(obj instanceof Egg)) {
 			openModal('delete-modal')
 			let modal = document.getElementById('delete-modal-contents')
 			modal.innerHTML = `
