@@ -1,88 +1,88 @@
 <!DOCTYPE html>
- 
+
 <html>
-    <head>
-        <title>Bunbons</title>
-        <meta charset="utf-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0">
+	<head>
+		<title>Bunbons</title>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0">
 
-        <link rel="stylesheet" type="text/css" href="styles/style.css">
+		<link rel="stylesheet" type="text/css" href="styles/style.css">
 
-        <script src="library/p5.min.js"></script>
-        <script src="library/howler.core.min.js"></script>
-        <script src="library/gif.js"></script>
-        <script src="scripts/screenstate.js"></script>
-        <script src="scripts/storage.js"></script>
-        <script src="scripts/space.js"></script>
-        <script src="scripts/planet.js"></script>
-        <script src="scripts/gameobject.js"></script>
-        <script src="scripts/food.js"></script>
-        <script src="scripts/toy.js"></script>
-        <script src="scripts/egg.js"></script>
-        <script src="scripts/bunbon.js"></script>
-        <script src="scripts/spritesheet.js"></script>
-        <script src="scripts/namegenerator.js"></script>
-        <script src="scripts/exporter.js"></script>
-        <script src="scripts/main.js"></script>
-    </head>
- 
-    <body>
+		<script src="library/p5.min.js"></script>
+		<script src="library/howler.core.min.js"></script>
+		<script src="library/gif.js"></script>
+		<script src="scripts/screenstate.js"></script>
+		<script src="scripts/storage.js"></script>
+		<script src="scripts/space.js"></script>
+		<script src="scripts/planet.js"></script>
+		<script src="scripts/gameobject.js"></script>
+		<script src="scripts/food.js"></script>
+		<script src="scripts/toy.js"></script>
+		<script src="scripts/egg.js"></script>
+		<script src="scripts/bunbon.js"></script>
+		<script src="scripts/spritesheet.js"></script>
+		<script src="scripts/namegenerator.js"></script>
+		<script src="scripts/exporter.js"></script>
+		<script src="scripts/main.js"></script>
+	</head>
 
-        <div id="loadingscreen"></div>
-        <div id="titlescreen" class="hidden"></div>
+	<body>
 
-        <input id="fileInput" type="file" style="display:none;" />
+		<div id="loadingscreen"></div>
+		<div id="titlescreen" class="hidden"></div>
 
-        <div class="modal" id="import-modal">
-            <div class="modal-contents">
-                <div class="modal-header">
-                    import?
-                </div>
-                <div class="modal-body" id="import-modal-contents">
-                </div>
-            </div>
-        </div>
+		<input id="fileInput" type="file" style="display:none;" />
 
-        <div class="modal" id="import-item-modal">
-            <div class="modal-contents">
-                <div class="modal-header">
-                    import item?
-                </div>
-                <div class="modal-body" id="import-item-modal-contents">
-                </div>
-            </div>
-        </div>
+		<div class="modal" id="import-modal">
+			<div class="modal-contents">
+				<div class="modal-header">
+					import?
+				</div>
+				<div class="modal-body" id="import-modal-contents">
+				</div>
+			</div>
+		</div>
 
-        <div class="modal" id="import-bunbon-modal">
-            <div class="modal-contents">
-                <div class="modal-header">
-                    import bunbon?
-                </div>
-                <div class="modal-body" id="import-bunbon-modal-contents">
-                </div>
-            </div>
-        </div>
+		<div class="modal" id="import-item-modal">
+			<div class="modal-contents">
+				<div class="modal-header">
+					import item?
+				</div>
+				<div class="modal-body" id="import-item-modal-contents">
+				</div>
+			</div>
+		</div>
 
-        <div class="modal" id="export-modal">
-            <div class="modal-contents">
-                <div class="modal-header">
-                    export bunbon?
-                </div>
-                <div class="modal-body" id="export-modal-contents">
-                </div>
-            </div>
-        </div>
+		<div class="modal" id="import-bunbon-modal">
+			<div class="modal-contents">
+				<div class="modal-header">
+					import bunbon?
+				</div>
+				<div class="modal-body" id="import-bunbon-modal-contents">
+				</div>
+			</div>
+		</div>
 
-        <div class="modal" id="delete-modal">
-            <div class="modal-contents">
-                <div class="modal-header">
-                    delete item?
-                </div>
-                <div class="modal-body" id="delete-modal-contents">
-                </div>
-            </div>
-        </div>
+		<div class="modal" id="export-modal">
+			<div class="modal-contents">
+				<div class="modal-header">
+					export bunbon?
+				</div>
+				<div class="modal-body" id="export-modal-contents">
+				</div>
+			</div>
+		</div>
 
-    </body>
- 
+		<div class="modal" id="delete-modal">
+			<div class="modal-contents">
+				<div class="modal-header">
+					delete item?
+				</div>
+				<div class="modal-body" id="delete-modal-contents">
+				</div>
+			</div>
+		</div>
+
+	</body>
+
 </html>
