@@ -152,6 +152,8 @@ let bubbleImgs = {}
 let blastedOffBunbon = null
 let confirmingBlastOff = false
 
+let builderScreen = new BunbonBuilder()
+
 let spaceScreen = new Space()
 let planets = []
 let unlockedPlanetCount = 0
@@ -181,6 +183,8 @@ function openScreen(type, index, arg) {
 		currentScreen = spaceScreen
 	} else if (type === 'storage') {
 		currentScreen = storageScreen
+	} else if (type === 'builder') {
+		currentScreen = builderScreen
 	} else {
 		currentScreen = planets[index]
 	}
@@ -340,6 +344,7 @@ function setup() {
 	introBunbonTails = shuffle(introBunbonTails.concat(introBunbonTails))
 	introBunbonPatterns = shuffle(introBunbonPatterns.concat(introBunbonPatterns))
 
+	builderScreen.setup()
 	spaceScreen.setup()
 	storageScreen.setup()
 
@@ -410,17 +415,15 @@ function loadSounds() {
 
 function printDebugCommands() {
 	console.log('DEBUG COMMANDS')
-	console.log('m - mute')
-	console.log('p - pause')
 	console.log('u - unlock planet\'s connections')
 	console.log('a - make bunbon an adult')
 	console.log('s - increase bunbon\'s score')
 	console.log('b - make bunbon blast off')
-	console.log('e - make bunbon lay egg')
 	console.log('1 - make bunbon look for food')
 	console.log('2 - make bunbon look for toy')
 	console.log('3 - make bunbon look for friend')
 	console.log('4 - make bunbon go to sleep')
+	console.log('g - open bunbon image generator')
 }
 
 function draw() {
