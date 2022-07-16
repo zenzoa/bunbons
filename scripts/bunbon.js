@@ -210,7 +210,7 @@ class Bunbon extends GameObject {
 		bunbonCount++
 
 		if (!bunbonDNA) bunbonDNA = Bunbon.randomDNA()
-		this.dna = bunbonDNA
+		this.dna = Bunbon.repairDNA(bunbonDNA)
 		this.parents = this.dna.parents
 
 		this.name = NameGenerator.generate()
@@ -412,6 +412,24 @@ class Bunbon extends GameObject {
 
 		return dna
 
+	}
+
+	static repairDNA(dna) {
+		dna.chromosomes.forEach(chromosome => {
+			let baseChromosome = Bunbon.randomChromosome()
+			Object.keys(baseChromosome).forEach(gene => {
+				if (chromosome[gene] == null) {
+					chromosome[gene] = baseChromosome[gene]
+				}
+			})
+		})
+		Object.keys(dna.chromosomes[0]).forEach(gene => {
+			if (dna[gene] == null) {
+				let chromosome = dna.chromosomes[random([0, 1])]
+				dna[gene] = chromosome[gene]
+			}
+		})
+		return dna
 	}
 
 	static canBreed(parent1, parent2) {
