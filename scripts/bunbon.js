@@ -396,7 +396,7 @@ class Bunbon extends GameObject {
 
 		if (partialChromosome) {
 			Object.keys(chromosome).forEach(gene => {
-				if (partialChromosome[gene] !== null) chromosome[gene] = partialChromosome[gene]
+				if (partialChromosome[gene] != null) chromosome[gene] = partialChromosome[gene]
 			})
 		}
 
