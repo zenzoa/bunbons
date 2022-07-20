@@ -6,11 +6,11 @@ A virtual pet game where you raise bunny-like creatures and explore space.
 
 Background graphics by [Tati Soutar](http://tatianasoutar.com/)
 
-Music by [Visager](https://freemusicarchive.org/music/Visager) under a [CC BY-SA 4.0 license](https://creativecommons.org/licenses/by-sa/4.0/)
+Music by [Visager](https://freemusicarchive.org/music/Visager/) under a [CC BY-SA 4.0 license](https://creativecommons.org/licenses/by-sa/4.0/)
 
 Sound effects by [PocketSound](https://pocket-se.info/)
 
-Additional tweaks and bugfixes by Kazoo
+Additional tweaks and bugfixes by Kazooo
 
 ## Libraries
 
