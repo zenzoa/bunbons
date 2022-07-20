@@ -195,14 +195,21 @@ let bunbonColors = {
 	]
 }
 
-let introBunbonColors = ['grey', 'black', 'dust', 'chocolate', 'cream']
-let introBunbonSecondaryColors = ['grey', 'black', 'dust', 'chocolate', 'cream']
-let introBunbonEars = ['long', 'short', 'lop']
-let introBunbonTails = ['none', 'puff', 'deer']
-let introBunbonPatterns = ['none', 'spots', 'freckles']
+function resetColors() {
+	introBunbonColors = ['grey', 'black', 'dust', 'chocolate', 'cream']
+	introBunbonSecondaryColors = ['grey', 'black', 'dust', 'chocolate', 'cream']
+	introBunbonEars = ['long', 'short', 'lop']
+	introBunbonTails = ['none', 'puff', 'deer']
+	introBunbonPatterns = ['none', 'spots', 'freckles']
+	
+	ratBunbonSecondaryColors = ['pink', 'blush']
+	ratBunbonTails = ['rat', 'long']
+}
+resetColors()
 
 class Bunbon extends GameObject {
 
+	
 	constructor(pos, bunbonDNA) {
 
 		super(26, 22)
@@ -210,7 +217,7 @@ class Bunbon extends GameObject {
 		bunbonCount++
 
 		if (!bunbonDNA) bunbonDNA = Bunbon.randomDNA()
-		this.dna = Bunbon.repairDNA(bunbonDNA)
+		this.dna = bunbonDNA
 		this.parents = this.dna.parents
 
 		this.name = NameGenerator.generate()
@@ -412,24 +419,6 @@ class Bunbon extends GameObject {
 
 		return dna
 
-	}
-
-	static repairDNA(dna) {
-		dna.chromosomes.forEach(chromosome => {
-			let baseChromosome = Bunbon.randomChromosome()
-			Object.keys(baseChromosome).forEach(gene => {
-				if (chromosome[gene] == null) {
-					chromosome[gene] = baseChromosome[gene]
-				}
-			})
-		})
-		Object.keys(dna.chromosomes[0]).forEach(gene => {
-			if (dna[gene] == null) {
-				let chromosome = dna.chromosomes[random([0, 1])]
-				dna[gene] = chromosome[gene]
-			}
-		})
-		return dna
 	}
 
 	static canBreed(parent1, parent2) {
