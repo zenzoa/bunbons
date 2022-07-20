@@ -10,6 +10,8 @@ Music by [Visager](https://freemusicarchive.org/music/Visager) under a [CC BY-SA
 
 Sound effects by [PocketSound](https://pocket-se.info/)
 
+Additional tweaks and bugfixes by Kazoo
+
 ## Libraries
 
 [p5.js](https://p5js.org/)

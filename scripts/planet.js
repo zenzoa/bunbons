@@ -557,6 +557,8 @@ class Planet extends ScreenState {
 			} else if (key === 'b' && selectedBunbon) {
 				this.isBlastingOff = true
 				selectedBunbon.startBlastOff()
+			} else if (key === 'g') {
+				openScreen('builder', this.index)
 			}
 
 		}
