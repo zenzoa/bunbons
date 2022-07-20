@@ -289,16 +289,30 @@ class Storage extends ScreenState {
 			<br><br><br><br>
 			<button onclick='closeModal();'>cancel</button>
 		`
+		if (DEBUG) {
+			let modal = document.getElementById('import-modal-contents')
+			modal.innerHTML = `
+				<button id='open-import-item'>import item</button>
+				<br><br>
+				<button id='open-import-egg'>import egg</button>
+				<br><br>
+				<button id='open-import-bunbon'>import bunbon</button>
+				<br><br><br><br>
+				<button onclick='closeModal();'>cancel</button>
+		`
+		}
 
 		document.getElementById('open-import-item').onclick = () => {
 			this.importItem()
 		}
 
+		if (DEBUG) {document.getElementById('open-import-egg').onclick = () => {
+			this.importEgg()
+		}}
+
 		document.getElementById('open-import-bunbon').onclick = () => {
 			uploadBunbon()
 		}
-
-		document.getElementById('open-import-item').focus()
 
 	}
 
@@ -380,6 +394,130 @@ class Storage extends ScreenState {
 		}
 		modal.appendChild(cancelButtonEl)
 
+	}
+
+	importEgg() {
+
+		openModal('import-egg-modal')
+		let modal = document.getElementById('import-egg-modal-contents')
+		modal.innerHTML = ''
+	
+		let eggColors = {
+			'deer': 'dust',
+			'bee': 'yellow',
+			'alicorn': 'purple',
+			'alien': 'pink',
+			'leafcat': 'gold',
+			'snail': 'blush',
+			'sheep': 'cream',
+			'fish': 'aqua',
+			'lizard': 'green',
+			'mousepunk' : 'grey',
+			'dragonegg' : 'green',
+			'rat' : 'blush'
+		}
+		
+		let SpriteEggList = ['intro', 'rat', 'randomegg']
+		let eggSprite = {
+			'intro': 273,
+			'rat' : 275,
+			'randomegg' : 274
+		}
+	
+		let addEgg = itemName => {
+			
+			let imageEl = document.createElement('img')
+			imageEl.width = 64
+			imageEl.height = 64
+			imageEl.title = itemName
+	
+			
+
+			let spriteIndex = SpriteEggList.includes(itemName) ? eggSprite[itemName] : bunbonEggs[0]
+			let itemSprite = SpriteEggList.includes(itemName) ? baseSpritesheet.getSprite(spriteIndex) : colorSpritesheets[eggColors[itemName]].getSprite(spriteIndex)
+	
+			imageEl.src = itemSprite.canvas.toDataURL()
+			let buttonEl = document.createElement('button')
+			buttonEl.className = 'image-button'
+			buttonEl.onclick = () => {
+				let item = new Egg(this.randomPoint(), itemName)				
+				this.addObject(item)
+				saveState()
+				closeModal()
+				resetColors()
+				shuffleColors()
+			}
+			buttonEl.appendChild(imageEl)
+			modal.appendChild(buttonEl)
+		}
+	
+
+		var StarterEggs = modal.appendChild(document.createElement("span"));
+		StarterEggs.setAttribute("class","sr-only");
+		StarterEggs.appendChild(document.createTextNode("Starter eggs"));
+		modal.appendChild(document.createElement("br"));
+	
+	
+		if (planets[0].isUnlocked) { // park
+			addEgg('intro')
+		}
+		if (planets[1].isUnlocked) { // mossyforest
+			addEgg('deer')
+		}
+		if (planets[2].isUnlocked) { // flowertown
+			addEgg('bee')
+		}
+		if (planets[3].isUnlocked) { // volcano
+			addEgg('leafcat')
+		}
+		if (planets[4].isUnlocked) { // bubbledome
+			addEgg('fish')
+		}
+		if (planets[5].isUnlocked) { // desert
+			addEgg('lizard')
+		}
+		if (planets[6].isUnlocked) { // snowymountain
+			addEgg('sheep')
+		}
+		if (planets[7].isUnlocked) { // cloudland
+			addEgg('alicorn')
+		}
+		if (planets[8].isUnlocked) { // crystalcave
+			addEgg('snail')
+		}
+		if (planets[9].isUnlocked) { // asteroid
+			addEgg('alien')
+		}
+
+		modal.appendChild(document.createElement('br'))
+		modal.appendChild(document.createElement('br'))
+
+		var SpecialEggs = modal.appendChild(document.createElement("span"));
+		SpecialEggs.setAttribute("class","sr-only");
+		SpecialEggs.appendChild(document.createTextNode("Special eggs"));
+		modal.appendChild(document.createElement('br'))
+
+		
+		addEgg('mousepunk')
+		addEgg('dragonegg')
+		addEgg('rat')
+		addEgg('randomegg')
+		
+	
+		//if (spriteIndex=eggSprite) {this.bunbonDNA.color}
+	
+		modal.appendChild(document.createElement('br'))
+		modal.appendChild(document.createElement('br'))
+		modal.appendChild(document.createElement('br'))
+		modal.appendChild(document.createElement('br'))
+	
+		let cancelButtonEl = document.createElement('button')
+		cancelButtonEl.innerText = 'cancel'
+		cancelButtonEl.onclick = () => {
+			document.getElementById('import-egg-modal').className = 'modal'
+		}
+		modal.appendChild(cancelButtonEl)	
+	
 	}
 
 	putObjectInWorld(obj) {

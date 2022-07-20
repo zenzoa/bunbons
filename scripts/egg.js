@@ -186,7 +186,29 @@ class Egg extends Toy {
 				sleepinessRate: 80
 			})
 
-		} else {
+		} else if (bunbonDNA === 'rat') {
+			this.bunbonDNA = Bunbon.randomDNA({
+				color: introBunbonColors.pop(),
+				secondaryColor: ratBunbonSecondaryColors.pop(),
+				ears: 'mouse',
+				tail: ratBunbonTails.pop(),
+				head: 'none',
+				back: 'none',
+				pattern: 'none',
+				earsUsePrimaryColor: false,
+				tailUsesPrimaryColor: false,
+				maxSpeed: 0.8,
+				jumpChance: 0.08,
+				ageToAdulthood: 120,
+				hungerRate: 70,
+				boredomRate: 80,
+				lonelinessRate: 70,
+				sleepinessRate: 30
+			})
+
+		} else if (bunbonDNA === 'randomegg'){
+			this.bunbonDNA = Bunbon.randomDNA()
+		}else {
 			this.bunbonDNA = bunbonDNA || Bunbon.randomDNA()
 		}
 

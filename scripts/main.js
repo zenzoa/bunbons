@@ -338,11 +338,7 @@ function setup() {
 		baseSpritesheet.getSprite(272)
 	]
 
-	introBunbonColors = shuffle(introBunbonColors.concat(introBunbonColors))
-	introBunbonSecondaryColors = shuffle(introBunbonSecondaryColors.concat(introBunbonSecondaryColors))
-	introBunbonEars = shuffle(introBunbonEars.concat(introBunbonEars))
-	introBunbonTails = shuffle(introBunbonTails.concat(introBunbonTails))
-	introBunbonPatterns = shuffle(introBunbonPatterns.concat(introBunbonPatterns))
+	shuffleColors()
 
 	builderScreen.setup()
 	spaceScreen.setup()
@@ -375,6 +371,17 @@ function setup() {
 		loop()
 	}
 
+}
+
+function shuffleColors() {
+	introBunbonColors = shuffle(introBunbonColors.concat(introBunbonColors))
+	introBunbonSecondaryColors = shuffle(introBunbonSecondaryColors.concat(introBunbonSecondaryColors))
+	introBunbonEars = shuffle(introBunbonEars.concat(introBunbonEars))
+	introBunbonTails = shuffle(introBunbonTails.concat(introBunbonTails))
+	introBunbonPatterns = shuffle(introBunbonPatterns.concat(introBunbonPatterns))
+
+	ratBunbonTails = shuffle(ratBunbonTails)
+	ratBunbonSecondaryColors = shuffle(ratBunbonSecondaryColors)
 }
 
 function loadSounds() {
@@ -674,6 +681,9 @@ function closeModal() {
 
 	document.getElementById('import-item-modal').className = 'modal'
 	document.getElementById('import-item-modal-contents').innerHTML = ''
+
+	document.getElementById('import-egg-modal').className = 'modal'
+	document.getElementById('import-egg-modal-contents').innerHTML = ''
 
 	document.getElementById('import-bunbon-modal').className = 'modal'
 	document.getElementById('import-bunbon-modal-contents').innerHTML = ''
