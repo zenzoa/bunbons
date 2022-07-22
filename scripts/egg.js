@@ -208,7 +208,8 @@ class Egg extends Toy {
 
 		} else if (bunbonDNA === 'randomegg'){
 			this.bunbonDNA = Bunbon.randomDNA()
-		}else {
+			
+		} else {
 			this.bunbonDNA = bunbonDNA || Bunbon.randomDNA()
 		}
 
