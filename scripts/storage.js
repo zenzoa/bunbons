@@ -401,7 +401,8 @@ class Storage extends ScreenState {
 		openModal('import-egg-modal')
 		let modal = document.getElementById('import-egg-modal-contents')
 		modal.innerHTML = ''
-	
+
+		// eggs with basic colors
 		let eggColors = {
 			'deer': 'dust',
 			'bee': 'yellow',
@@ -413,111 +414,108 @@ class Storage extends ScreenState {
 			'fish': 'aqua',
 			'lizard': 'green',
 			'mousepunk' : 'grey',
-			'dragonegg' : 'green',
-			'rat' : 'blush'
+			'dragonegg' : 'green'
 		}
-		
-		let SpriteEggList = ['intro', 'rat', 'randomegg']
-		let eggSprite = {
+
+		// fancy sprites for special eggs
+		let specialEggSprites = {
 			'intro': 273,
-			'rat' : 275,
-			'randomegg' : 274
+			'randomegg' : 274,
+			'rat' : 275
 		}
-	
-		let addEgg = itemName => {
-			
+
+		let addEgg = (parentEl, eggName) => {
+
 			let imageEl = document.createElement('img')
 			imageEl.width = 64
 			imageEl.height = 64
-			imageEl.title = itemName
-	
-			
+			imageEl.title = eggName
 
-			let spriteIndex = SpriteEggList.includes(itemName) ? eggSprite[itemName] : bunbonEggs[0]
-			let itemSprite = SpriteEggList.includes(itemName) ? baseSpritesheet.getSprite(spriteIndex) : colorSpritesheets[eggColors[itemName]].getSprite(spriteIndex)
-	
-			imageEl.src = itemSprite.canvas.toDataURL()
+			let eggSprite = null
+			if (Object.keys(specialEggSprites).includes(eggName)) {
+				let spriteIndex = specialEggSprites[eggName]
+				eggSprite = baseSpritesheet.getSprite(spriteIndex)
+			} else {
+				let spriteIndex = bunbonEggs[0]
+				let eggColor = eggColors[eggName]
+				colorSpritesheets[eggColor].getSprite(spriteIndex)
+			}
+
+			imageEl.src = eggSprite.canvas.toDataURL()
 			let buttonEl = document.createElement('button')
 			buttonEl.className = 'image-button'
 			buttonEl.onclick = () => {
-				let item = new Egg(this.randomPoint(), itemName)				
-				this.addObject(item)
+				let egg = new Egg(currentScreen.randomPoint(), eggName)
+				currentScreen.addObject(egg)
 				saveState()
 				closeModal()
 				resetColors()
 				shuffleColors()
 			}
 			buttonEl.appendChild(imageEl)
-			modal.appendChild(buttonEl)
-		}
-	
+			parentEl.appendChild(buttonEl)
 
-		var StarterEggs = modal.appendChild(document.createElement("span"));
-		StarterEggs.setAttribute("class","sr-only");
-		StarterEggs.appendChild(document.createTextNode("Starter eggs"));
-		modal.appendChild(document.createElement("br"));
-	
-	
+		}
+
+		// add eggs you find on the planets you've unlocked
+		let starterEggsDiv = document.createElement('div')
+		starterEggsDiv.appendChild(document.createTextNode('starter eggs'))
+		starterEggsDiv.appendChild(document.createElement('br'))
+
 		if (planets[0].isUnlocked) { // park
-			addEgg('intro')
+			addEgg(starterEggsDiv, 'intro')
 		}
 		if (planets[1].isUnlocked) { // mossyforest
-			addEgg('deer')
+			addEgg(starterEggsDiv, 'deer')
 		}
 		if (planets[2].isUnlocked) { // flowertown
-			addEgg('bee')
+			addEgg(starterEggsDiv, 'bee')
 		}
 		if (planets[3].isUnlocked) { // volcano
-			addEgg('leafcat')
+			addEgg(starterEggsDiv, 'leafcat')
 		}
 		if (planets[4].isUnlocked) { // bubbledome
-			addEgg('fish')
+			addEgg(starterEggsDiv, 'fish')
 		}
 		if (planets[5].isUnlocked) { // desert
-			addEgg('lizard')
+			addEgg(starterEggsDiv, 'lizard')
 		}
 		if (planets[6].isUnlocked) { // snowymountain
-			addEgg('sheep')
+			addEgg(starterEggsDiv, 'sheep')
 		}
 		if (planets[7].isUnlocked) { // cloudland
-			addEgg('alicorn')
+			addEgg(starterEggsDiv, 'alicorn')
 		}
 		if (planets[8].isUnlocked) { // crystalcave
-			addEgg('snail')
+			addEgg(starterEggsDiv, 'snail')
 		}
 		if (planets[9].isUnlocked) { // asteroid
-			addEgg('alien')
+			addEgg(starterEggsDiv, 'alien')
 		}
 
-		modal.appendChild(document.createElement('br'))
-		modal.appendChild(document.createElement('br'))
-
-		var SpecialEggs = modal.appendChild(document.createElement("span"));
-		SpecialEggs.setAttribute("class","sr-only");
-		SpecialEggs.appendChild(document.createTextNode("Special eggs"));
+		modal.appendChild(starterEggsDiv)
 		modal.appendChild(document.createElement('br'))
 
-		
-		addEgg('mousepunk')
-		addEgg('dragonegg')
-		addEgg('rat')
-		addEgg('randomegg')
-		
-	
-		//if (spriteIndex=eggSprite) {this.bunbonDNA.color}
-	
+		// add special eggs
+		let specialEggsDiv = document.createElement('div')
+		specialEggsDiv.appendChild(document.createTextNode('special eggs'))
+		specialEggsDiv.appendChild(document.createElement('br'))
+
+		addEgg(specialEggsDiv, 'mousepunk')
+		addEgg(specialEggsDiv, 'dragonegg')
+		addEgg(specialEggsDiv, 'rat')
+		addEgg(specialEggsDiv, 'randomegg')
+
+		modal.appendChild(specialEggsDiv)
 		modal.appendChild(document.createElement('br'))
-		modal.appendChild(document.createElement('br'))
-		modal.appendChild(document.createElement('br'))
-		modal.appendChild(document.createElement('br'))
-	
+
 		let cancelButtonEl = document.createElement('button')
 		cancelButtonEl.innerText = 'cancel'
 		cancelButtonEl.onclick = () => {
 			document.getElementById('import-egg-modal').className = 'modal'
 		}
-		modal.appendChild(cancelButtonEl)	
-	
+		modal.appendChild(cancelButtonEl)
+
 	}
 
 	putObjectInWorld(obj) {
