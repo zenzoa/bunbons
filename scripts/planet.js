@@ -372,7 +372,7 @@ class Planet extends ScreenState {
 		text('zenzoa.itch.io', WORLD_WIDTH / 2, WORLD_HEIGHT / 2 - 30)
 		text('tatianasoutar.com', WORLD_WIDTH / 2, WORLD_HEIGHT / 2)
 		text('pocket-se.info', WORLD_WIDTH / 2, WORLD_HEIGHT / 2 + 30)
-		text('freemusicarchive.org/music/visager', WORLD_WIDTH / 2, WORLD_HEIGHT / 2 + 60)
+		text('freemusicarchive.org/music/Visager/', WORLD_WIDTH / 2, WORLD_HEIGHT / 2 + 60)
 	}
 
 	drawConfetti() {

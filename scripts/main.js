@@ -338,11 +338,7 @@ function setup() {
 		baseSpritesheet.getSprite(272)
 	]
 
-	introBunbonColors = shuffle(introBunbonColors.concat(introBunbonColors))
-	introBunbonSecondaryColors = shuffle(introBunbonSecondaryColors.concat(introBunbonSecondaryColors))
-	introBunbonEars = shuffle(introBunbonEars.concat(introBunbonEars))
-	introBunbonTails = shuffle(introBunbonTails.concat(introBunbonTails))
-	introBunbonPatterns = shuffle(introBunbonPatterns.concat(introBunbonPatterns))
+	shuffleColors()
 
 	builderScreen.setup()
 	spaceScreen.setup()
@@ -351,13 +347,13 @@ function setup() {
 	Object.keys(planetTypes).forEach(planetType => {
 		planets.push(new Planet(planetType))
 	})
-	planets[0].isUnlocked = true
 
 	let isLoadSuccessful = loadState()
 	if (!isLoadSuccessful) {
 		planets.forEach(planet => planet.setup())
 		openScreen('planet', 0)
 	}
+	planets[0].isUnlocked = true
 
 	document.getElementById('fileInput').onchange = onUpload
 
@@ -375,6 +371,17 @@ function setup() {
 		loop()
 	}
 
+}
+
+function shuffleColors() {
+	introBunbonColors = shuffle(introBunbonColors.concat(introBunbonColors))
+	introBunbonSecondaryColors = shuffle(introBunbonSecondaryColors.concat(introBunbonSecondaryColors))
+	introBunbonEars = shuffle(introBunbonEars.concat(introBunbonEars))
+	introBunbonTails = shuffle(introBunbonTails.concat(introBunbonTails))
+	introBunbonPatterns = shuffle(introBunbonPatterns.concat(introBunbonPatterns))
+
+	ratBunbonTails = shuffle(ratBunbonTails)
+	ratBunbonSecondaryColors = shuffle(ratBunbonSecondaryColors)
 }
 
 function loadSounds() {
@@ -598,6 +605,7 @@ function resetState() {
 		planet.isUnlocked = false
 		planet.bunbonHasBlastedOffHere = false
 	})
+	planets[0].isUnlocked = true
 	inventory.objects = Array(inventory.slotCount)
 	storageScreen.objects = Array(storageScreen.slotCount)
 	openScreen('planet', 0)
@@ -674,6 +682,9 @@ function closeModal() {
 
 	document.getElementById('import-item-modal').className = 'modal'
 	document.getElementById('import-item-modal-contents').innerHTML = ''
+
+	document.getElementById('import-egg-modal').className = 'modal'
+	document.getElementById('import-egg-modal-contents').innerHTML = ''
 
 	document.getElementById('import-bunbon-modal').className = 'modal'
 	document.getElementById('import-bunbon-modal-contents').innerHTML = ''

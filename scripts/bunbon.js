@@ -195,11 +195,17 @@ let bunbonColors = {
 	]
 }
 
-let introBunbonColors = ['grey', 'black', 'dust', 'chocolate', 'cream']
-let introBunbonSecondaryColors = ['grey', 'black', 'dust', 'chocolate', 'cream']
-let introBunbonEars = ['long', 'short', 'lop']
-let introBunbonTails = ['none', 'puff', 'deer']
-let introBunbonPatterns = ['none', 'spots', 'freckles']
+function resetColors() {
+	introBunbonColors = ['grey', 'black', 'dust', 'chocolate', 'cream']
+	introBunbonSecondaryColors = ['grey', 'black', 'dust', 'chocolate', 'cream']
+	introBunbonEars = ['long', 'short', 'lop']
+	introBunbonTails = ['none', 'puff', 'deer']
+	introBunbonPatterns = ['none', 'spots', 'freckles']
+	
+	ratBunbonSecondaryColors = ['pink', 'blush']
+	ratBunbonTails = ['rat', 'long']
+}
+resetColors()
 
 class Bunbon extends GameObject {
 

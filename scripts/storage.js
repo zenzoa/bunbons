@@ -282,23 +282,37 @@ class Storage extends ScreenState {
 
 		openModal('import-modal')
 		let modal = document.getElementById('import-modal-contents')
-		modal.innerHTML = `
-			<button id='open-import-item'>import item</button>
-			<br><br>
-			<button id='open-import-bunbon'>import bunbon</button>
-			<br><br><br><br>
-			<button onclick='closeModal();'>cancel</button>
-		`
+		if (DEBUG) {
+			modal.innerHTML = `
+				<button id='open-import-item'>import item</button>
+				<br><br>
+				<button id='open-import-egg'>import egg</button>
+				<br><br>
+				<button id='open-import-bunbon'>import bunbon</button>
+				<br><br><br><br>
+				<button onclick='closeModal();'>cancel</button>
+			`
+		} else {
+			modal.innerHTML = `
+				<button id='open-import-item'>import item</button>
+				<br><br>
+				<button id='open-import-bunbon'>import bunbon</button>
+				<br><br><br><br>
+				<button onclick='closeModal();'>cancel</button>
+			`
+		}
 
 		document.getElementById('open-import-item').onclick = () => {
 			this.importItem()
 		}
 
+		if (DEBUG) {document.getElementById('open-import-egg').onclick = () => {
+			this.importEgg()
+		}}
+
 		document.getElementById('open-import-bunbon').onclick = () => {
 			uploadBunbon()
 		}
-
-		document.getElementById('open-import-item').focus()
 
 	}
 
@@ -377,6 +391,129 @@ class Storage extends ScreenState {
 		cancelButtonEl.innerText = 'cancel'
 		cancelButtonEl.onclick = () => {
 			document.getElementById('import-item-modal').className = 'modal'
+		}
+		modal.appendChild(cancelButtonEl)
+
+	}
+
+	importEgg() {
+
+		openModal('import-egg-modal')
+		let modal = document.getElementById('import-egg-modal-contents')
+		modal.innerHTML = ''
+
+		// eggs with basic colors
+		let eggColors = {
+			'deer': 'dust',
+			'bee': 'yellow',
+			'alicorn': 'purple',
+			'alien': 'pink',
+			'leafcat': 'gold',
+			'snail': 'blush',
+			'sheep': 'cream',
+			'fish': 'aqua',
+			'lizard': 'green',
+			'mousepunk' : 'grey',
+			'dragon' : 'green'
+		}
+
+		// fancy sprites for special eggs
+		let specialEggSprites = {
+			'intro': 273,
+			'random' : 274,
+			'rat' : 275
+		}
+
+		let addEgg = (parentEl, eggName) => {
+
+			let imageEl = document.createElement('img')
+			imageEl.width = 64
+			imageEl.height = 64
+			imageEl.title = eggName
+
+			let eggSprite = null
+			if (Object.keys(specialEggSprites).includes(eggName)) {
+				let spriteIndex = specialEggSprites[eggName]
+				eggSprite = baseSpritesheet.getSprite(spriteIndex)
+			} else {
+				let spriteIndex = bunbonEggs[0]
+				let eggColor = eggColors[eggName]
+				eggSprite = colorSpritesheets[eggColor].getSprite(spriteIndex)
+			}
+
+			imageEl.src = eggSprite.canvas.toDataURL()
+			let buttonEl = document.createElement('button')
+			buttonEl.className = 'image-button'
+			buttonEl.onclick = () => {
+				let egg = new Egg(currentScreen.randomPoint(), eggName)
+				currentScreen.addObject(egg)
+				saveState()
+				closeModal()
+				resetColors()
+				shuffleColors()
+			}
+			buttonEl.appendChild(imageEl)
+			parentEl.appendChild(buttonEl)
+
+		}
+
+		// add eggs you find on the planets you've unlocked
+		let starterEggsDiv = document.createElement('div')
+		starterEggsDiv.appendChild(document.createTextNode('starter eggs'))
+		starterEggsDiv.appendChild(document.createElement('br'))
+
+		if (planets[0].isUnlocked) { // park
+			addEgg(starterEggsDiv, 'intro')
+		}
+		if (planets[1].isUnlocked) { // mossyforest
+			addEgg(starterEggsDiv, 'deer')
+		}
+		if (planets[2].isUnlocked) { // flowertown
+			addEgg(starterEggsDiv, 'bee')
+		}
+		if (planets[3].isUnlocked) { // volcano
+			addEgg(starterEggsDiv, 'leafcat')
+		}
+		if (planets[4].isUnlocked) { // bubbledome
+			addEgg(starterEggsDiv, 'fish')
+		}
+		if (planets[5].isUnlocked) { // desert
+			addEgg(starterEggsDiv, 'lizard')
+		}
+		if (planets[6].isUnlocked) { // snowymountain
+			addEgg(starterEggsDiv, 'sheep')
+		}
+		if (planets[7].isUnlocked) { // cloudland
+			addEgg(starterEggsDiv, 'alicorn')
+		}
+		if (planets[8].isUnlocked) { // crystalcave
+			addEgg(starterEggsDiv, 'snail')
+		}
+		if (planets[9].isUnlocked) { // asteroid
+			addEgg(starterEggsDiv, 'alien')
+		}
+
+		modal.appendChild(starterEggsDiv)
+		modal.appendChild(document.createElement('br'))
+
+		// add special eggs
+		let specialEggsDiv = document.createElement('div')
+		specialEggsDiv.appendChild(document.createTextNode('special eggs'))
+		specialEggsDiv.appendChild(document.createElement('br'))
+
+		addEgg(specialEggsDiv, 'mousepunk')
+		addEgg(specialEggsDiv, 'dragon')
+		addEgg(specialEggsDiv, 'rat')
+		addEgg(specialEggsDiv, 'random')
+
+		modal.appendChild(specialEggsDiv)
+		modal.appendChild(document.createElement('br'))
+		modal.appendChild(document.createElement('br'))
+
+		let cancelButtonEl = document.createElement('button')
+		cancelButtonEl.innerText = 'cancel'
+		cancelButtonEl.onclick = () => {
+			document.getElementById('import-egg-modal').className = 'modal'
 		}
 		modal.appendChild(cancelButtonEl)
 
