@@ -282,15 +282,7 @@ class Storage extends ScreenState {
 
 		openModal('import-modal')
 		let modal = document.getElementById('import-modal-contents')
-		modal.innerHTML = `
-			<button id='open-import-item'>import item</button>
-			<br><br>
-			<button id='open-import-bunbon'>import bunbon</button>
-			<br><br><br><br>
-			<button onclick='closeModal();'>cancel</button>
-		`
 		if (DEBUG) {
-			let modal = document.getElementById('import-modal-contents')
 			modal.innerHTML = `
 				<button id='open-import-item'>import item</button>
 				<br><br>
@@ -299,7 +291,15 @@ class Storage extends ScreenState {
 				<button id='open-import-bunbon'>import bunbon</button>
 				<br><br><br><br>
 				<button onclick='closeModal();'>cancel</button>
-		`
+			`
+		} else {
+			modal.innerHTML = `
+				<button id='open-import-item'>import item</button>
+				<br><br>
+				<button id='open-import-bunbon'>import bunbon</button>
+				<br><br><br><br>
+				<button onclick='closeModal();'>cancel</button>
+			`
 		}
 
 		document.getElementById('open-import-item').onclick = () => {
