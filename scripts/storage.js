@@ -414,13 +414,13 @@ class Storage extends ScreenState {
 			'fish': 'aqua',
 			'lizard': 'green',
 			'mousepunk' : 'grey',
-			'dragonegg' : 'green'
+			'dragon' : 'green'
 		}
 
 		// fancy sprites for special eggs
 		let specialEggSprites = {
 			'intro': 273,
-			'randomegg' : 274,
+			'random' : 274,
 			'rat' : 275
 		}
 
@@ -438,7 +438,7 @@ class Storage extends ScreenState {
 			} else {
 				let spriteIndex = bunbonEggs[0]
 				let eggColor = eggColors[eggName]
-				colorSpritesheets[eggColor].getSprite(spriteIndex)
+				eggSprite = colorSpritesheets[eggColor].getSprite(spriteIndex)
 			}
 
 			imageEl.src = eggSprite.canvas.toDataURL()
@@ -502,11 +502,12 @@ class Storage extends ScreenState {
 		specialEggsDiv.appendChild(document.createElement('br'))
 
 		addEgg(specialEggsDiv, 'mousepunk')
-		addEgg(specialEggsDiv, 'dragonegg')
+		addEgg(specialEggsDiv, 'dragon')
 		addEgg(specialEggsDiv, 'rat')
-		addEgg(specialEggsDiv, 'randomegg')
+		addEgg(specialEggsDiv, 'random')
 
 		modal.appendChild(specialEggsDiv)
+		modal.appendChild(document.createElement('br'))
 		modal.appendChild(document.createElement('br'))
 
 		let cancelButtonEl = document.createElement('button')

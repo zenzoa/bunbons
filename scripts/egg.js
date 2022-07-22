@@ -206,9 +206,9 @@ class Egg extends Toy {
 				sleepinessRate: 30
 			})
 
-		} else if (bunbonDNA === 'randomegg'){
+		} else if (bunbonDNA === 'random'){
 			this.bunbonDNA = Bunbon.randomDNA()
-			
+
 		} else {
 			this.bunbonDNA = bunbonDNA || Bunbon.randomDNA()
 		}
