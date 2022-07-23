@@ -80,6 +80,14 @@ class Storage extends ScreenState {
 			text(selectedObject.name, selectionX, selectionY - 5)
 		}
 
+		// draw bunbon stats
+        	if (selectedObject && selectedObject instanceof Bunbon) {
+        	    let normalizedScore = selectedObject.score / selectedObject.maxScore
+        	    let scoreImageIndex = floor(normalizedScore * 11)
+            	image(scoreButtonImgs[scoreImageIndex], WORLD_WIDTH - 36, WORLD_HEIGHT + 4)
+            	if (DEBUG) selectedObject.drawStatOrb()
+	        }
+
 		// draw upload button
 		if (!this.isFull()) {
 			image(uploadButtonImg, uploadButton.x, uploadButton.y)
