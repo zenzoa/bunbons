@@ -201,7 +201,7 @@ function resetColors() {
 	introBunbonEars = ['long', 'short', 'lop']
 	introBunbonTails = ['none', 'puff', 'deer']
 	introBunbonPatterns = ['none', 'spots', 'freckles']
-	
+
 	ratBunbonSecondaryColors = ['pink', 'blush']
 	ratBunbonTails = ['rat', 'long']
 }
@@ -439,6 +439,10 @@ class Bunbon extends GameObject {
 	}
 
 	static canBreed(parent1, parent2) {
+		// don't breed if there are too many bunbons
+		if (currentScreen != null && currentScreen.type === 'planet' && currentScreen.bunbonCount >= MAX_BUNBONS_ON_PLANET) {
+			return false
+		}
 
 		// don't breed if parents have laid an egg recently
 		if (parent1.eggCooldownTimer || parent2.eggCooldownTimer) {
